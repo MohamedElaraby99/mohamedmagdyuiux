@@ -275,66 +275,160 @@ export default function Wallet() {
 
 
                                     {/* Contact Methods */}
-                                    <div className="mt-4 space-y-3">
-                                        {/* WhatsApp Contact */}
-                                        <div className="p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700 rounded-lg">
-                                            <h5 className="text-md font-semibold text-green-900 dark:text-green-100 mb-3 flex items-center gap-2">
-                                                <FaWhatsapp className="text-green-600 dark:text-green-400" />
+                                    <div className="mt-8 space-y-6">
+
+                                        {/* WhatsApp Section */}
+                                        <div className="p-5 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700 rounded-xl">
+                                            <h5 className="text-lg font-bold text-green-900 dark:text-green-100 mb-4 flex items-center gap-2">
+                                                <FaWhatsapp className="text-green-600 dark:text-green-400 text-xl" />
                                                 {PAYMENT.whatsappForCodes.label}
                                             </h5>
-                                            <div className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded border border-green-200 dark:border-green-600">
-                                                <div>
-                                                    <div className="font-medium text-gray-900 dark:text-white">
+                                            <div className="flex flex-col sm:flex-row items-center justify-between p-4 bg-white dark:bg-gray-800 rounded-lg border border-green-200 dark:border-green-600 shadow-sm">
+                                                <div className="mb-4 sm:mb-0 text-center sm:text-right">
+                                                    <div className="font-bold text-gray-900 dark:text-white">
                                                         {PAYMENT.whatsappContact.label}
                                                     </div>
-                                                    <div className="text-lg font-bold text-green-600 dark:text-green-400">
+                                                    <div className="text-xl font-bold text-green-600 dark:text-green-400 my-1" dir="ltr">
                                                         {PAYMENT.whatsappContact.phone}
                                                     </div>
-                                                    <div className="text-sm text-gray-600 dark:text-gray-400">
+                                                    <div className="text-sm text-gray-500 dark:text-gray-400">
                                                         {PAYMENT.whatsappContact.description}
                                                     </div>
                                                 </div>
                                                 <button
                                                     onClick={() => {
-                                                        const message = `مرحباً! أنا مهتم بشراء كود شحن للمحفظة. هل يمكنك تقديم المزيد من المعلومات؟`;
+                                                        const message = "مرحباً! اريد شحن المحفظة";
                                                         window.open(`https://wa.me/2${PAYMENT.whatsappContact.phone}?text=${encodeURIComponent(message)}`, '_blank');
                                                     }}
-                                                    className="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
+                                                    className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-bold transition-all transform hover:scale-105 shadow-md flex items-center justify-center gap-2"
                                                 >
-                                                    <FaWhatsapp />
+                                                    <FaWhatsapp className="text-xl" />
                                                     تواصل الآن
                                                 </button>
                                             </div>
                                         </div>
 
-                                        {/* Vodafone Cash Contact */}
-                                        <div className="p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700 rounded-lg">
-                                            <h5 className="text-md font-semibold text-green-900 dark:text-green-100 mb-3 flex items-center gap-2">
-                                                <FaCreditCard className="text-green-600 dark:text-green-400" />
-                                                الدفع عبر فودافون كاش
-                                            </h5>
-                                            <div className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded border border-green-200 dark:border-green-600">
-                                                <div>
-                                                    <div className="font-medium text-gray-900 dark:text-white">
-                                                        {PAYMENT.vodafoneCash.label}
+                                        {/* Egypt Payment Methods */}
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            {/* Vodafone Cash */}
+                                            <div className="p-5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+                                                <div className="flex items-center gap-3 mb-3">
+                                                    <div className="p-2 bg-red-100 dark:bg-red-900/30 rounded-lg text-red-600 dark:text-red-400">
+                                                        <FaCreditCard className="text-xl" />
                                                     </div>
-                                                    <div className="text-lg font-bold text-green-600 dark:text-green-400">
+                                                    <h6 className="font-bold text-gray-900 dark:text-white">{PAYMENT.vodafoneCash.label}</h6>
+                                                </div>
+                                                <div className="text-center p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg border border-gray-100 dark:border-gray-700">
+                                                    <p className="text-2xl font-bold text-gray-800 dark:text-gray-100 tracking-wider" dir="ltr">
                                                         {PAYMENT.vodafoneCash.phone}
-                                                    </div>
-                                                    <div className="text-sm text-gray-600 dark:text-gray-400">
+                                                    </p>
+                                                    <p className="text-xs text-green-600 dark:text-green-400 mt-1 font-medium">
                                                         {PAYMENT.vodafoneCash.description}
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            {/* InstaPay */}
+                                            <div className="p-5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+                                                <div className="flex items-center gap-3 mb-3">
+                                                    <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg text-purple-600 dark:text-purple-400">
+                                                        <FaCreditCard className="text-xl" />
+                                                    </div>
+                                                    <h6 className="font-bold text-gray-900 dark:text-white">{PAYMENT.instaPay.label}</h6>
+                                                </div>
+                                                <div className="text-center p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg border border-gray-100 dark:border-gray-700">
+                                                    <p className="text-2xl font-bold text-gray-800 dark:text-gray-100 tracking-wider" dir="ltr">
+                                                        {PAYMENT.instaPay.phone}
+                                                    </p>
+                                                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                                        تحويل لحظي
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Local Bank Transfer */}
+                                        <div className="p-5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm">
+                                            <h6 className="font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                                                <span className="w-1 h-6 bg-blue-600 rounded-full"></span>
+                                                {PAYMENT.bankMisr.label}
+                                            </h6>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <div className="p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                                                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">اسم المستفيد</p>
+                                                    <p className="font-bold text-gray-900 dark:text-white select-all">
+                                                        {PAYMENT.bankMisr.accountName}
+                                                    </p>
+                                                </div>
+                                                <div className="p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                                                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">رقم الحساب</p>
+                                                    <p className="font-bold text-gray-900 dark:text-white select-all text-lg" dir="ltr">
+                                                        {PAYMENT.bankMisr.accountNumber}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Saudi Payment */}
+                                        <div className="p-5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm">
+                                            <h6 className="font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                                                <span className="w-1 h-6 bg-green-600 rounded-full"></span>
+                                                {PAYMENT.saudiPayment.label}
+                                            </h6>
+
+                                            <div className="space-y-4">
+                                                {/* Bank Misr IBAN */}
+                                                <div className="p-4 border border-gray-100 dark:border-gray-700 rounded-lg">
+                                                    <div className="flex items-center gap-2 mb-3 pb-2 border-b border-gray-100 dark:border-gray-700">
+                                                        <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                                                        <p className="font-bold text-gray-800 dark:text-gray-200 text-sm">
+                                                            {PAYMENT.saudiPayment.bankMisrIban.label}
+                                                        </p>
+                                                    </div>
+                                                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                                                        <div>
+                                                            <p className="text-xs text-gray-500 mb-1">اسم المستفيد</p>
+                                                            <p className="font-semibold">{PAYMENT.saudiPayment.bankMisrIban.accountName}</p>
+                                                        </div>
+                                                        <div className="overflow-hidden">
+                                                            <p className="text-xs text-gray-500 mb-1">IBAN</p>
+                                                            <p className="font-mono font-semibold bg-gray-50 dark:bg-gray-900 px-2 py-1 rounded select-all break-all text-sm" dir="ltr">
+                                                                {PAYMENT.saudiPayment.bankMisrIban.iban}
+                                                            </p>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                                <div className="text-center">
-                                                    <div className="text-xs text-gray-500 dark:text-gray-400 mb-2">
-                                                        ادفع المبلغ المطلوب
+
+                                                {/* Rajhi Bank */}
+                                                <div className="p-4 border border-gray-100 dark:border-gray-700 rounded-lg">
+                                                    <div className="flex items-center gap-2 mb-3 pb-2 border-b border-gray-100 dark:border-gray-700">
+                                                        <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+                                                        <p className="font-bold text-gray-800 dark:text-gray-200 text-sm">
+                                                            {PAYMENT.saudiPayment.rajhiBank.label}
+                                                        </p>
                                                     </div>
-                                                    <div className="text-xs text-gray-500 dark:text-gray-400">
-                                                        ثم تواصل على الواتساب
+                                                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                                                        <div>
+                                                            <p className="text-xs text-gray-500 mb-1">اسم المستفيد</p>
+                                                            <p className="font-semibold">{PAYMENT.saudiPayment.rajhiBank.accountName}</p>
+                                                        </div>
+                                                        <div>
+                                                            <p className="text-xs text-gray-500 mb-1">رقم الحساب</p>
+                                                            <p className="font-mono font-semibold bg-gray-50 dark:bg-gray-900 px-2 py-1 rounded select-all text-sm" dir="ltr">
+                                                                {PAYMENT.saudiPayment.rajhiBank.accountNumber}
+                                                            </p>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
+
+                                        {/* International Message */}
+                                        <div className="text-center p-4 bg-blue-50 dark:bg-blue-900/10 rounded-xl text-blue-800 dark:text-blue-300 font-medium">
+                                            <FaGlobe className="inline-block mx-2 ml-2" />
+                                            {PAYMENT.internationalPayment.label}
+                                        </div>
+
                                     </div>
 
                                     {/* WhatsApp Contact Information */}
