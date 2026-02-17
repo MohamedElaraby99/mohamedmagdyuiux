@@ -17,10 +17,8 @@ export default function Login() {
 
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [loginType, setLoginType] = useState('phone'); // 'phone' or 'email'
   const [loginData, setLoginData] = useState({
-    phoneNumber: "",
-    email: "",
+    identifier: "",
     password: "",
   });
 
@@ -28,7 +26,7 @@ export default function Login() {
     const { name, value } = e.target;
 
     // Remove spaces from specific fields for easier login
-    const fieldsToCleanSpaces = ['email', 'password', 'phoneNumber'];
+    const fieldsToCleanSpaces = ['identifier', 'password'];
     const cleanValue = fieldsToCleanSpaces.includes(name) ? value.replace(/\s+/g, '') : value;
 
     setLoginData({
@@ -40,27 +38,21 @@ export default function Login() {
   async function onLogin(event) {
     event.preventDefault();
 
-    // Validate based on login type
-    if (loginType === 'phone') {
-      if (!loginData.phoneNumber || !loginData.password) {
-        toast.error("املا كل البيانات المطلوبة");
-        return;
-      }
-      // Validate Egyptian phone number format
-      if (!loginData.phoneNumber.match(/^(\+20|0)?1[0125][0-9]{8}$/)) {
-        toast.error("رقم التليفون ده مش صح - اكتب رقم مصري صح");
-        return;
-      }
-    } else {
-      if (!loginData.email || !loginData.password) {
-        toast.error("املا كل البيانات المطلوبة");
-        return;
-      }
-      // Validate email format
-      if (!loginData.email.match(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g)) {
-        toast.error("الإيميل ده مش صح - اكتبه صح");
-        return;
-      }
+    if (!loginData.identifier || !loginData.password) {
+      toast.error("املا كل البيانات المطلوبة");
+      return;
+    }
+
+    // Validate if identifier is email or phone
+    const phoneRegex = /^(\+20|0)?1[0125][0-9]{8}$/;
+    const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+
+    const isPhone = phoneRegex.test(loginData.identifier);
+    const isEmail = emailRegex.test(loginData.identifier);
+
+    if (!isPhone && !isEmail) {
+      toast.error("من فضلك ادخل بريد إلكتروني صحيح أو رقم هاتف مصري صحيح");
+      return;
     }
 
     setIsLoading(true);
@@ -68,14 +60,14 @@ export default function Login() {
     // Generate device information for fingerprinting
     const deviceInfo = {
       platform: getDeviceType(),
-      screenResolution: `${screen.width}x${screen.height}`,
+      screenResolution: `${window.screen.width}x${window.screen.height}`,
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       additionalInfo: {
         browser: getBrowserInfo().browser,
         browserVersion: getBrowserInfo().version,
         os: getOperatingSystem(),
         language: navigator.language,
-        colorDepth: screen.colorDepth,
+        colorDepth: window.screen.colorDepth,
         touchSupport: 'ontouchstart' in window,
       }
     };
@@ -85,19 +77,18 @@ export default function Login() {
       deviceInfo: deviceInfo
     };
 
-    // Add identifier based on login type
-    if (loginType === 'phone') {
-      Data.phoneNumber = loginData.phoneNumber;
+    // Set the correct field based on detection
+    if (isPhone) {
+      Data.phoneNumber = loginData.identifier;
     } else {
-      Data.email = loginData.email;
+      Data.email = loginData.identifier;
     }
 
     // dispatch login action
     const response = await dispatch(login(Data));
     if (response?.payload?.success) {
       setLoginData({
-        phoneNumber: "",
-        email: "",
+        identifier: "",
         password: "",
       });
       navigate("/");
@@ -143,52 +134,24 @@ export default function Login() {
           {/* Enhanced Modern Form */}
           <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-3xl shadow-2xl p-8 border border-primary/20 dark:border-primary/50 transform hover:scale-[1.02] transition-all duration-500">
             <form onSubmit={onLogin} className="space-y-6">
-              {/* Login Type Toggle */}
-              <div className="w-full">
-                <div className="relative mx-auto w-full max-w-sm">
-                  <div className="grid grid-cols-2 bg-gray-100 dark:bg-gray-700 p-1 rounded-2xl shadow-inner border border-gray-200 dark:border-gray-600">
-                    <button
-                      type="button"
-                      onClick={() => setLoginType('phone')}
-                      className={`flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm sm:text-base transition-all duration-200 ${loginType === 'phone' ? 'bg-white dark:bg-gray-800 text-primary dark:text-primary-light shadow' : 'text-gray-600 dark:text-gray-300'}`}
-                      aria-pressed={loginType === 'phone'}
-                    >
-                      <FaPhone className="h-5 w-5" />
-                      <span>رقم الهاتف</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setLoginType('email')}
-                      className={`flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm sm:text-base transition-all duration-200 ${loginType === 'email' ? 'bg-white dark:bg-gray-800 text-primary dark:text-primary-light shadow' : 'text-gray-600 dark:text-gray-300'}`}
-                      aria-pressed={loginType === 'email'}
-                    >
-                      <FaEnvelope className="h-5 w-5" />
-                      <span>الإيميل</span>
-                    </button>
-                  </div>
-                </div>
-                <p className="mt-2 text-xs sm:text-sm text-gray-500 dark:text-gray-400 text-center">
-                  {loginType === 'phone' ? 'ادخل برقم تليفونك' : 'ادخل بالإيميل بتاعك'}
-                </p>
-              </div>
 
-              {/* Email/Phone Field */}
+              {/* Identifier Field (Email or Phone) */}
               <div className="group">
-                <label htmlFor={loginType === 'phone' ? 'phoneNumber' : 'email'} className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 text-right">
-                  {loginType === 'phone' ? 'رقم التليفون' : 'الإيميل'}
+                <label htmlFor="identifier" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 text-right">
+                  البريد الإلكتروني أو رقم الهاتف
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
-                    {loginType === 'phone' ? <FaPhone className="h-5 w-5 text-primary group-focus-within:text-primary-dark transition-colors duration-200" /> : <FaEnvelope className="h-5 w-5 text-primary group-focus-within:text-primary-dark transition-colors duration-200" />}
+                    <FaUser className="h-5 w-5 text-primary group-focus-within:text-primary-dark transition-colors duration-200" />
                   </div>
                   <input
-                    id={loginType === 'phone' ? 'phoneNumber' : 'email'}
-                    name={loginType === 'phone' ? 'phoneNumber' : 'email'}
-                    type={loginType === 'phone' ? 'tel' : 'email'}
+                    id="identifier"
+                    name="identifier"
+                    type="text"
                     required
                     className="block w-full pr-12 pl-4 py-4 border-2 border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-primary/20 focus:border-primary transition-all duration-300 text-right shadow-sm hover:shadow-md"
-                    placeholder={loginType === 'phone' ? 'أدخل رقم هاتفك' : 'أدخل بريدك الإلكتروني'}
-                    value={loginType === 'phone' ? loginData.phoneNumber : loginData.email}
+                    placeholder="أدخل البريد الإلكتروني أو رقم الهاتف"
+                    value={loginData.identifier}
                     onChange={handleUserInput}
                   />
                 </div>
