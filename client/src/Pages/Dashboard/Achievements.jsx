@@ -22,11 +22,11 @@ const Achievements = () => {
   } = useSelector((state) => state.stat);
 
   const [students, setStudents] = useState([]);
-  const [stages, setStages] = useState([]);
+
   const [achievementApiStats, setAchievementApiStats] = useState(null);
   const [examStats, setExamStats] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [filterStage, setFilterStage] = useState('all');
+
   const [message, setMessage] = useState({ show: false, text: '', type: 'success' });
   const [selectedUser, setSelectedUser] = useState(null);
   const [showUserModal, setShowUserModal] = useState(false);
@@ -39,7 +39,7 @@ const Achievements = () => {
   const fetchAllData = async () => {
     try {
       setLoading(true);
-      
+
       // Fetch multiple data sources in parallel
       await Promise.allSettled([
         fetchStudents(),
@@ -48,7 +48,7 @@ const Achievements = () => {
         dispatch(getAttendanceDashboard()),
         dispatch(getStatsData())
       ]);
-      
+
     } catch (error) {
 
       showMessage('حدث خطأ في تحميل البيانات', 'error');
@@ -65,22 +65,8 @@ const Achievements = () => {
       if (usersResponse.data && usersResponse.data.success) {
         const usersData = usersResponse.data.data.docs || [];
 
-        // Extract unique stages from users data
-        const uniqueStages = [];
-        const stageMap = new Map();
-        
-        usersData.forEach(user => {
 
-          if (user.stage && user.stage._id) {
-            if (!stageMap.has(user.stage._id)) {
-              stageMap.set(user.stage._id, user.stage);
-              uniqueStages.push(user.stage);
-            }
-          }
-        });
 
-        setStages(uniqueStages);
-        
         // Calculate achievement levels and points for each student with real data
         const studentsWithAchievements = await Promise.all(
           usersData.map(async (student) => {
@@ -92,11 +78,11 @@ const Achievements = () => {
             };
           })
         );
-        
+
         // Sort by total points (descending)
         studentsWithAchievements.sort((a, b) => b.totalPoints - a.totalPoints);
         setStudents(studentsWithAchievements);
-        
+
       } else {
         setStudents([]);
         setStages([]);
@@ -139,37 +125,37 @@ const Achievements = () => {
       let attendanceData = null;
       let examData = null;
       let gradeData = null;
-      
+
       try {
         const attendanceResponse = await axiosInstance.get(`/attendance/user/${student._id}/stats`);
         attendanceData = attendanceResponse.data?.data;
       } catch (error) {
 
       }
-      
+
       try {
         const examResponse = await axiosInstance.get(`/exam-results?userId=${student._id}&limit=100`);
         examData = examResponse.data?.data;
       } catch (error) {
 
       }
-      
+
       try {
         const gradeResponse = await axiosInstance.get(`/offline-grades?search=${student.fullName}&limit=100`);
         gradeData = gradeResponse.data?.data?.data;
       } catch (error) {
 
       }
-      
+
       // Calculate real points based on actual data
       const attendancePoints = calculateAttendancePoints(attendanceData);
       const examPoints = calculateExamPoints(examData);
       const gradePoints = calculateGradePoints(gradeData);
       const totalPoints = attendancePoints + examPoints + gradePoints;
-      
+
       // Determine achievement level based on total points
       const achievementLevel = calculateAchievementLevel({ totalPoints });
-      
+
       return {
         achievementLevel,
         totalPoints,
@@ -194,74 +180,74 @@ const Achievements = () => {
 
   const calculateAttendancePoints = (attendanceData) => {
     if (!attendanceData) return 0;
-    
+
     const { attendanceRate = 0, totalAttendance = 0 } = attendanceData;
-    
+
     // Award points based on attendance rate and total attendance
     let points = 0;
-    
+
     if (attendanceRate >= 95) points += 30;
     else if (attendanceRate >= 85) points += 25;
     else if (attendanceRate >= 75) points += 20;
     else if (attendanceRate >= 65) points += 15;
     else if (attendanceRate >= 50) points += 10;
-    
+
     // Bonus points for high total attendance
     if (totalAttendance >= 30) points += 10;
     else if (totalAttendance >= 20) points += 5;
-    
+
     return Math.min(points, 40); // Cap at 40 points
   };
 
   const calculateExamPoints = (examData) => {
     if (!examData || !Array.isArray(examData) || examData.length === 0) return 0;
-    
+
     const totalExams = examData.length;
     const passedExams = examData.filter(exam => exam.passed).length;
     const averageScore = examData.reduce((sum, exam) => sum + (exam.score || 0), 0) / totalExams;
-    
+
     let points = 0;
-    
+
     // Points for pass rate
     const passRate = (passedExams / totalExams) * 100;
     if (passRate >= 90) points += 25;
     else if (passRate >= 80) points += 20;
     else if (passRate >= 70) points += 15;
     else if (passRate >= 60) points += 10;
-    
+
     // Points for average score
     if (averageScore >= 90) points += 15;
     else if (averageScore >= 80) points += 12;
     else if (averageScore >= 70) points += 8;
     else if (averageScore >= 60) points += 5;
-    
+
     return Math.min(points, 40); // Cap at 40 points
   };
 
   const calculateGradePoints = (gradeData) => {
     if (!gradeData || !Array.isArray(gradeData) || gradeData.length === 0) return 0;
-    
+
     const totalGrades = gradeData.length;
     const averagePercentage = gradeData.reduce((sum, grade) => {
       const percentage = (grade.score / grade.maxScore) * 100;
       return sum + percentage;
     }, 0) / totalGrades;
-    
+
     let points = 0;
-    
+
     // Points based on average grade percentage
     if (averagePercentage >= 95) points += 20;
     else if (averagePercentage >= 85) points += 15;
     else if (averagePercentage >= 75) points += 12;
     else if (averagePercentage >= 65) points += 8;
     else if (averagePercentage >= 50) points += 5;
-    
+
     return Math.min(points, 20); // Cap at 20 points
   };
 
   const calculateAchievementLevel = (data) => {
     const totalPoints = data.totalPoints || 0;
-    
+
     if (totalPoints >= 80) return 'نجم';      // Star (80+ points)
     if (totalPoints >= 60) return 'متفوق';    // Excellent (60-79 points)
     if (totalPoints >= 40) return 'متقدم';    // Advanced (40-59 points)
@@ -269,18 +255,7 @@ const Achievements = () => {
   };
 
   // Filter students based on selected stage
-  const getFilteredStudents = () => {
-    let filtered = students;
-
-    // Filter by stage
-    if (filterStage !== 'all') {
-      filtered = filtered.filter(student => 
-        student.stage?._id === filterStage || student.stage?.id === filterStage
-      );
-    }
-
-    return filtered;
-  };
+  return students;
 
   const filteredStudents = getFilteredStudents();
 
@@ -291,31 +266,31 @@ const Achievements = () => {
       متقدم: 0,
       مبتدئ: 0
     };
-    
+
     filteredStudents.forEach(student => {
       stats[student.achievementLevel]++;
     });
-    
+
     return stats;
   };
 
   const getOverallStats = () => {
     if (filteredStudents.length === 0) {
-      return { 
-        total: allUsersCount || 0, 
-        avgPoints: 0, 
-        avgAttendance: 0, 
+      return {
+        total: allUsersCount || 0,
+        avgPoints: 0,
+        avgAttendance: 0,
         avgGrades: 0,
         avgExams: 0
       };
     }
-    
+
     const totalStudents = filteredStudents.length;
     const totalPoints = filteredStudents.reduce((sum, student) => sum + (student.totalPoints || 0), 0);
     const totalAttendancePoints = filteredStudents.reduce((sum, student) => sum + (student.attendancePoints || 0), 0);
     const totalGradesPoints = filteredStudents.reduce((sum, student) => sum + (student.gradesPoints || 0), 0);
     const totalExamPoints = filteredStudents.reduce((sum, student) => sum + (student.examPoints || 0), 0);
-    
+
     return {
       total: totalStudents,
       avgPoints: totalStudents > 0 ? (totalPoints / totalStudents).toFixed(1) : '0.0',
@@ -339,7 +314,7 @@ const Achievements = () => {
       'متقدم': 'bg-teal-100 text-teal-800 border-teal-200',
       'مبتدئ': 'bg-green-100 text-green-800 border-green-200'
     };
-    
+
     return (
       <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium border ${levelColors[level] || levelColors['مبتدئ']}`}>
         <FaTrophy className="ml-2 text-white" />
@@ -351,7 +326,7 @@ const Achievements = () => {
   const showMessage = (text, type = 'success') => {
     setMessage({ show: true, text, type });
     setTimeout(() => setMessage({ show: false, text: '', type: 'success' }), 5000);
-    
+
     // Also show toast notification
     if (type === 'success') {
       toast.success(text);
@@ -476,24 +451,7 @@ const Achievements = () => {
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
             <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
               <div className="flex flex-col md:flex-row gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    فلترة حسب المرحلة الدراسية
-                  </label>
-                  <select
-                    value={filterStage}
-                    onChange={(e) => setFilterStage(e.target.value)}
-                    className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-right"
-                    dir="rtl"
-                  >
-                    <option value="all">جميع المراحل</option>
-                    {stages.map((stage) => (
-                      <option key={stage._id} value={stage._id}>
-                        {stage.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+
               </div>
               <div className="text-center">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
@@ -517,7 +475,7 @@ const Achievements = () => {
                 ترتيب الطلاب حسب الإنجازات
               </h2>
             </div>
-            
+
             {loading ? (
               <div className="p-8 text-center">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto"></div>
@@ -535,7 +493,7 @@ const Achievements = () => {
                     <tr>
                       <th className="px-4 py-3 font-medium text-gray-900 dark:text-white">الترتيب</th>
                       <th className="px-4 py-3 font-medium text-gray-900 dark:text-white">الطالب</th>
-                      <th className="px-4 py-3 font-medium text-gray-900 dark:text-white">المرحلة الدراسية</th>
+
                       <th className="px-4 py-3 font-medium text-gray-900 dark:text-white">مستوى الإنجاز</th>
                       <th className="px-4 py-3 font-medium text-gray-900 dark:text-white">إجمالي النقاط</th>
                       <th className="px-4 py-3 font-medium text-gray-900 dark:text-white">نقاط الحضور</th>
@@ -561,9 +519,7 @@ const Achievements = () => {
                             </div>
                           </div>
                         </td>
-                        <td className="px-4 py-3 text-gray-900 dark:text-white">
-                          {student.stage?.name || 'غير محدد'}
-                        </td>
+
                         <td className="px-4 py-3">
                           {getAchievementLevelBadge(student.achievementLevel)}
                         </td>
@@ -586,7 +542,7 @@ const Achievements = () => {
                         </td>
                         <td className="px-4 py-3">
                           <div className="flex items-center space-x-2 space-x-reverse">
-                            <button 
+                            <button
                               onClick={() => handleViewUserInfo(student)}
                               className="p-2 text-green-600 hover:bg-green-100 dark:hover:bg-green-900 rounded-lg transition-colors"
                               title="عرض معلومات الطالب"
@@ -612,13 +568,12 @@ const Achievements = () => {
 
         {/* Message Toast */}
         {message.show && (
-          <div className={`fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg transform transition-all duration-300 ${
-            message.type === 'success' 
-              ? 'bg-green-500 text-white' 
+          <div className={`fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg transform transition-all duration-300 ${message.type === 'success'
+              ? 'bg-green-500 text-white'
               : message.type === 'error'
-              ? 'bg-red-500 text-white'
-              : 'bg-green-500 text-white'
-          }`}>
+                ? 'bg-red-500 text-white'
+                : 'bg-green-500 text-white'
+            }`}>
             <div className="flex items-center space-x-2 space-x-reverse">
               <span>{message.text}</span>
             </div>
@@ -682,13 +637,7 @@ const Achievements = () => {
                         <p className="font-medium text-gray-900 dark:text-white">{selectedUser.email || 'غير محدد'}</p>
                       </div>
                     </div>
-                    <div className="flex items-center space-x-3 space-x-reverse">
-                      <FaGraduationCap className="text-gray-400" />
-                      <div>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">المرحلة الدراسية</p>
-                        <p className="font-medium text-gray-900 dark:text-white">{selectedUser.stage?.name || 'غير محدد'}</p>
-                      </div>
-                    </div>
+
                     <div className="flex items-center space-x-3 space-x-reverse">
                       <FaBirthdayCake className="text-gray-400" />
                       <div>
@@ -770,9 +719,8 @@ const Achievements = () => {
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-gray-600 dark:text-gray-400">الحالة:</span>
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        selectedUser.isActive ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
-                      }`}>
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${selectedUser.isActive ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+                        }`}>
                         {selectedUser.isActive ? 'نشط' : 'غير نشط'}
                       </span>
                     </div>

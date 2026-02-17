@@ -77,7 +77,7 @@ export default function AdminUserDashboard() {
     const [filters, setFilters] = useState({
         role: "",
         status: "",
-        stage: "",
+
         search: ""
     });
     const [selectedUserId, setSelectedUserId] = useState(null);
@@ -105,11 +105,11 @@ export default function AdminUserDashboard() {
         phoneNumber: '',
         fatherPhoneNumber: '',
         governorate: '',
-        stage: '',
+
         age: ''
     });
     const [activeTab, setActiveTab] = useState("users");
-    const [stages, setStages] = useState([]);
+
 
     // Check if current user can create admin users
     const canCreateAdmin = user && (user.role === 'SUPER_ADMIN');
@@ -117,19 +117,7 @@ export default function AdminUserDashboard() {
     const canChangeRoleToAdmin = user && (user.role === 'SUPER_ADMIN');
 
     // Fetch stages on component mount
-    useEffect(() => {
-        const fetchStages = async () => {
-            try {
-                const response = await axiosInstance.get('/stages');
-                if (response.data.success) {
-                    setStages(response.data.data.stages);
-                }
-            } catch (error) {
-            }
-        };
 
-        fetchStages();
-    }, []);
 
     // Monitor filter changes
     useEffect(() => {
@@ -152,7 +140,7 @@ export default function AdminUserDashboard() {
                 limit: 20,
                 role: roleFilter,
                 status: filters.status,
-                stage: filters.stage,
+
                 search: filters.search,
                 codeSearch: filters.codeSearch
             }));
@@ -196,7 +184,7 @@ export default function AdminUserDashboard() {
             limit: 20,
             role: roleFilter,
             status: filters.status,
-            stage: filters.stage,
+
             search: filters.search,
             codeSearch: filters.codeSearch
         }));
@@ -276,7 +264,7 @@ export default function AdminUserDashboard() {
             // Prepare the data, ensuring stage is properly handled
             const userData = {
                 ...editForm,
-                stage: editForm.stage || null, // Convert empty string to null for stage
+
                 age: editForm.age ? parseInt(editForm.age) : undefined // Convert age to number
             };
 
@@ -320,7 +308,7 @@ export default function AdminUserDashboard() {
             phoneNumber: user.phoneNumber || '',
             fatherPhoneNumber: user.fatherPhoneNumber || '',
             governorate: user.governorate || '',
-            stage: user.stage?._id || null,
+
             age: user.age || '',
             role: user.role || 'USER',
             code: user.code || '',
@@ -544,8 +532,8 @@ export default function AdminUserDashboard() {
                         <button
                             onClick={() => setActiveTab("users")}
                             className={`px-6 py-3 rounded-lg font-medium transition-colors ${activeTab === "users"
-                                    ? "bg-indigo-600 text-white"
-                                    : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
+                                ? "bg-indigo-600 text-white"
+                                : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
                                 }`}
                         >
                             <FaUsers className="inline mr-2" />
@@ -554,8 +542,8 @@ export default function AdminUserDashboard() {
                         <button
                             onClick={() => setActiveTab("admins")}
                             className={`px-6 py-3 rounded-lg font-medium transition-colors ${activeTab === "admins"
-                                    ? "bg-green-600 text-white"
-                                    : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
+                                ? "bg-green-600 text-white"
+                                : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
                                 }`}
                         >
                             <FaCrown className="inline mr-2" />
@@ -564,8 +552,8 @@ export default function AdminUserDashboard() {
                         <button
                             onClick={() => setActiveTab("all")}
                             className={`px-6 py-3 rounded-lg font-medium transition-colors ${activeTab === "all"
-                                    ? "bg-green-600 text-white"
-                                    : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
+                                ? "bg-green-600 text-white"
+                                : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
                                 }`}
                         >
                             <FaUser className="inline mr-2" />
@@ -684,24 +672,7 @@ export default function AdminUserDashboard() {
                                                 <option value="inactive">غير نشط</option>
                                             </select>
                                         </div>
-                                        {activeTab === "users" && (
-                                            <div>
-                                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                                    المرحلة الدراسية
-                                                </label>
-                                                <select
-                                                    name="stage"
-                                                    value={filters.stage}
-                                                    onChange={handleFilterChange}
-                                                    className="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                                                >
-                                                    <option value="">جميع المراحل</option>
-                                                    {stages.map(stage => (
-                                                        <option key={stage._id} value={stage._id}>{stage.name}</option>
-                                                    ))}
-                                                </select>
-                                            </div>
-                                        )}
+
                                         <div className="flex items-end">
                                             <button
                                                 onClick={() => {
@@ -756,14 +727,10 @@ export default function AdminUserDashboard() {
                                                             {user.role !== 'SUPER_ADMIN' && (
                                                                 <>
                                                                     المحفظة: {user.walletBalance} جنيه مصري • المعاملات: {user.totalTransactions}
-                                                                    {user.stage && user.stage.name && (
-                                                                        <span className="ml-2">• المرحلة: {user.stage.name}</span>
-                                                                    )}
+
                                                                 </>
                                                             )}
-                                                            {user.role === 'SUPER_ADMIN' && user.stage && user.stage.name && (
-                                                                <span>المرحلة: {user.stage.name}</span>
-                                                            )}
+
                                                         </p>
                                                     </div>
                                                 </div>
@@ -830,8 +797,8 @@ export default function AdminUserDashboard() {
                                                         ...filters
                                                     }))}
                                                     className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${pagination.currentPage === i + 1
-                                                            ? "bg-indigo-600 text-white"
-                                                            : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
+                                                        ? "bg-indigo-600 text-white"
+                                                        : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
                                                         }`}
                                                 >
                                                     {i + 1}
@@ -1959,8 +1926,8 @@ export default function AdminUserDashboard() {
                                     <button
                                         onClick={() => handleToggleStatus(selectedUser.id, selectedUser.isActive)}
                                         className={`px-6 py-2 rounded-lg font-medium transition-colors ${selectedUser.isActive
-                                                ? 'bg-green-600 hover:bg-green-700 text-white'
-                                                : 'bg-green-600 hover:bg-green-700 text-white'
+                                            ? 'bg-green-600 hover:bg-green-700 text-white'
+                                            : 'bg-green-600 hover:bg-green-700 text-white'
                                             }`}
                                     >
                                         {selectedUser.isActive ? 'إلغاء التفعيل' : 'تفعيل'}

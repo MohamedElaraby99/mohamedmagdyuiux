@@ -9,9 +9,9 @@ import jwt from 'jsonwebtoken';
 // Create a new course
 export const createCourse = async (req, res, next) => {
   try {
-    const { title, description, instructor, stage, subject, price } = req.body;
-    if (!title || !instructor || !stage || !subject) {
-      return res.status(400).json({ success: false, message: 'Title, instructor, stage, and subject are required' });
+    const { title, description, instructor, subject, price } = req.body;
+    if (!title || !instructor || !subject) {
+      return res.status(400).json({ success: false, message: 'Title, instructor, and subject are required' });
     }
 
     // Prepare course data
@@ -19,7 +19,7 @@ export const createCourse = async (req, res, next) => {
       title,
       description,
       instructor,
-      stage,
+
       subject,
       price: price ? Number(price) : 0,
       units: [],
@@ -84,9 +84,7 @@ export const getAdminCourses = async (req, res, next) => {
       query.subject = { $regex: req.query.subject, $options: 'i' };
     }
 
-    if (req.query.stage) {
-      query.stage = { $regex: req.query.stage, $options: 'i' };
-    }
+
 
     if (req.query.featured !== undefined && req.query.featured !== '') {
       query.featured = req.query.featured === 'true';
@@ -106,7 +104,7 @@ export const getAdminCourses = async (req, res, next) => {
 
     const courses = await Course.find(query)
       .populate('instructor', 'name')
-      .populate('stage', 'name')
+
       .populate('subject', 'title')
       .populate({
         path: 'units.lessons.exams.userAttempts.userId',
@@ -155,15 +153,14 @@ export const getAllCourses = async (req, res, next) => {
 
     const courses = await Course.find(query)
       .populate('instructor', 'name')
-      .populate('stage', 'name')
+
       .populate('subject', 'title')
       .select('-units.lessons.exams.questions.correctAnswer -units.lessons.trainings.questions.correctAnswer -directLessons.exams.questions.correctAnswer -directLessons.trainings.questions.correctAnswer -units.lessons.exams.userAttempts -units.lessons.trainings.userAttempts -directLessons.exams.userAttempts -directLessons.trainings.userAttempts');
 
     console.log('📊 Raw courses before processing:', courses.map(c => ({
       id: c._id,
       title: c.title,
-      stage: c.stage?.name,
-      stageId: c.stage?._id
+
     })));
 
     // Check if any courses have invalid stage references
@@ -221,7 +218,7 @@ export const getAllCourses = async (req, res, next) => {
       coursesReturned: secureCourses.map(c => ({
         id: c._id,
         title: c.title,
-        stage: c.stage?.name
+
       }))
     });
 
@@ -277,14 +274,14 @@ export const getFeaturedCourses = async (req, res, next) => {
 
     const courses = await Course.find({ ...query, featured: true })
       .populate('instructor', 'name')
-      .populate('stage', 'name')
+
       .populate('subject', 'title')
       .limit(6);
 
     console.log('📚 Featured courses details:', courses.map(c => ({
       id: c._id,
       title: c.title,
-      stage: c.stage?.name,
+
 
     })));
 
@@ -349,7 +346,7 @@ export const getCourseById = async (req, res, next) => {
 
     const course = await Course.findById(id)
       .populate('instructor', 'name')
-      .populate('stage', 'name')
+
       .populate('subject', 'title');
 
     if (!course) {
@@ -439,7 +436,7 @@ export const getLessonById = async (req, res, next) => {
     const { unitId } = req.query;
     const userId = req.user?._id || req.user?.id;
 
-    const course = await Course.findById(courseId).select('title instructor stage subject units directLessons');
+    const course = await Course.findById(courseId).select('title instructor subject units directLessons');
     if (!course) {
       return res.status(404).json({ success: false, message: 'Course not found' });
     }
@@ -681,7 +678,7 @@ export const getLessonById = async (req, res, next) => {
 export const updateCourse = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { title, description, instructor, stage, subject, price } = req.body;
+    const { title, description, instructor, subject, price } = req.body;
 
     // Find the existing course
     const existingCourse = await Course.findById(id);
@@ -696,7 +693,7 @@ export const updateCourse = async (req, res, next) => {
     });
 
     // Prepare update data
-    const updateData = { title, description, instructor, stage, subject, price: price !== undefined ? Number(price) : undefined };
+    const updateData = { title, description, instructor, subject, price: price !== undefined ? Number(price) : undefined };
 
     // Handle image upload if provided
     if (req.file) {
@@ -762,7 +759,7 @@ export const updateCourse = async (req, res, next) => {
     if (updateData.title) existingCourse.title = updateData.title;
     if (updateData.description !== undefined) existingCourse.description = updateData.description;
     if (updateData.instructor) existingCourse.instructor = updateData.instructor;
-    if (updateData.stage) existingCourse.stage = updateData.stage;
+
     if (updateData.subject) existingCourse.subject = updateData.subject;
     if (updateData.price !== undefined) existingCourse.price = updateData.price;
 
@@ -772,10 +769,10 @@ export const updateCourse = async (req, res, next) => {
     // Fetch the updated course with populated fields
     const course = await Course.findById(id)
       .populate('instructor', 'name')
-      .populate('stage', 'name')
+
       .populate('subject', 'title')
 
-      .select('title description instructor stage subject image createdAt updatedAt');
+      .select('title description instructor subject image createdAt updatedAt');
 
     return res.status(200).json({
       success: true,

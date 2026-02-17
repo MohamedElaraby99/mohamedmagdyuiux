@@ -38,7 +38,7 @@ const CourseFilters = ({ filters, onFilterChange, onClearFilters }) => {
         >
           {showAdvancedFilters ? 'إخفاء' : 'إظهار'} الفلاتر المتقدمة
         </button>
-        
+
         {hasActiveFilters && (
           <button
             onClick={clearFilters}
@@ -143,7 +143,7 @@ const CourseFilters = ({ filters, onFilterChange, onClearFilters }) => {
             >
               <option value="">جميع الحالات</option>
               <option value="true">منشورة</option>
-             
+
             </select>
           </div>
 
@@ -161,19 +161,7 @@ const CourseFilters = ({ filters, onFilterChange, onClearFilters }) => {
             />
           </div>
 
-          {/* Stage Filter */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              المرحلة
-            </label>
-            <input
-              type="text"
-              placeholder="اسم المرحلة..."
-              value={filters.stage}
-              onChange={(e) => handleInputChange('stage', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500"
-            />
-          </div>
+
         </div>
       )}
     </div>

@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { 
-  getUpcomingLiveMeetings, 
-  getUserLiveMeetings, 
+import {
+  getUpcomingLiveMeetings,
+  getUserLiveMeetings,
   joinLiveMeeting,
   getLiveMeeting
 } from '../../Redux/Slices/LiveMeetingSlice';
 import Layout from '../../Layout/Layout';
-import { 
-  FaCalendarAlt, 
-  FaClock, 
-  FaUsers, 
-  FaVideo, 
+import {
+  FaCalendarAlt,
+  FaClock,
+  FaUsers,
+  FaVideo,
   FaChalkboardTeacher,
   FaBookOpen,
   FaGraduationCap,
@@ -26,7 +26,7 @@ import { toast } from 'react-hot-toast';
 const LiveMeetings = () => {
   const dispatch = useDispatch();
   const { upcomingMeetings, myMeetings, loading } = useSelector(state => state.liveMeeting);
-  
+
   const [activeTab, setActiveTab] = useState('upcoming');
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -130,8 +130,8 @@ const LiveMeetings = () => {
   const filterMeetings = (meetings) => {
     return meetings.filter(meeting => {
       const matchesSearch = meeting.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                           meeting.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                           meeting.subject?.title?.toLowerCase().includes(searchQuery.toLowerCase());
+        meeting.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        meeting.subject?.title?.toLowerCase().includes(searchQuery.toLowerCase());
       return matchesSearch;
     });
   };
@@ -172,9 +172,9 @@ const LiveMeetings = () => {
         <div className="flex items-center text-gray-600 dark:text-gray-300 col-span-full">
           <FaVideo className="ml-2 text-red-500" />
           <span className="text-sm">
-            <a 
-              href={meeting.googleMeetLink} 
-              target="_blank" 
+            <a
+              href={meeting.googleMeetLink}
+              target="_blank"
               rel="noopener noreferrer"
               className="text-green-600 hover:text-green-800 underline break-all"
             >
@@ -189,7 +189,7 @@ const LiveMeetings = () => {
           <FaUsers className="ml-2 text-cyan-500" />
           <span className="text-sm">{meeting.attendeesCount || 0} مشارك</span>
         </div>
-        
+
         <div className="flex gap-2">
           <button
             onClick={() => {
@@ -202,7 +202,7 @@ const LiveMeetings = () => {
             <FaVideo />
             نسخ الرابط
           </button>
-          
+
           <button
             onClick={() => handleViewMeeting(meeting._id)}
             className="flex items-center gap-1 px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors duration-200 text-sm"
@@ -210,7 +210,7 @@ const LiveMeetings = () => {
             <FaEye />
             التفاصيل
           </button>
-          
+
           {isMeetingLive(meeting) && (
             <button
               onClick={() => handleJoinMeeting(meeting._id)}
@@ -220,7 +220,7 @@ const LiveMeetings = () => {
               انضم الآن
             </button>
           )}
-          
+
           {isMeetingUpcoming(meeting) && (
             <button
               onClick={() => toast.success('سيتم إشعارك قبل بدء الاجتماع')}
@@ -254,21 +254,19 @@ const LiveMeetings = () => {
             <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
               <button
                 onClick={() => setActiveTab('upcoming')}
-                className={`px-6 py-2 rounded-md transition-colors duration-200 ${
-                  activeTab === 'upcoming'
+                className={`px-6 py-2 rounded-md transition-colors duration-200 ${activeTab === 'upcoming'
                     ? 'bg-green-600 text-white'
                     : 'text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
-                }`}
+                  }`}
               >
                 الجلسات القادمة
               </button>
               <button
                 onClick={() => setActiveTab('my-meetings')}
-                className={`px-6 py-2 rounded-md transition-colors duration-200 ${
-                  activeTab === 'my-meetings'
+                className={`px-6 py-2 rounded-md transition-colors duration-200 ${activeTab === 'my-meetings'
                     ? 'bg-green-600 text-white'
                     : 'text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
-                }`}
+                  }`}
               >
                 اجتماعاتي
               </button>
@@ -386,7 +384,7 @@ const LiveMeetings = () => {
                     </div>
                     <div className="flex items-center">
                       <FaGraduationCap className="ml-3 text-indigo-500" />
-                      <span className="text-gray-600 dark:text-gray-300">{selectedMeeting.stage?.name}</span>
+
                     </div>
                     <div className="flex items-center">
                       <FaBookOpen className="ml-3 text-green-500" />
@@ -395,9 +393,9 @@ const LiveMeetings = () => {
                     <div className="flex items-center">
                       <FaVideo className="ml-3 text-red-500" />
                       <span className="text-gray-600 dark:text-gray-300">
-                        <a 
-                          href={selectedMeeting.googleMeetLink} 
-                          target="_blank" 
+                        <a
+                          href={selectedMeeting.googleMeetLink}
+                          target="_blank"
                           rel="noopener noreferrer"
                           className="text-green-600 hover:text-green-800 underline break-all"
                         >
@@ -423,7 +421,7 @@ const LiveMeetings = () => {
                 >
                   إغلاق
                 </button>
-                
+
                 <button
                   onClick={() => {
                     navigator.clipboard.writeText(selectedMeeting.googleMeetLink);
@@ -433,7 +431,7 @@ const LiveMeetings = () => {
                 >
                   نسخ الرابط
                 </button>
-                
+
                 {isMeetingLive(selectedMeeting) && (
                   <button
                     onClick={() => {
@@ -447,7 +445,7 @@ const LiveMeetings = () => {
                     <FaExternalLinkAlt className="text-sm" />
                   </button>
                 )}
-                
+
                 {!isMeetingLive(selectedMeeting) && selectedMeeting.status === 'scheduled' && (
                   <button
                     onClick={() => {

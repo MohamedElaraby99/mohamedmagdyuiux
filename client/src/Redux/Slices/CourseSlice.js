@@ -93,7 +93,7 @@ export const createCourse = createAsyncThunk(
       formData.append('title', courseData.title);
       formData.append('description', courseData.description);
       formData.append('instructor', courseData.instructor);
-      formData.append('stage', courseData.stage);
+
       formData.append('subject', courseData.subject);
       if (courseData.price !== undefined) {
         formData.append('price', courseData.price);
@@ -126,7 +126,7 @@ export const updateCourse = createAsyncThunk(
       formData.append('title', courseData.title);
       formData.append('description', courseData.description);
       formData.append('instructor', courseData.instructor);
-      formData.append('stage', courseData.stage);
+
       formData.append('subject', courseData.subject);
       if (courseData.price !== undefined) {
         formData.append('price', courseData.price);

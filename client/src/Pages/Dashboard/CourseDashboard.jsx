@@ -20,7 +20,7 @@ export default function CourseDashboard() {
     instructor: '',
     subject: '',
     grade: '',
-    stage: '',
+
     featured: '',
     isPublished: '',
     level: '',
@@ -53,7 +53,7 @@ export default function CourseDashboard() {
   const handleFilterChange = (newFilters) => {
     const updatedFilters = { ...filters, ...newFilters };
     setFilters(updatedFilters);
-    
+
     // Apply filters by calling backend with filter parameters
     const queryParams = new URLSearchParams();
     Object.entries(updatedFilters).forEach(([key, value]) => {
@@ -61,7 +61,7 @@ export default function CourseDashboard() {
         queryParams.append(key, value);
       }
     });
-    
+
     // Call backend with filters
     dispatch(getAdminCourses(queryParams.toString()));
   };
@@ -116,7 +116,7 @@ export default function CourseDashboard() {
                   تصفية وبحث
                 </h2>
               </div>
-              
+
               {(role === 'ADMIN' || role === 'SUPER_ADMIN') && (
                 <button
                   onClick={handleCreateCourse}
@@ -127,16 +127,16 @@ export default function CourseDashboard() {
                 </button>
               )}
             </div>
-            
-            <CourseFilters 
-              filters={filters} 
+
+            <CourseFilters
+              filters={filters}
               onFilterChange={handleFilterChange}
               onClearFilters={clearFilters}
             />
           </div>
 
           {/* Course List */}
-          <CourseList 
+          <CourseList
             courses={courses}
             loading={loading}
             pagination={pagination}

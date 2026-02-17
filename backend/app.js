@@ -34,7 +34,7 @@ import gradeRoutes from './routes/grade.routes.js';
 import offlineGradeRoutes from './routes/offlineGrade.routes.js';
 import achievementRoutes from './routes/achievement.routes.js';
 import instructorRoutes from './routes/instructor.routes.js';
-import stageRoutes from './routes/stage.routes.js';
+
 import express from 'express';
 import connectToDb from './config/db.config.js';
 import './config/cloudinary.config.js'; // Initialize Cloudinary
@@ -319,7 +319,7 @@ app.use('/api/v1/grades', gradeRoutes);
 app.use('/api/v1/offline-grades', offlineGradeRoutes);
 app.use('/api/v1/achievements', achievementRoutes);
 app.use('/api/v1/instructors', instructorRoutes);
-app.use('/api/v1/stages', stageRoutes);
+
 
 
 // Handle payload too large errors specifically

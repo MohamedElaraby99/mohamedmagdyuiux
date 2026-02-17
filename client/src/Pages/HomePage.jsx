@@ -7,7 +7,7 @@ import iconLine from "../assets/image copy 3.png";
 import { getAllBlogs } from "../Redux/Slices/BlogSlice";
 import { getFeaturedSubjects } from "../Redux/Slices/SubjectSlice";
 import { getFeaturedCourses } from "../Redux/Slices/CourseSlice";
-import { getAllStages } from "../Redux/Slices/StageSlice";
+
 import { generateImageUrl } from "../utils/fileUtils";
 import AnimatedHero from "../Components/AnimatedHero";
 import FeaturesSection from "../Components/FeaturesSection";
@@ -60,10 +60,10 @@ export default function HomePage() {
   const { blogs } = useSelector((state) => state.blog);
   const { featuredSubjects } = useSelector((state) => state.subject);
   const { courses, featuredCourses, featuredLoading } = useSelector((state) => state.course);
-  const { stages, loading: stagesLoading } = useSelector((state) => state.stage);
+
 
   const { role, isLoggedIn, data: userData } = useSelector((state) => state.auth);
-  const userStageId = userData?.stage?._id || userData?.stage;
+
   const [isVisible, setIsVisible] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
 
@@ -78,7 +78,7 @@ export default function HomePage() {
       await Promise.all([
         dispatch(getFeaturedSubjects()),
         dispatch(getFeaturedCourses()),
-        dispatch(getAllStages())
+
       ]);
 
       // Then fetch blogs after a short delay for better perceived performance

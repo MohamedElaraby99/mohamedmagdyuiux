@@ -54,14 +54,14 @@ export default function Profile() {
     const formData = new FormData();
     formData.append("fullName", userInput.name);
     formData.append("phoneNumber", userInput.phoneNumber);
-    
+
     // Only append user-specific fields for regular users
     if (userData?.role !== 'ADMIN' && userData?.role !== 'SUPER_ADMIN') {
       formData.append("fatherPhoneNumber", userInput.fatherPhoneNumber);
       formData.append("governorate", userInput.governorate);
       formData.append("age", userInput.age);
     }
-    
+
     if (userInput.avatar) {
       formData.append("avatar", userInput.avatar);
     }
@@ -116,11 +116,11 @@ export default function Profile() {
 
   useEffect(() => {
     if (isEditing) {
-      let hasChanges = 
-        userInput.name !== userData?.fullName || 
+      let hasChanges =
+        userInput.name !== userData?.fullName ||
         userInput.phoneNumber !== userData?.phoneNumber ||
         userInput.avatar;
-      
+
       // Only check user-specific fields for regular users
       if (userData?.role !== 'ADMIN' && userData?.role !== 'SUPER_ADMIN') {
         hasChanges = hasChanges ||
@@ -151,15 +151,15 @@ export default function Profile() {
 
   useEffect(() => {
     if (userData && Object.keys(userData).length > 0) {
-    setUserInput({
-      ...userInput,
+      setUserInput({
+        ...userInput,
         name: userData?.fullName || "",
         phoneNumber: userData?.phoneNumber || "",
         fatherPhoneNumber: userData?.fatherPhoneNumber || "",
         governorate: userData?.governorate || "",
         age: userData?.age || "",
-      userId: userData?._id,
-    });
+        userId: userData?._id,
+      });
     }
   }, [userData]);
 
@@ -252,7 +252,7 @@ export default function Profile() {
                 </button>
               )}
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Name */}
               <div className="space-y-2">
@@ -265,11 +265,10 @@ export default function Profile() {
                   value={isEditing ? userInput.name : (userData?.fullName || "")}
                   onChange={(e) => setUserInput({ ...userInput, name: e.target.value })}
                   disabled={!isEditing}
-                  className={`w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-right ${
-                    !isEditing 
-                      ? 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-300 cursor-not-allowed' 
+                  className={`w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-right ${!isEditing
+                      ? 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-300 cursor-not-allowed'
                       : 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white'
-                  }`}
+                    }`}
                   placeholder="أدخل اسمك الكامل"
                   dir="rtl"
                 />
@@ -301,11 +300,10 @@ export default function Profile() {
                   value={isEditing ? userInput.phoneNumber : (userData?.phoneNumber || "")}
                   onChange={(e) => setUserInput({ ...userInput, phoneNumber: e.target.value })}
                   disabled={!isEditing}
-                  className={`w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-left ${
-                    !isEditing 
-                      ? 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-300 cursor-not-allowed' 
+                  className={`w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-left ${!isEditing
+                      ? 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-300 cursor-not-allowed'
                       : 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white'
-                  }`}
+                    }`}
                   placeholder="أدخل رقم هاتفك"
                   dir="ltr"
                 />
@@ -325,11 +323,10 @@ export default function Profile() {
                       value={isEditing ? userInput.fatherPhoneNumber : (userData?.fatherPhoneNumber || "")}
                       onChange={(e) => setUserInput({ ...userInput, fatherPhoneNumber: e.target.value })}
                       disabled={!isEditing}
-                      className={`w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-left ${
-                        !isEditing 
-                          ? 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-300 cursor-not-allowed' 
+                      className={`w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-left ${!isEditing
+                          ? 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-300 cursor-not-allowed'
                           : 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white'
-                      }`}
+                        }`}
                       placeholder="أدخل رقم هاتف الأب"
                       dir="ltr"
                     />
@@ -346,11 +343,10 @@ export default function Profile() {
                       value={isEditing ? userInput.age : (userData?.age || "")}
                       onChange={(e) => setUserInput({ ...userInput, age: e.target.value })}
                       disabled={!isEditing}
-                      className={`w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-right ${
-                        !isEditing 
-                          ? 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-300 cursor-not-allowed' 
+                      className={`w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-right ${!isEditing
+                          ? 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-300 cursor-not-allowed'
                           : 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white'
-                      }`}
+                        }`}
                       placeholder="أدخل عمرك"
                       min="5"
                       max="100"
@@ -358,20 +354,7 @@ export default function Profile() {
                     />
                   </div>
 
-                  {/* Stage */}
-                  <div className="space-y-2">
-                    <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                      <FaBook className="text-green-500" />
-                      المرحلة الدراسية
-                    </label>
-                    
-                    <div className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-right" dir="rtl">
-                      {userData?.stage?.name || userData?.stage || "غير محدد"}
-                    </div>
-                    <div className="text-xs text-gray-500 dark:text-gray-400">
-                      المرحلة الدراسية لا يمكن تعديلها
-                    </div>
-                  </div>
+
 
                   {/* Governorate */}
                   <div className="space-y-2">
@@ -383,11 +366,10 @@ export default function Profile() {
                       value={isEditing ? userInput.governorate : (userData?.governorate || "")}
                       onChange={(e) => setUserInput({ ...userInput, governorate: e.target.value })}
                       disabled={!isEditing}
-                      className={`w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-right ${
-                        !isEditing 
-                          ? 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-300 cursor-not-allowed' 
+                      className={`w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-right ${!isEditing
+                          ? 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-300 cursor-not-allowed'
                           : 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white'
-                      }`}
+                        }`}
                       dir="rtl"
                     >
                       <option value="">اختر المدينة</option>
@@ -409,7 +391,7 @@ export default function Profile() {
             <h2 className="text-xl font-semibold text-gray-800 dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2">
               معلومات الحساب
             </h2>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Role */}
               <div className="space-y-2">
@@ -449,18 +431,17 @@ export default function Profile() {
           <div className="w-full flex md:flex-row flex-col md:justify-between justify-center md:gap-0 gap-3" dir="rtl">
             {isEditing ? (
               <>
-            <button
-              type="submit"
-                  className={`py-3.5 rounded-md mt-3 text-white font-inter md:w-[48%] w-full flex items-center justify-center gap-2 ${
-                    !isChanged || isUpdating 
-                      ? 'bg-gray-400 cursor-not-allowed' 
+                <button
+                  type="submit"
+                  className={`py-3.5 rounded-md mt-3 text-white font-inter md:w-[48%] w-full flex items-center justify-center gap-2 ${!isChanged || isUpdating
+                      ? 'bg-gray-400 cursor-not-allowed'
                       : 'bg-green-500 hover:bg-green-600'
-                  }`}
-              disabled={!isChanged || isUpdating}
-              onClick={() => {
+                    }`}
+                  disabled={!isChanged || isUpdating}
+                  onClick={() => {
 
-              }}
-            >
+                  }}
+                >
                   {isUpdating ? (
                     <>
                       <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
@@ -472,7 +453,7 @@ export default function Profile() {
                       حفظ التغييرات
                     </>
                   )}
-            </button>
+                </button>
 
                 <button
                   type="button"
@@ -487,13 +468,13 @@ export default function Profile() {
             ) : (
               /* show cancel subscription btn if Active */
               userData?.subscription?.status === "active" && (
-              <button
-                type="button"
-                onClick={handleCancelSubscription}
-                className="py-3.5 rounded-md bg-[#f32e2e] mt-3 text-white font-inter md:w-[48%] w-full"
-              >
-                إلغاء الاشتراك
-              </button>
+                <button
+                  type="button"
+                  onClick={handleCancelSubscription}
+                  className="py-3.5 rounded-md bg-[#f32e2e] mt-3 text-white font-inter md:w-[48%] w-full"
+                >
+                  إلغاء الاشتراك
+                </button>
               )
             )}
           </div>

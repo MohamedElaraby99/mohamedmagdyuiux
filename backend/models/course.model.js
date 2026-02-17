@@ -183,11 +183,7 @@ const courseSchema = new mongoose.Schema({
     ref: 'Instructor',
     required: true
   },
-  stage: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Stage',
-    required: true
-  },
+
   subject: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Subject',
