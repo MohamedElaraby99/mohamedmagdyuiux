@@ -312,26 +312,6 @@ export default function Profile() {
               {/* User-specific fields - only show for regular users */}
               {userData?.role !== 'ADMIN' && userData?.role !== 'SUPER_ADMIN' && (
                 <>
-                  {/* Father's Phone Number */}
-                  <div className="space-y-2">
-                    <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                      <FaPhone className="text-green-500" />
-                      رقم هاتف الأب
-                    </label>
-                    <input
-                      type="tel"
-                      value={isEditing ? userInput.fatherPhoneNumber : (userData?.fatherPhoneNumber || "")}
-                      onChange={(e) => setUserInput({ ...userInput, fatherPhoneNumber: e.target.value })}
-                      disabled={!isEditing}
-                      className={`w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-left ${!isEditing
-                          ? 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-300 cursor-not-allowed'
-                          : 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white'
-                        }`}
-                      placeholder="أدخل رقم هاتف الأب"
-                      dir="ltr"
-                    />
-                  </div>
-
                   {/* Age */}
                   <div className="space-y-2">
                     <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -383,45 +363,6 @@ export default function Profile() {
                   </div>
                 </>
               )}
-            </div>
-          </div>
-
-          {/* Account Information Section */}
-          <div className="w-full space-y-6">
-            <h2 className="text-xl font-semibold text-gray-800 dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2">
-              معلومات الحساب
-            </h2>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Role */}
-              <div className="space-y-2">
-                <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                  <FaIdCard className="text-green-500" />
-                  دور الحساب
-                </label>
-                <input
-                  type="text"
-                  value={userData?.role || "USER"}
-                  disabled
-                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-300 cursor-not-allowed text-right"
-                  dir="rtl"
-                />
-              </div>
-
-              {/* User Number/ID */}
-              <div className="space-y-2">
-                <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                  <FaIdCard className="text-green-500" />
-                  رقم المستخدم
-                </label>
-                <div className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 font-mono text-sm text-left" dir="ltr">
-                  {userData?._id || "غير متوفر"}
-                </div>
-                <div className="text-xs text-gray-500 dark:text-gray-400">
-                  يمكن للمدربين استخدام هذا الرقم لتسجيل الحضور يدوياً
-                </div>
-              </div>
-
             </div>
           </div>
 

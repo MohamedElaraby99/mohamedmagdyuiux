@@ -58,31 +58,6 @@ const UserQRCode = ({ userData }) => {
 
   return (
     <div className="w-full space-y-4">
-      <div className="flex justify-between items-center border-b border-gray-200 dark:border-gray-700 pb-2">
-        <h2 className="text-xl font-semibold text-gray-800 dark:text-white flex items-center gap-2">
-          <FaQrcode className="text-green-500" />
-          رمز الاستجابة السريعة للحضور
-        </h2>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setShowQR(!showQR)}
-            className="flex items-center gap-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors"
-          >
-            {showQR ? <FaEyeSlash size={14} /> : <FaEye size={14} />}
-            {showQR ? 'إخفاء' : 'عرض'} الرمز
-          </button>
-          {showQR && (
-            <button
-              onClick={downloadQRCode}
-              className="flex items-center gap-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors"
-            >
-              <FaDownload size={14} />
-              تحميل
-            </button>
-          )}
-        </div>
-      </div>
-
       {showQR && (
         <div className="flex flex-col items-center space-y-4 p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
           <div className="text-center">

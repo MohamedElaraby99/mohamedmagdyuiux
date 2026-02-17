@@ -27,7 +27,8 @@ import {
     FaArrowUp,
     FaArrowDown,
     FaWhatsapp,
-    FaClock
+    FaClock,
+    FaGlobe
 } from "react-icons/fa";
 
 export default function Wallet() {
@@ -226,8 +227,8 @@ export default function Wallet() {
                         <button
                             onClick={() => setActiveTab("balance")}
                             className={`px-6 py-3 rounded-lg font-medium transition-colors ${activeTab === "balance"
-                                    ? "bg-green-600 text-white"
-                                    : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
+                                ? "bg-green-600 text-white"
+                                : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
                                 }`}
                         >
                             <FaCreditCard className="inline ml-2" />
@@ -236,8 +237,8 @@ export default function Wallet() {
                         <button
                             onClick={() => setActiveTab("history")}
                             className={`px-6 py-3 rounded-lg font-medium transition-colors ${activeTab === "history"
-                                    ? "bg-green-600 text-white"
-                                    : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
+                                ? "bg-green-600 text-white"
+                                : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
                                 }`}
                         >
                             <FaHistory className="inline ml-2" />
@@ -516,17 +517,17 @@ export default function Wallet() {
                                                 </div>
                                                 <div className="text-right">
                                                     <p className={`font-bold text-lg ${transaction.type === 'recharge' || transaction.type === 'refund'
-                                                            ? 'text-green-600 dark:text-green-400'
-                                                            : 'text-red-600 dark:text-red-400'
+                                                        ? 'text-green-600 dark:text-green-400'
+                                                        : 'text-red-600 dark:text-red-400'
                                                         }`}>
                                                         {transaction.type === 'recharge' || transaction.type === 'refund' ? '+' : '-'}
                                                         {Math.abs(transaction.amount).toFixed(2)} جنيه
                                                     </p>
                                                     <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${transaction.status === 'completed'
+                                                        ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400'
+                                                        : transaction.status === 'pending'
                                                             ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400'
-                                                            : transaction.status === 'pending'
-                                                                ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400'
-                                                                : 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400'
+                                                            : 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400'
                                                         }`}>
                                                         {getStatusText(transaction.status)}
                                                     </span>

@@ -153,7 +153,7 @@ export const FOOTER = {
 export const PAYMENT = {
     // واتساب للحصول على كود شحن
     whatsappForCodes: {
-        phone: "01555559887",
+        phone: "01080808667",
         label: "للحصول على كود شحن - تواصل معنا على واتساب",
         enabled: true,
     },
@@ -166,16 +166,45 @@ export const PAYMENT = {
     },
     // فودافون كاش
     vodafoneCash: {
-        phone: "01080808667",
-        label: "رقم فودافون كاش",
+        phone: "01028510498",
+        label: "فودافون كاش",
         description: "ادفع المبلغ وسيصلك الكود فوراً",
         enabled: true,
+    },
+    instaPay: {
+        phone: "01028510498",
+        label: "انستا باي",
+        enabled: true,
+    },
+    bankMisr: {
+        accountName: "Ahmed Magdy Abdullah",
+        accountNumber: "7310383000010136",
+        label: "حساب بنك مصر",
+        enabled: true
+    },
+    saudiPayment: {
+        bankMisrIban: {
+            accountName: "Ahmed Magdy Abdullah",
+            iban: "EG630002073107310383000010136",
+            label: "إيبان بنك مصر"
+        },
+        rajhiBank: {
+            accountName: "Mohamed Mahmoud Abdullah",
+            accountNumber: "283000010006086155093",
+            label: "حساب سعودي (بنك الراجحي)"
+        },
+        label: "للتحويل من المملكة العربية السعودية",
+        enabled: true
+    },
+    internationalPayment: {
+        label: "للتحويل من أي دولة عربية أخرى الرجاء التواصل واتساب",
+        enabled: true
     },
     // عنوان قسم الشحن
     sectionTitle: "كيفية الشحن:",
     // خطوات الشحن
     steps: [
-        "تواصل معنا على واتساب للحصول على كود شحن",
+        "تواصل معنا على واتساب للحصول على كود شحن 01555559887",
         "اشتر كود شحن من البائعين المعتمدين",
         "أدخل الكود والمبلغ في النموذج أعلاه",
         "سيتم إضافة المبلغ إلى محفظتك فوراً",
