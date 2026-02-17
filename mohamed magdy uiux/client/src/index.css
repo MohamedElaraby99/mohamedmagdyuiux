@@ -1480,7 +1480,9 @@ html.light .textarea {
   .hero-section {
     padding: 60px 0 80px;
     border-radius: 0 0 24px 24px;
-    min-height: 550px;
+    min-height: 70vh;
+    display: flex;
+    align-items: center;
   }
 
   .hero-title {

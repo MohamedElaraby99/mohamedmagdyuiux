@@ -9,6 +9,7 @@ import { getFeaturedCourses } from "../Redux/Slices/CourseSlice";
 import { getAllStages } from "../Redux/Slices/StageSlice";
 import { generateImageUrl } from "../utils/fileUtils";
 import AnimatedHero from "../Components/AnimatedHero";
+import FeaturesSection from "../Components/FeaturesSection";
 import { CONTACT, SOCIAL_MEDIA, PAYMENT } from "../Constants/LayoutConfig";
 // Lazy load components
 const FAQAccordion = lazy(() => import("../Components/FAQAccordion"));
@@ -385,21 +386,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Features Section - What You'll Find on the Platform */}
-      <section className={`py-20 bg-white dark:bg-gray-800 transition-all duration-700 ease-out ${heroLoaded
-        ? 'opacity-100 translate-y-0'
-        : 'opacity-0 translate-y-8'
-        }`}
-        dir="rtl"
-        style={{ transitionDelay: '400ms' }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
-
-          
-
-         
-        </div>
-      </section>
+      {/* Features Section */}
+      <FeaturesSection />
 
       {/* Scroll to Top Button */}
       {
