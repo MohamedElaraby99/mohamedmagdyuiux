@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FaSun, FaMoon, FaBars, FaHome, FaUser, FaGraduationCap, FaBlog, FaQuestionCircle, FaSignOutAlt, FaPlus, FaList, FaInfoCircle, FaPhone, FaHistory } from "react-icons/fa";
+import { FaSun, FaMoon, FaBars, FaHome, FaUser, FaGraduationCap, FaBlog, FaQuestionCircle, FaSignOutAlt, FaPlus, FaList, FaInfoCircle, FaPhone, FaHistory, FaArrowLeft } from "react-icons/fa";
 import { Link, useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../Redux/Slices/AuthSlice";
@@ -104,10 +104,10 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className="sticky top-0 z-50 bg-white dark:bg-gray-900 shadow-md border-b border-gray-200 dark:border-gray-700">
+    <nav className="sticky top-0 z-50 dark:bg-gray-900" style={{ backgroundColor: '#F5F0EB' }}>
 
       {/* Gradient Line at Top */}
-      <div className="absolute top-0 left-0 right-0 h-[2px] navbar-accent-line"></div>
+      <div className="absolute top-0 left-0 right-0 h-[2px]" style={{ background: 'linear-gradient(90deg, #8B5CF6, #6C2BD9, #5B21B6)' }}></div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16 md:h-20">
@@ -201,28 +201,30 @@ export default function Navbar() {
               <div className="flex items-center gap-2">
                 <Link
                   to="/login"
-                  className="flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-200 hover:text-primary dark:hover:text-primary-light transition-all duration-300 border border-gray-200 dark:border-gray-700 hover:border-primary/50 dark:hover:border-primary/50 bg-white/50 dark:bg-gray-800/50 hover:bg-primary/10"
+                  className="flex items-center gap-1 sm:gap-2 px-4 sm:px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold transition-all duration-300 border-2 hover:scale-105 active:scale-95"
+                  style={{ color: '#6C2BD9', borderColor: '#6C2BD9', backgroundColor: 'transparent' }}
+                  onMouseEnter={(e) => { e.target.style.backgroundColor = '#6C2BD9'; e.target.style.color = '#fff'; }}
+                  onMouseLeave={(e) => { e.target.style.backgroundColor = 'transparent'; e.target.style.color = '#6C2BD9'; }}
                 >
-                  <FaUser className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                  <span className="hidden sm:inline">تسجيل الدخول</span>
-                  <span className="sm:hidden">دخول</span>
+                  <span>تسجيل الدخول</span>
                 </Link>
 
                 <Link
                   to="/signup"
-                  className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white btn-primary shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 active:scale-95"
+                  className="flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 active:scale-95"
+                  style={{ backgroundColor: '#6C2BD9' }}
                 >
-                  <FaPlus className="w-3.5 h-3.5" />
-                  <span className="hidden sm:inline">حساب جديد</span>
-                  <span className="sm:hidden">حساب جديد</span>
+                  <span>اشترك الآن</span>
+                  <FaArrowLeft className="w-3 h-3" />
                 </Link>
 
                 {/* Mobile Menu Button for Guests */}
                 <button
                   onClick={toggleMenu}
-                  className="md:hidden relative p-2.5 rounded-xl bg-primary/10 dark:bg-primary/20 hover:bg-primary/20 dark:hover:bg-primary/30 transition-all duration-300 border border-primary/30 dark:border-primary/50 group"
+                  className="md:hidden relative p-2.5 rounded-xl transition-all duration-300 group"
+                  style={{ backgroundColor: 'rgba(108, 43, 217, 0.1)' }}
                 >
-                  <FaBars className="w-4 h-4 text-primary dark:text-primary-light transition-transform duration-300 group-hover:rotate-90" />
+                  <FaBars className="w-4 h-4 transition-transform duration-300 group-hover:rotate-90" style={{ color: '#6C2BD9' }} />
                 </button>
               </div>
             )}
@@ -365,18 +367,18 @@ export default function Navbar() {
               <>
                 {/* Special Navigation for Guests */}
                 <div className="space-y-1 px-2 pb-3">
-                  <p className="px-4 pb-2 text-xs font-bold text-green-600 dark:text-green-400 uppercase">تصفح المحتوى</p>
+                  <p className="px-4 pb-2 text-xs font-bold uppercase" style={{ color: '#6C2BD9' }}>تصفح المحتوى</p>
 
                   {/* الكورسات */}
                   <Link
                     to="/courses"
                     className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all duration-300 ${location.pathname === '/courses'
-                      ? "text-green-600 dark:text-green-400 bg-gradient-to-r from-green-100 to-amber-100 dark:from-green-900/30 dark:to-amber-900/30"
-                      : "text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 hover:bg-gray-100 dark:hover:bg-gray-800"
+                      ? "text-purple-600 dark:text-purple-400 bg-gradient-to-r from-purple-100 to-violet-100 dark:from-purple-900/30 dark:to-violet-900/30"
+                      : "text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 hover:bg-gray-100 dark:hover:bg-gray-800"
                       }`}
                   >
                     <div className={`p-2 rounded-lg ${location.pathname === '/courses'
-                      ? "bg-green-200 dark:bg-green-800/50"
+                      ? "bg-purple-200 dark:bg-purple-800/50"
                       : "bg-gray-200 dark:bg-gray-700"
                       }`}>
                       <FaGraduationCap className="w-4 h-4" />
@@ -388,12 +390,12 @@ export default function Navbar() {
                   <Link
                     to="/blogs"
                     className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all duration-300 ${location.pathname === '/blogs'
-                      ? "text-green-600 dark:text-green-400 bg-gradient-to-r from-green-100 to-amber-100 dark:from-green-900/30 dark:to-amber-900/30"
-                      : "text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 hover:bg-gray-100 dark:hover:bg-gray-800"
+                      ? "text-purple-600 dark:text-purple-400 bg-gradient-to-r from-purple-100 to-violet-100 dark:from-purple-900/30 dark:to-violet-900/30"
+                      : "text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 hover:bg-gray-100 dark:hover:bg-gray-800"
                       }`}
                   >
                     <div className={`p-2 rounded-lg ${location.pathname === '/blogs'
-                      ? "bg-green-200 dark:bg-green-800/50"
+                      ? "bg-purple-200 dark:bg-purple-800/50"
                       : "bg-gray-200 dark:bg-gray-700"
                       }`}>
                       <FaBlog className="w-4 h-4" />
@@ -405,12 +407,12 @@ export default function Navbar() {
                   <Link
                     to="/qa"
                     className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all duration-300 ${location.pathname === '/qa'
-                      ? "text-green-600 dark:text-green-400 bg-gradient-to-r from-green-100 to-amber-100 dark:from-green-900/30 dark:to-amber-900/30"
-                      : "text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 hover:bg-gray-100 dark:hover:bg-gray-800"
+                      ? "text-purple-600 dark:text-purple-400 bg-gradient-to-r from-purple-100 to-violet-100 dark:from-purple-900/30 dark:to-violet-900/30"
+                      : "text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 hover:bg-gray-100 dark:hover:bg-gray-800"
                       }`}
                   >
                     <div className={`p-2 rounded-lg ${location.pathname === '/qa'
-                      ? "bg-green-200 dark:bg-green-800/50"
+                      ? "bg-purple-200 dark:bg-purple-800/50"
                       : "bg-gray-200 dark:bg-gray-700"
                       }`}>
                       <FaQuestionCircle className="w-4 h-4" />
@@ -423,17 +425,19 @@ export default function Navbar() {
                 <div className="space-y-3 px-4 pt-4 border-t border-gray-200/50 dark:border-gray-700/50">
                   <Link
                     to="/login"
-                    className="flex items-center justify-center gap-2 w-full px-4 py-3 border-2 border-green-500 text-green-600 dark:text-green-400 hover:bg-green-500 hover:text-white rounded-xl font-semibold transition-all duration-300"
+                    className="flex items-center justify-center gap-2 w-full px-4 py-3 border-2 rounded-xl font-semibold transition-all duration-300"
+                    style={{ borderColor: '#6C2BD9', color: '#6C2BD9' }}
                   >
                     <FaUser className="w-4 h-4" />
                     تسجيل الدخول
                   </Link>
                   <Link
                     to="/signup"
-                    className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl font-semibold transition-all duration-300 shadow-lg"
+                    className="flex items-center justify-center gap-2 w-full px-4 py-3 text-white rounded-xl font-semibold transition-all duration-300 shadow-lg"
+                    style={{ background: 'linear-gradient(135deg, #6C2BD9, #7C3AED)' }}
                   >
                     <FaPlus className="w-4 h-4" />
-                    إنشاء حساب جديد
+                    اشترك الآن
                   </Link>
                 </div>
               </>

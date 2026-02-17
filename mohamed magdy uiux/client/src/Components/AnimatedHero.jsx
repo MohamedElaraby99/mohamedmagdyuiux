@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { FaPlay, FaArrowLeft } from 'react-icons/fa';
 import { HERO, BRAND } from '../Constants/LayoutConfig';
+import heroImage from '../assets/image.png';
 
 const AnimatedHero = ({ onGetStarted }) => {
   const [isVisible, setIsVisible] = useState(false);
@@ -56,15 +57,15 @@ const AnimatedHero = ({ onGetStarted }) => {
           {/* Right Side - Text Content */}
           <div className={`hero-text-content ${isVisible ? 'hero-animate-in' : 'hero-animate-out'}`}>
             <h1 className="hero-title">
-              {HERO.mainTitle || 'ابدأ مسيرتك في'}
+              ابدأ مسيرتك في
               <br />
               <span className="hero-title-highlight">
-                {HERO.subtitle || 'تصميم UX/UI'}
+                تصميم UX/UI
               </span>
             </h1>
 
             <p className="hero-description">
-              {HERO.topText || 'اتعلم المهارات اللى هتفتحلك فرص كبيرة!'}
+              اتعلم المهارات اللى هتفتحلك فرص كبيرة!
             </p>
 
             <div className="hero-actions">
@@ -83,62 +84,18 @@ const AnimatedHero = ({ onGetStarted }) => {
             </div>
           </div>
 
-          {/* Left Side - Mockup / Visual */}
+          {/* Left Side - Hero Image */}
           <div className={`hero-visual ${isVisible ? 'hero-visual-in' : 'hero-visual-out'}`}>
-            <div className="hero-mockup-container">
-              {/* Main mockup screen */}
-              <div className="hero-mockup-screen">
-                <div className="mockup-browser-bar">
-                  <div className="mockup-dot mockup-dot-red"></div>
-                  <div className="mockup-dot mockup-dot-yellow"></div>
-                  <div className="mockup-dot mockup-dot-green"></div>
-                </div>
-                <div className="mockup-content">
-                  <div className="mockup-sidebar">
-                    <div className="mockup-sidebar-item active"></div>
-                    <div className="mockup-sidebar-item"></div>
-                    <div className="mockup-sidebar-item"></div>
-                    <div className="mockup-sidebar-item"></div>
-                  </div>
-                  <div className="mockup-main">
-                    <div className="mockup-heading"></div>
-                    <div className="mockup-text-line"></div>
-                    <div className="mockup-text-line short"></div>
-                    <div className="mockup-grid">
-                      <div className="mockup-card"></div>
-                      <div className="mockup-card"></div>
-                      <div className="mockup-card"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+            <div className="hero-image-container">
+              <img
+                src={heroImage}
+                alt="Master UX/UI Design"
+                className="hero-main-image"
+              />
 
-              {/* Floating elements */}
-              <div className="hero-floating-card hero-float-1">
-                <div className="floating-card-icon">✓</div>
-                <div className="floating-card-text">
-                  <div className="fc-title">UX Research</div>
-                  <div className="fc-bar"><div className="fc-bar-fill" style={{ width: '85%' }}></div></div>
-                </div>
-              </div>
+        
 
-              <div className="hero-floating-card hero-float-2">
-                <div className="floating-card-icon">✓</div>
-                <div className="floating-card-text">
-                  <div className="fc-title">UI Design</div>
-                  <div className="fc-bar"><div className="fc-bar-fill" style={{ width: '72%' }}></div></div>
-                </div>
-              </div>
 
-              <div className="hero-floating-badge hero-float-3">
-                <span className="badge-number">300+</span>
-                <span className="badge-label">طالب</span>
-              </div>
-
-              <div className="hero-floating-badge hero-float-4">
-                <span className="badge-number">2+</span>
-                <span className="badge-label">سنة خبرة</span>
-              </div>
             </div>
           </div>
         </div>

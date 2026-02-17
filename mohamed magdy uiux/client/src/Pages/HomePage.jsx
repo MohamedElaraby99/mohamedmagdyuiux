@@ -168,10 +168,10 @@ export default function HomePage() {
   };
 
   const stats = [
-    { icon: FaUsers, number: "10K+", label: "طالب مسجل", color: "text-green-600" },
-    { icon: FaGraduationCap, number: "100+", label: "مادة متاحة", color: "text-green-600" },
+    { icon: FaUsers, number: "10K+", label: "طالب مسجل", color: "text-purple-600" },
+    { icon: FaGraduationCap, number: "100+", label: "مادة متاحة", color: "text-purple-600" },
     { icon: FaStar, number: "4.9", label: "متوسط التقييم", color: "text-yellow-600" },
-    { icon: FaAward, number: "50+", label: "مدرس خبير", color: "text-green-600" }
+    { icon: FaAward, number: "50+", label: "مدرس خبير", color: "text-purple-600" }
   ];
 
   const features = [
@@ -179,37 +179,37 @@ export default function HomePage() {
       icon: FaRocket,
       title: "تعلم بوتيرتك الخاصة",
       description: "جداول تعلم مرنة تناسب نمط حياتك والتزاماتك.",
-      color: "text-green-600",
-      bgColor: "bg-green-50 dark:bg-green-900/20"
+      color: "text-purple-600",
+      bgColor: "bg-purple-50 dark:bg-purple-900/20"
     },
     {
       icon: FaLightbulb,
       title: "دورات بقيادة الخبراء",
       description: "تعلم من المحترفين في المجال مع سنوات من الخبرة العملية.",
-      color: "text-green-600",
-      bgColor: "bg-green-50 dark:bg-green-900/20"
+      color: "text-purple-600",
+      bgColor: "bg-purple-50 dark:bg-purple-900/20"
     },
     {
       icon: FaShieldAlt,
       title: "التعلم المعتمد",
       description: "احصل على شهادات معترف بها من أفضل الشركات في العالم.",
-      color: "text-green-600",
-      bgColor: "bg-green-50 dark:bg-green-900/20"
+      color: "text-purple-600",
+      bgColor: "bg-purple-50 dark:bg-purple-900/20"
     },
     {
       icon: FaGlobe,
       title: "المجتمع العالمي",
       description: "تواصل مع المتعلمين من جميع أنحاء العالم وشارك الخبرات.",
-      color: "text-green-600",
-      bgColor: "bg-green-50 dark:bg-green-900/20"
+      color: "text-purple-600",
+      bgColor: "bg-purple-50 dark:bg-purple-900/20"
     }
   ];
 
   const categories = [
-    { icon: FaCode, name: "البرمجة", count: "150+ دورة", color: "bg-green-500" },
-    { icon: FaPalette, name: "التصميم", count: "120+ دورة", color: "bg-green-500" },
-    { icon: FaChartLine, name: "الأعمال", count: "200+ دورة", color: "bg-green-500" },
-    { icon: FaBookOpen, name: "التسويق", count: "180+ دورة", color: "bg-green-500" }
+    { icon: FaCode, name: "البرمجة", count: "150+ دورة", color: "bg-purple-500" },
+    { icon: FaPalette, name: "التصميم", count: "120+ دورة", color: "bg-purple-500" },
+    { icon: FaChartLine, name: "الأعمال", count: "200+ دورة", color: "bg-purple-500" },
+    { icon: FaBookOpen, name: "التسويق", count: "180+ دورة", color: "bg-purple-500" }
   ];
 
   return (
@@ -758,75 +758,6 @@ export default function HomePage() {
         <InstructorSection />
       </Suspense> */}
 
-
-
-      {/* CTA Section */}
-      <section className={`py-20 bg-gradient-to-r from-primary via-primary-dark to-accent/20 transition-all duration-700 ease-out ${heroLoaded
-        ? 'opacity-100 translate-y-0'
-        : 'opacity-0 translate-y-8'
-        }`}
-        style={{ transitionDelay: '3600ms' }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className={`transition-all duration-700 ease-out ${heroLoaded
-            ? 'opacity-100 scale-100'
-            : 'opacity-0 scale-95'
-            }`}
-            style={{ transitionDelay: '3800ms' }}>
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-              هل أنت مستعد لبدء رحلة التعلم؟
-            </h2>
-            <p className="text-xl text-primary-light/20 mb-8 max-w-3xl mx-auto">
-              اكتشف مجموعة متنوعة من الكورسات التعليمية المصممة خصيصاً لمساعدتك في تحقيق أهدافك الأكاديمية
-            </p>
-          </div>
-          <div className={`flex flex-col sm:flex-row gap-4 justify-center items-center transition-all duration-700 ease-out ${heroLoaded
-            ? 'opacity-100 translate-y-0 scale-100'
-            : 'opacity-0 translate-y-8 scale-95'
-            }`}
-            style={{ transitionDelay: '4000ms' }}>
-            <Link to="/signup">
-              <button className="px-8 py-4 btn-primary text-white font-semibold rounded-full text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300">
-                ابدأ مجاناً
-              </button>
-            </Link>
-
-            <Link to="/qa">
-              <button className="px-8 py-4 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold rounded-full text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 flex items-center gap-2">
-                <FaQuestionCircle className="w-5 h-5" />
-                اطرح سؤالاً
-              </button>
-            </Link>
-          </div>
-        </div>
-      </section>
-
-
-
-      {/* Static FAQ Section */}
-      <section className="py-16 px-4 lg:px-20 bg-gradient-to-br from-gray-50 to-primary-light/10 dark:from-gray-900 dark:to-gray-800" dir="rtl">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-gray-800 dark:text-white mb-4 text-right">
-              الأسئلة الشائعة
-            </h2>
-            <p className="text-lg text-gray-600 dark:text-gray-300 text-right">
-              كل ما تحتاج معرفته عن منصتنا
-            </p>
-          </div>
-          <Suspense fallback={
-            <div className="space-y-4">
-              {[1, 2, 3, 4].map(i => (
-                <div key={i} className="bg-white dark:bg-gray-800 rounded-lg p-6 animate-pulse text-right">
-                  <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-2 mr-auto"></div>
-                  <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-1/2 mr-auto"></div>
-                </div>
-              ))}
-            </div>
-          }>
-            <FAQAccordion />
-          </Suspense>
-        </div>
-      </section>
 
       {/* Contact Section */}
       <section className="py-16 px-4 lg:px-8 bg-white dark:bg-gray-900">

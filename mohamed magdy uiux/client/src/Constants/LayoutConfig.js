@@ -15,15 +15,14 @@
 // ============================================
 export const BRAND = {
     // اسم المنصة
-    platformName: "فكرة",
+    platformName: "E-Learning Platform",
     // اسم المعلم
-    teacherName: "منصة فكرة",
+    teacherName: "Magdy Academy",
     // الاسم الكامل
-    fullName: "فكرة",
+    fullName: "Magdy Academy",
     // وصف قصير
-    shortDescription: "منصة الفكرة",
+    shortDescription: "تعلم تصميم UX/UI باحترافية",
     // الشعار (اتركه فارغاً لاستخدام الشعار الافتراضي)
-    // يمكنك وضع رابط صورة هنا
     logoUrl: "",
     // الشعار الثانوي
     secondaryLogoUrl: "",
@@ -33,15 +32,10 @@ export const BRAND = {
 // 2. إعدادات الهيدر/النافبار - Navbar Settings
 // ============================================
 export const NAVBAR = {
-    // إظهار اسم المعلم بجانب الشعار
     showTeacherName: true,
-    // إظهار وصف المنصة تحت الاسم
     showPlatformDescription: true,
-    // لون الخلفية (يمكنك تغييره لـ tailwind classes)
-    bgColor: "bg-white dark:bg-gray-900",
-    // لون الخط الملون أعلى النافبار
-    accentLineColors: "from-green-400 via-green-500 to-emerald-600",
-    // ارتفاع النافبار
+    bgColor: "dark:bg-gray-900",
+    accentLineColors: "from-purple-400 via-violet-500 to-purple-600",
     height: "h-16 md:h-20",
 };
 
@@ -50,21 +44,21 @@ export const NAVBAR = {
 // ============================================
 export const HERO = {
     // العنوان الرئيسي
-    mainTitle: "منصتك المتكاملة للتفوق والتميز ",
+    mainTitle: "ابدأ مسيرتك في تصميم UX/UI",
     // العنوان الفرعي
-    subtitle: "لو انت اولى او تانية او تالته اتأكد ان هنا المكان الصح عشان تتميز ",
+    subtitle: "تصميم UX/UI",
     // النص أعلى العنوان
-    topText: "🎓 تعلم الفكرة بطريقة عملية وممتعة!",
+    topText: "اتعلم المهارات اللى هتفتحلك فرص كبيرة!",
     // نص زر الاشتراك
-    ctaButtonText: "اشترك دلوقتي ! 🤩",
+    ctaButtonText: "اشترك الآن",
     // رابط زر الاشتراك
     ctaButtonLink: "/signup",
-    // صورة المعلم في الهيرو (ضع رابط الصورة هنا)
+    // صورة المعلم في الهيرو
     teacherImageUrl: "",
     // إظهار صورة المعلم
     showTeacherImage: true,
     // لون الخلفية
-    bgGradient: "from-green-50 via-white to-emerald-50",
+    bgGradient: "from-purple-50 via-white to-violet-50",
 };
 
 // ============================================
@@ -212,33 +206,30 @@ export const SIDEBAR = {
  * - برتقالي: #f97316
  */
 export const COLORS = {
-    // اللون الرئيسي (أخضر)
+    // اللون الرئيسي (بنفسجي)
     primary: {
-        50: "#f0fdf4",    // خلفية فاتحة جداً
-        100: "#dcfce7",   // خلفية فاتحة
-        200: "#bbf7d0",
-        300: "#86efac",
-        400: "#4ade80",   // نص في الوضع الداكن
-        500: "#22c55e",   // اللون الأساسي
-        600: "#16a34a",   // hover
-        700: "#15803d",
-        gradient: "from-green-500 via-green-600 to-emerald-600",
+        50: "#F8F5FF",
+        100: "#EDE9FE",
+        200: "#DDD6FE",
+        300: "#C4B5FD",
+        400: "#A78BFA",
+        500: "#6C2BD9",
+        600: "#5B21B6",
+        700: "#4C1D95",
+        gradient: "from-purple-500 via-violet-600 to-purple-700",
     },
-    // اللون الثانوي (زمردي)
     secondary: {
-        500: "#10b981",
-        gradient: "from-emerald-500 to-teal-600",
+        500: "#7C3AED",
+        gradient: "from-violet-500 to-purple-600",
     },
-    // لون التمييز (ذهبي)
     accent: {
-        500: "#f59e0b",
-        gradient: "from-amber-400 to-orange-500",
+        500: "#A78BFA",
+        gradient: "from-purple-400 to-violet-500",
     },
-    // أسماء الألوان للاستخدام في الكود
     tailwind: {
-        primary: "green",      // غيّر هذا لتغيير اللون (green, blue, purple, red, orange)
-        secondary: "emerald",
-        accent: "amber",
+        primary: "purple",
+        secondary: "violet",
+        accent: "purple",
     }
 };
 
