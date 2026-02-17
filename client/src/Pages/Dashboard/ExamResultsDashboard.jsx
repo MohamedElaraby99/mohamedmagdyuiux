@@ -64,7 +64,7 @@ const ExamResultsDashboard = () => {
     limit: 20, // Default to 20 so pagination is visible
     search: '',
     courseId: '',
-    stageId: '',
+
     examType: '',
     passed: '',
     sortBy: 'completedAt',
@@ -72,7 +72,7 @@ const ExamResultsDashboard = () => {
     lessonId: '' // Added for filtering by specific exam
   });
   const [courses, setCourses] = useState([]);
-  const [stages, setStages] = useState([]);
+
   const [lessons, setLessons] = useState([]); // State for lessons list
   const [examsList, setExamsList] = useState([]); // Unique list of exams for "By Exam" view
   const [selectedResult, setSelectedResult] = useState(null);
@@ -123,17 +123,6 @@ const ExamResultsDashboard = () => {
       const response = await axiosInstance.get('/courses');
       if (response.data.success) {
         setCourses(response.data.data.courses || []);
-      }
-    } catch (error) {
-    }
-  };
-
-  // Fetch stages for filter dropdown
-  const fetchStages = async () => {
-    try {
-      const response = await axiosInstance.get('/stages');
-      if (response.data.success) {
-        setStages(response.data.data.stages || []);
       }
     } catch (error) {
     }
@@ -259,7 +248,7 @@ const ExamResultsDashboard = () => {
     try {
       const params = new URLSearchParams();
       if (filters.courseId) params.append('courseId', filters.courseId);
-      if (filters.stageId) params.append('stageId', filters.stageId);
+
       if (filters.examType) params.append('examType', filters.examType);
       params.append('minAttempts', '2');
       params.append('limit', '10');
@@ -354,7 +343,7 @@ const ExamResultsDashboard = () => {
   useEffect(() => {
     fetchExamResults();
     fetchCourses();
-    fetchStages();
+
     fetchTopActiveUsers();
     fetchTopPerformers();
   }, [filters]);

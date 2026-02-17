@@ -37,7 +37,7 @@ const AdminUserDashboard = lazy(() => import("./Pages/Dashboard/AdminUserDashboa
 const WhatsAppServiceDashboard = lazy(() => import("./Pages/Dashboard/WhatsAppServiceDashboard"));
 const WhatsAppServices = lazy(() => import("./Pages/WhatsAppServices/WhatsAppServices"));
 const InstructorDashboard = lazy(() => import("./Pages/Dashboard/InstructorDashboard"));
-const StageDashboard = lazy(() => import("./Pages/Dashboard/StageDashboard"));
+
 const Instructors = lazy(() => import("./Pages/Instructors"));
 const InstructorDetail = lazy(() => import("./Pages/InstructorDetail"));
 const CourseContentManager = lazy(() => import('./Pages/Dashboard/CourseContentManager'));
@@ -133,7 +133,7 @@ function AppContent() {
             <Route path="/admin/recharge-codes" element={<AdminRechargeCodeDashboard />} />
             <Route path="/admin/users" element={<AdminUserDashboard />} />
             <Route path="/admin/instructors" element={<InstructorDashboard />} />
-            <Route path="/admin/stages" element={<StageDashboard />} />
+
             <Route path="/admin/whatsapp-services" element={<WhatsAppServiceDashboard />} />
             <Route path="/admin/course-content" element={<CourseContentManager />} />
             <Route path="/admin/course-dashboard" element={<CourseDashboard />} />

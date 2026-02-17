@@ -1,7 +1,7 @@
 import LiveMeeting from '../models/liveMeeting.model.js';
 import User from '../models/user.model.js';
 import Instructor from '../models/instructor.model.js';
-import Stage from '../models/stage.model.js';
+
 import Subject from '../models/subject.model.js';
 import AppError from '../utils/error.utils.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
@@ -17,7 +17,7 @@ export const createLiveMeeting = asyncHandler(async (req, res, next) => {
     scheduledDate,
     duration,
     instructor,
-    stage,
+
     subject,
     attendees,
     maxAttendees,
@@ -26,7 +26,7 @@ export const createLiveMeeting = asyncHandler(async (req, res, next) => {
   } = req.body;
 
   // Validate required fields
-  if (!title || !description || !googleMeetLink || !scheduledDate || !duration || !instructor || !stage || !subject) {
+  if (!title || !description || !googleMeetLink || !scheduledDate || !duration || !instructor || !subject) {
     return next(new AppError('جميع الحقول المطلوبة يجب ملؤها', 400));
   }
 
@@ -42,11 +42,7 @@ export const createLiveMeeting = asyncHandler(async (req, res, next) => {
     return next(new AppError('المحاضر غير موجود', 404));
   }
 
-  // Validate stage exists
-  const stageExists = await Stage.findById(stage);
-  if (!stageExists) {
-    return next(new AppError('المرحلة غير موجودة', 404));
-  }
+
 
   // Validate subject exists
   const subjectExists = await Subject.findById(subject);
@@ -73,7 +69,7 @@ export const createLiveMeeting = asyncHandler(async (req, res, next) => {
     scheduledDate: scheduledDateTime,
     duration,
     instructor,
-    stage,
+
     subject,
     attendees: validatedAttendees,
     maxAttendees: maxAttendees || 100,
@@ -85,7 +81,7 @@ export const createLiveMeeting = asyncHandler(async (req, res, next) => {
   // Populate the created meeting
   await liveMeeting.populate([
     { path: 'instructor', select: 'name email' },
-    { path: 'stage', select: 'name' },
+
     { path: 'subject', select: 'title' },
     { path: 'attendees.user', select: 'fullName email' },
     { path: 'createdBy', select: 'fullName email' }
@@ -102,7 +98,7 @@ export const createLiveMeeting = asyncHandler(async (req, res, next) => {
 // @route   GET /api/v1/live-meetings/admin
 // @access  Admin
 export const getAllLiveMeetings = asyncHandler(async (req, res, next) => {
-  const { page = 1, limit = 10, status, stage, subject, instructor, startDate, endDate } = req.query;
+  const { page = 1, limit = 10, status, subject, instructor, startDate, endDate } = req.query;
 
   // Build filter object
   let filter = {};
@@ -111,9 +107,7 @@ export const getAllLiveMeetings = asyncHandler(async (req, res, next) => {
     filter.status = status;
   }
 
-  if (stage) {
-    filter.stage = stage;
-  }
+
 
   if (subject) {
     filter.subject = subject;
@@ -139,7 +133,7 @@ export const getAllLiveMeetings = asyncHandler(async (req, res, next) => {
 
   const liveMeetings = await LiveMeeting.find(filter)
     .populate('instructor', 'name email')
-    .populate('stage', 'name')
+
     .populate('subject', 'title')
     .populate('attendees.user', 'fullName email')
     .populate('createdBy', 'fullName email')
@@ -187,7 +181,7 @@ export const getUserLiveMeetings = asyncHandler(async (req, res, next) => {
 
   const liveMeetings = await LiveMeeting.find(filter)
     .populate('instructor', 'name email')
-    .populate('stage', 'name')
+
     .populate('subject', 'title')
     .sort({ scheduledDate: 1 })
     .skip((page - 1) * limit)
@@ -207,13 +201,13 @@ export const getUserLiveMeetings = asyncHandler(async (req, res, next) => {
   });
 });
 
-// @desc    Get upcoming live meetings for user's stage
+// @desc    Get upcoming live meetings
 // @route   GET /api/v1/live-meetings/upcoming
 // @access  User
 export const getUpcomingLiveMeetings = asyncHandler(async (req, res, next) => {
-  const userStage = req.user.stage;
+
   const userId = req.user._id || req.user.id;
-  
+
   // Debug logging
   console.log('Debug - User requesting upcoming meetings:', {
     userId,
@@ -227,14 +221,11 @@ export const getUpcomingLiveMeetings = asyncHandler(async (req, res, next) => {
     scheduledDate: { $gte: new Date() }
   };
 
-  // If user has a stage, filter by stage, otherwise show all upcoming meetings
-  if (userStage) {
-    filter.stage = userStage;
-  }
+
 
   const upcomingMeetings = await LiveMeeting.find(filter)
     .populate('instructor', 'name email')
-    .populate('stage', 'name')
+
     .populate('subject', 'title')
     .populate('attendees.user', 'fullName email')
     .sort({ scheduledDate: 1 })
@@ -246,8 +237,6 @@ export const getUpcomingLiveMeetings = asyncHandler(async (req, res, next) => {
     meetings: upcomingMeetings.map(m => ({
       id: m._id,
       title: m.title,
-      stage: m.stage?.name,
-      stageId: m.stage?._id,
       scheduledDate: m.scheduledDate
     }))
   });
@@ -260,19 +249,16 @@ export const getUpcomingLiveMeetings = asyncHandler(async (req, res, next) => {
     return meetingObj;
   });
 
-  const message = userStage 
-    ? 'تم استرجاع الاجتماعات القادمة بنجاح'
-    : upcomingMeetings.length > 0 
-      ? 'تم استرجاع جميع الاجتماعات القادمة - لم يتم تحديد مرحلتك الدراسية'
-      : 'لا توجد اجتماعات قادمة';
+  const message = upcomingMeetings.length > 0
+    ? 'تم استرجاع جميع الاجتماعات القادمة'
+    : 'لا توجد اجتماعات قادمة';
 
   res.status(200).json({
     success: true,
     message,
     upcomingMeetings: meetingsWithAttendeeInfo,
     debug: {
-      userHasStage: !!userStage,
-      userStage: userStage,
+
       totalFound: upcomingMeetings.length
     }
   });
@@ -288,7 +274,7 @@ export const getLiveMeeting = asyncHandler(async (req, res, next) => {
 
   const liveMeeting = await LiveMeeting.findById(id)
     .populate('instructor', 'name email')
-    .populate('stage', 'name')
+
     .populate('subject', 'title')
     .populate('attendees.user', 'fullName email')
     .populate('createdBy', 'fullName email');
@@ -301,7 +287,7 @@ export const getLiveMeeting = asyncHandler(async (req, res, next) => {
   if (userRole !== 'ADMIN' && userRole !== 'SUPER_ADMIN') {
     const isAttendee = liveMeeting.isUserAttendee(userId);
     const isInstructor = liveMeeting.instructor._id.toString() === userId.toString();
-    
+
     // Debug logging for authorization
     console.log('🔐 Authorization check for meeting access:', {
       userId: userId,
@@ -315,7 +301,7 @@ export const getLiveMeeting = asyncHandler(async (req, res, next) => {
         matches: a.user.toString() === userId.toString()
       }))
     });
-    
+
     if (!isAttendee && !isInstructor) {
 
       return next(new AppError('غير مصرح لك بالوصول لهذا الاجتماع', 403));
@@ -362,16 +348,16 @@ export const updateLiveMeeting = asyncHandler(async (req, res, next) => {
       originalAttendees: updates.attendees,
       existingAttendees: liveMeeting.attendees
     });
-    
+
     // Keep existing attendees with their properties (hasJoined, joinedAt)
     const existingAttendees = liveMeeting.attendees || [];
     const existingAttendeeMap = new Map();
-    
+
     existingAttendees.forEach(attendee => {
       const userId = attendee.user._id ? attendee.user._id.toString() : attendee.user.toString();
       existingAttendeeMap.set(userId, attendee);
     });
-    
+
     // Transform new attendees array to proper schema format
     updates.attendees = updates.attendees.map(userId => {
       const existingAttendee = existingAttendeeMap.get(userId.toString());
@@ -400,7 +386,7 @@ export const updateLiveMeeting = asyncHandler(async (req, res, next) => {
     { new: true, runValidators: true }
   )
     .populate('instructor', 'name email')
-    .populate('stage', 'name')
+
     .populate('subject', 'title')
     .populate('attendees.user', 'fullName email')
     .populate('createdBy', 'fullName email');
@@ -452,7 +438,7 @@ export const joinLiveMeeting = asyncHandler(async (req, res, next) => {
 
   // Check if user is an attendee
   const isAttendee = liveMeeting.isUserAttendee(userId);
-  
+
   // Debug logging for join authorization
   console.log('🔐 Join authorization check:', {
     userId: userId,
@@ -463,7 +449,7 @@ export const joinLiveMeeting = asyncHandler(async (req, res, next) => {
       matches: a.user.toString() === userId.toString()
     }))
   });
-  
+
   if (!isAttendee) {
 
     return next(new AppError('غير مصرح لك بالانضمام لهذا الاجتماع', 403));
@@ -509,7 +495,7 @@ export const addAttendees = asyncHandler(async (req, res, next) => {
   // Validate all attendees exist
   const validAttendees = [];
   const invalidAttendees = [];
-  
+
   for (const attendeeId of attendees) {
 
     // Skip null or undefined values
@@ -518,7 +504,7 @@ export const addAttendees = asyncHandler(async (req, res, next) => {
       invalidAttendees.push(attendeeId);
       continue;
     }
-    
+
     const user = await User.findById(attendeeId);
 
     if (user && !liveMeeting.isUserAttendee(attendeeId)) {
@@ -532,8 +518,8 @@ export const addAttendees = asyncHandler(async (req, res, next) => {
     }
   }
 
-  console.log('Debug - Validation results:', { 
-    validAttendees: validAttendees.length, 
+  console.log('Debug - Validation results:', {
+    validAttendees: validAttendees.length,
     invalidAttendees: invalidAttendees.length,
     invalidIds: invalidAttendees
   });
@@ -643,7 +629,7 @@ export const getLiveMeetingStats = asyncHandler(async (req, res, next) => {
       completed: completedCount,
       totalAttendees: attendeesData.totalAttendees,
       joinedAttendees: attendeesData.joinedAttendees,
-      attendanceRate: attendeesData.totalAttendees > 0 
+      attendanceRate: attendeesData.totalAttendees > 0
         ? ((attendeesData.joinedAttendees / attendeesData.totalAttendees) * 100).toFixed(2)
         : 0
     }

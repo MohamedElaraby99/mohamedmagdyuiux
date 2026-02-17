@@ -4,7 +4,7 @@ import { axiosInstance } from "../../Helpers/axiosInstance";
 // Async thunks
 export const getAllUsers = createAsyncThunk(
     "adminUser/getAll",
-    async ({ page = 1, limit = 20, role, status, search, stage }, { rejectWithValue }) => {
+    async ({ page = 1, limit = 20, role, status, search }, { rejectWithValue }) => {
         try {
 
             const params = new URLSearchParams({
@@ -13,7 +13,7 @@ export const getAllUsers = createAsyncThunk(
                 ...(role && { role }),
                 ...(status && { status }),
                 ...(search && { search }),
-                ...(stage && { stage })
+
             });
 
             const response = await axiosInstance.get(`/admin/users/users?${params}`);
