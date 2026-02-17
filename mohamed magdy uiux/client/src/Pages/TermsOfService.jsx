@@ -33,55 +33,113 @@ export default function TermsOfService() {
                   <FaInfoCircle className="ml-3 text-primary" />
                   مقدمة
                 </h2>
-                <p className="text-gray-700 dark:text-gray-300 mb-4">
-                  مرحباً بك في نظامنا . من خلال الوصول إلى منصتنا واستخدامها،
-                  فإنك توافق على الالتزام بشروط الخدمة هذه. إذا كنت لا توافق على هذه الشروط،
-                  يرجى عدم استخدام خدماتنا.
-                </p>
                 <p className="text-gray-700 dark:text-gray-300">
-                  تنطبق هذه الشروط على جميع مستخدمي المنصة، بما في ذلك الطلاب والمدرسين والمسؤولين.
+                  يرجى قراءة هذه الشروط بعناية قبل إنشاء حسابك. الموافقة عليها تعني التزامك الكامل بها لضمان سير العملية التعليمية بنجاح.
                 </p>
               </section>
 
-              {/* Account Registration */}
+              {/* 1. Account & Data */}
               <section className="mb-8">
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 flex items-center">
                   <FaUserCheck className="ml-3 text-primary" />
-                  تسجيل الحساب
+                  البيانات والحساب
                 </h2>
                 <div className="space-y-4">
                   <div className="flex items-start">
-                    <FaCheckCircle className="text-primary mt-1 ml-3 flex-shrink-0" />
-                    <p className="text-gray-700 dark:text-gray-300">
-                      يجب عليك تقديم معلومات دقيقة وحالية وكاملة أثناء التسجيل.
-                    </p>
+                    <span className="font-bold text-primary ml-2 text-xl">1.</span>
+                    <div>
+                      <h3 className="font-bold text-gray-800 dark:text-gray-200 mb-1">دقة البيانات</h3>
+                      <p className="text-gray-700 dark:text-gray-300">
+                        يجب التأكد من صحة البيانات المدخلة عند إنشاء الحساب، وتشمل الاسم الرباعي، رقم الواتساب الشخصي، لضمان التواصل الفعال.
+                      </p>
+                    </div>
                   </div>
+
                   <div className="flex items-start">
-                    <FaCheckCircle className="text-primary mt-1 ml-3 flex-shrink-0" />
-                    <p className="text-gray-700 dark:text-gray-300">
-                      أنت مسؤول عن الحفاظ على سرية بيانات اعتماد حسابك.
-                    </p>
+                    <span className="font-bold text-primary ml-2 text-xl">2.</span>
+                    <div>
+                      <h3 className="font-bold text-gray-800 dark:text-gray-200 mb-1">الحد المسموح للأجهزة</h3>
+                      <p className="text-gray-700 dark:text-gray-300">
+                        يسمح بفتح الحساب على جهازين فقط كحد أقصى. يرجى اختيار الجهازين بعناية، حيث لا يمكن الدخول إلى الحساب من أي جهاز آخر في حال تغييرهما، وذلك لضمان أمان المحتوى.
+                      </p>
+                    </div>
                   </div>
+
                   <div className="flex items-start">
-                    <FaCheckCircle className="text-primary mt-1 ml-3 flex-shrink-0" />
-                    <p className="text-gray-700 dark:text-gray-300">
-                      يجب أن تكون عمرك 5 سنوات على الأقل لإنشاء حساب.
-                    </p>
-                  </div>
-                  <div className="flex items-start">
-                    <FaExclamationTriangle className="text-primary mt-1 ml-3 flex-shrink-0" />
-                    <p className="text-gray-700 dark:text-gray-300">
-                      أنت مسؤول عن جميع الأنشطة التي تحدث تحت حسابك.
-                    </p>
+                    <span className="font-bold text-primary ml-2 text-xl">3.</span>
+                    <div>
+                      <h3 className="font-bold text-gray-800 dark:text-gray-200 mb-1">أمان كلمة المرور</h3>
+                      <p className="text-gray-700 dark:text-gray-300">
+                        أنت مسؤول مسؤولية كاملة عن حفظ كلمة المرور الخاصة بك وعدم مشاركتها مع أي شخص آخر لضمان أمان حسابك.
+                      </p>
+                    </div>
                   </div>
                 </div>
               </section>
 
-              {/* Video Screening Policy - NEW SECTION */}
+              {/* 2. Academic Commitment */}
+              <section className="mb-8">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 flex items-center">
+                  <FaHandshake className="ml-3 text-primary" />
+                  الالتزام الأكاديمي والمتابعة
+                </h2>
+                <div className="space-y-4">
+                  <div className="flex items-start">
+                    <span className="font-bold text-primary ml-2 text-xl">4.</span>
+                    <div>
+                      <h3 className="font-bold text-gray-800 dark:text-gray-200 mb-1">الالتزام الدراسي</h3>
+                      <p className="text-gray-700 dark:text-gray-300">
+                        يجب الالتزام التام بمشاهدة الفيديوهات التعليمية، حل الواجبات، وأداء الامتحانات في المواعيد المحددة لضمان الاستفادة الكاملة من الدورة.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start">
+                    <span className="font-bold text-primary ml-2 text-xl">5.</span>
+                    <div>
+                      <h3 className="font-bold text-gray-800 dark:text-gray-200 mb-1">تقارير ولي الأمر</h3>
+                      <p className="text-gray-700 dark:text-gray-300">
+                        سيتم إرسال تقارير دورية توضح المستوى الدراسي للطالب إلى ولي الأمر لمتابعة التقدم والأداء بشكل منتظم.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start">
+                    <span className="font-bold text-primary ml-2 text-xl">6.</span>
+                    <div>
+                      <h3 className="font-bold text-gray-800 dark:text-gray-200 mb-1">سياسة عدم الالتزام</h3>
+                      <p className="text-gray-700 dark:text-gray-300">
+                        في حال عدم التزام الطالب بالواجبات ومتطلبات الدورة، سيتم إنهاء اشتراكه فوراً، ولن يتمكن من استكمال الدورة معنا.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              {/* 3. Subscription & Refund */}
+              <section className="mb-8">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 flex items-center">
+                  <FaCheckCircle className="ml-3 text-primary" />
+                  الاشتراك والاسترداد
+                </h2>
+                <div className="space-y-4">
+                  <div className="flex items-start">
+                    <span className="font-bold text-primary ml-2 text-xl">7.</span>
+                    <div>
+                      <h3 className="font-bold text-gray-800 dark:text-gray-200 mb-1">فترة الاشتراك</h3>
+                      <p className="text-gray-700 dark:text-gray-300">
+                        الاشتراك ساري حتى انتهاء امتحانات الدور الأول. يرجى العلم بأن قيمة الاشتراك غير قابلة للاسترداد نهائياً بعد الدفع.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              {/* Video Screening Policy (Kept as is) */}
               <section className="mb-8">
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 flex items-center">
                   <FaVideo className="ml-3 text-red-600" />
-                  سياسة مراقبة المحتوى والفيديوهات
+                  سياسة حماية المحتوى
                 </h2>
                 <div className="bg-red-50 dark:bg-red-900/20 rounded-lg p-6 border-l-4 border-red-500">
                   <div className="space-y-4">
@@ -89,200 +147,36 @@ export default function TermsOfService() {
                       <FaExclamationTriangle className="text-red-500 mt-1 ml-3 flex-shrink-0" />
                       <div>
                         <h3 className="text-lg font-semibold text-red-800 dark:text-red-200 mb-2">
-                          تحذير مهم: سياسة الحظر الصارمة
+                          تحذير: حقوق الملكية الفكرية
                         </h3>
                         <p className="text-red-700 dark:text-red-300">
-                          يحظر تماماً على أي طالب تسجيل أو مشاركة أو نشر أي فيديو أو محتوى من منصتنا التعليمية.
+                          يحظر تماماً تسجيل أو مشاركة أو نشر أي فيديو أو محتوى من منصتنا التعليمية.
                         </p>
                       </div>
                     </div>
 
                     <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-red-200 dark:border-red-800">
-                      <h4 className="font-semibold text-gray-900 dark:text-white mb-3">العقوبات المطبقة:</h4>
+                      <h4 className="font-semibold text-gray-900 dark:text-white mb-3">عقوبات انتهاك الملكية الفكرية:</h4>
                       <ul className="space-y-2 text-gray-700 dark:text-gray-300">
                         <li className="flex items-start">
                           <FaBan className="text-red-500 mt-1 ml-2 flex-shrink-0" />
-                          <span>حذف الحساب فوراً</span>
+                          <span>حذف الحساب فوراً والحظر الدائم من المنصة</span>
                         </li>
                         <li className="flex items-start">
                           <FaBan className="text-red-500 mt-1 ml-2 flex-shrink-0" />
-                          <span>حظر دائم من المنصة</span>
+                          <span>اتخاذ كافة الإجراءات القانونية اللازمة</span>
                         </li>
-                        <li className="flex items-start">
-                          <FaBan className="text-red-500 mt-1 ml-2 flex-shrink-0" />
-                          <span>عدم إمكانية التسجيل مرة أخرى</span>
-                        </li>
-                        <li className="flex items-start">
-                          <FaBan className="text-red-500 mt-1 ml-2 flex-shrink-0" />
-                          <span>إجراءات قانونية إذا لزم الأمر</span>
-                        </li>
-                      </ul>
-                    </div>
-
-                    <div className="bg-primary/10 dark:bg-primary/20 rounded-lg p-4 border border-primary/30 dark:border-primary/50">
-                      <h4 className="font-semibold text-primary-darker dark:text-primary-light mb-2">ما يعتبر انتهاكاً:</h4>
-                      <ul className="space-y-1 text-primary-dark dark:text-primary-light text-sm">
-                        <li>• تسجيل شاشة الفيديوهات التعليمية</li>
-                        <li>• مشاركة روابط المحتوى مع أشخاص آخرين</li>
-                        <li>• نشر المحتوى على وسائل التواصل الاجتماعي</li>
-                        <li>• حفظ أو تحميل المواد التعليمية</li>
-                        <li>• إعادة توزيع المحتوى بأي شكل من الأشكال</li>
                       </ul>
                     </div>
                   </div>
                 </div>
               </section>
 
-              {/* Acceptable Use */}
-              <section className="mb-8">
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 flex items-center">
-                  <FaHandshake className="ml-3 text-primary" />
-                  الاستخدام المقبول
-                </h2>
-                <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-6">
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">توافق على:</h3>
-                  <ul className="space-y-2 text-gray-700 dark:text-gray-300">
-                    <li className="flex items-start">
-                      <span className="text-primary ml-2">•</span>
-                      استخدام المنصة للأغراض التعليمية فقط
-                    </li>
-                    <li className="flex items-start">
-                      <span className="text-primary ml-2">•</span>
-                      احترام المستخدمين الآخرين والحفاظ على بيئة تعليمية إيجابية
-                    </li>
-                    <li className="flex items-start">
-                      <span className="text-primary ml-2">•</span>
-                      عدم مشاركة محتوى غير مناسب أو مسيء أو ضار
-                    </li>
-                    <li className="flex items-start">
-                      <span className="text-primary ml-2">•</span>
-                      عدم محاولة الوصول غير المصرح به للمنصة
-                    </li>
-                    <li className="flex items-start">
-                      <span className="text-primary ml-2">•</span>
-                      عدم استخدام الأنظمة الآلية للوصول إلى المنصة
-                    </li>
-                  </ul>
-                </div>
-              </section>
-
-              {/* Content and Intellectual Property */}
-              <section className="mb-8">
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-                  المحتوى والملكية الفكرية
-                </h2>
-                <div className="space-y-4">
-                  <p className="text-gray-700 dark:text-gray-300">
-                    جميع المحتوى على هذه المنصة، بما في ذلك الكورسات والمواد والبرامج،
-                    مملوك لشركة منصة  Magdy Academy أو المرخصين لها ومحمي بقوانين حقوق النشر.
-                  </p>
-                  <p className="text-gray-700 dark:text-gray-300">
-                    لا يجوز لك إعادة إنتاج أو توزيع أو إنشاء أعمال مشتقة دون إذن صريح.
-                  </p>
-                  <p className="text-gray-700 dark:text-gray-300">
-                    المحتوى الذي ينشئه المستخدم يبقى ملكك، لكنك تمنحنا ترخيصاً لاستخدامه
-                    لتحسين المنصة والأغراض التعليمية.
-                  </p>
-                </div>
-              </section>
-
-              {/* Privacy and Data Protection */}
-              <section className="mb-8">
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-                  الخصوصية وحماية البيانات
-                </h2>
-                <div className="space-y-4">
-                  <p className="text-gray-700 dark:text-gray-300">
-                    نحن ملتزمون بحماية خصوصيتك. ممارسات جمع البيانات واستخدامها
-                    موضحة في سياسة الخصوصية الخاصة بنا.
-                  </p>
-                  <p className="text-gray-700 dark:text-gray-300">
-                    نجمع المعلومات الشخصية بما في ذلك الاسم والبريد الإلكتروني وأرقام الهواتف والموقع
-                    والتفاصيل التعليمية لتقديم خدماتنا بفعالية.
-                  </p>
-                  <p className="text-gray-700 dark:text-gray-300">
-                    يتم تخزين بياناتك بأمان ولن يتم مشاركتها مع أطراف ثالثة دون موافقتك،
-                    إلا كما هو مطلوب بموجب القانون.
-                  </p>
-                </div>
-              </section>
-
-              {/* Payment and Subscriptions */}
-              <section className="mb-8">
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-                  الدفع والاشتراكات
-                </h2>
-                <div className="space-y-4">
-                  <p className="text-gray-700 dark:text-gray-300">
-                    قد تتطلب بعض الميزات الدفع. جميع الرسوم موضحة بوضوح قبل الشراء.
-                  </p>
-                  <p className="text-gray-700 dark:text-gray-300">
-                    يتم معالجة المدفوعات بأمان من خلال شركائنا في الدفع.
-                  </p>
-                  <p className="text-gray-700 dark:text-gray-300">
-                    يتم التعامل مع الاستردادات وفقاً لسياسة الاسترداد الخاصة بنا، المتاحة عند الطلب.
-                  </p>
-                </div>
-              </section>
-
-              {/* Termination */}
-              <section className="mb-8">
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-                  إنهاء الحساب
-                </h2>
-                <div className="space-y-4">
-                  <p className="text-gray-700 dark:text-gray-300">
-                    يمكنك إنهاء حسابك في أي وقت من خلال الاتصال بفريق الدعم لدينا.
-                  </p>
-                  <p className="text-gray-700 dark:text-gray-300">
-                    نحتفظ بالحق في تعليق أو إنهاء الحسابات التي تنتهك هذه الشروط.
-                  </p>
-                  <p className="text-gray-700 dark:text-gray-300">
-                    عند الإنهاء، سيتم إلغاء وصولك إلى المنصة،
-                    لكن بياناتك سيتم الاحتفاظ بها كما هو مطلوب بموجب القانون.
-                  </p>
-                </div>
-              </section>
-
-              {/* Limitation of Liability */}
-              <section className="mb-8">
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-                  حدود المسؤولية
-                </h2>
-                <div className="space-y-4">
-                  <p className="text-gray-700 dark:text-gray-300">
-                    تقدم شركة منصة  Magdy Academy المحتوى التعليمي والخدمات "كما هي" دون ضمانات.
-                  </p>
-                  <p className="text-gray-700 dark:text-gray-300">
-                    نحن لسنا مسؤولين عن أي أضرار غير مباشرة أو عرضية أو تبعية.
-                  </p>
-                  <p className="text-gray-700 dark:text-gray-300">
-                    إجمالي مسؤوليتنا محدود بالمبلغ الذي دفعته لخدماتنا.
-                  </p>
-                </div>
-              </section>
-
-              {/* Changes to Terms */}
-              <section className="mb-8">
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-                  تغييرات الشروط
-                </h2>
-                <div className="space-y-4">
-                  <p className="text-gray-700 dark:text-gray-300">
-                    قد نحدث هذه الشروط من وقت لآخر. سيتم نشر التغييرات على هذه الصفحة.
-                  </p>
-                  <p className="text-gray-700 dark:text-gray-300">
-                    الاستمرار في استخدام المنصة بعد التغييرات يشكل قبول الشروط الجديدة.
-                  </p>
-                </div>
-              </section>
-
 
               {/* Footer */}
               <div className="border-t border-gray-200 dark:border-gray-700 pt-6 mt-8">
-                <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
-                  من خلال استخدام هذه المنصة فإنك تقر بأنك قد قرأت وفهمت
-                  وتوافق على الالتزام بشروط الخدمة هذه.
+                <p className="text-lg font-bold text-gray-800 dark:text-gray-200 text-center">
+                  أوافق على جميع الشروط والأحكام المذكورة أعلاه وأتعهد بالالتزام بها كاملة.
                 </p>
               </div>
             </div>

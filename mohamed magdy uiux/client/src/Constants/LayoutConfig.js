@@ -13,9 +13,12 @@
 // ============================================
 // 1. معلومات العلامة التجارية - Brand Info
 // ============================================
+// ============================================
+// 1. معلومات العلامة التجارية - Brand Info
+// ============================================
 export const BRAND = {
     // اسم المنصة
-    platformName: "E-Learning Platform",
+    platformName: "Magdy Academy",
     // اسم المعلم
     teacherName: "Magdy Academy",
     // الاسم الكامل
@@ -80,12 +83,14 @@ export const CONTACT = {
     sectionSubtitle: "محتاج مساعدة ؟ تواصل معنا علطول على الارقام التاليه واتساب او اتصال",
 };
 
+// ... (omitted sections)
+
 // ============================================
 // 5. روابط السوشيال ميديا - Social Media Links
 // ============================================
 export const SOCIAL_MEDIA = {
     facebook: {
-        url: "https://www.facebook.com/",
+        url: "https://www.facebook.com/ahmedmagdyFACI?locale=ar_AR",
         label: "Facebook",
         enabled: true,
     },
@@ -95,7 +100,7 @@ export const SOCIAL_MEDIA = {
         enabled: true,
     },
     tiktok: {
-        url: "https://www.tiktok.com/",
+        url: "https://www.tiktok.com/@eng.ahmed0512?_r=1&_t=ZS-93ytafTWH6i",
         label: "Tiktok",
         enabled: true,
     },
@@ -110,7 +115,7 @@ export const SOCIAL_MEDIA = {
         enabled: false,
     },
     whatsapp: {
-        url: "https://wa.me/201207039410",
+        url: "https://wa.me/qr/7NWBREZZB6N7H1",
         label: "WhatsApp",
         enabled: true,
     },

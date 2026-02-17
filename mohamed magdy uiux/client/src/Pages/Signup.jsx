@@ -128,9 +128,7 @@ export default function Signup() {
       errors.push("🔒 يرجى التحقق من رمز الأمان أولاً");
     }
 
-    if (!termsAccepted) {
-      errors.push("📋 لازم توافق على الشروط والأحكام الأول");
-    }
+    /* Removed terms acceptance check */
 
     // Basic required fields for all users
     if (!signupData.fullName || signupData.fullName.trim() === "") {
@@ -248,10 +246,7 @@ export default function Signup() {
         }, 2500);
       }
 
-      // If terms not accepted, show modal
-      if (!termsAccepted) {
-        setShowTermsModal(true);
-      }
+      /* Removed terms validation */
 
       // Reset CAPTCHA verification ONLY if CAPTCHA was the issue
       if (!isCaptchaVerified || !captchaSessionId) {
@@ -874,157 +869,7 @@ export default function Signup() {
         </div>
       </div>
 
-      {/* Terms and Conditions Modal */}
-      {showTermsModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4" dir="rtl">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
-            {/* Modal Header */}
-            <div className="bg-gray-50 dark:bg-gray-700 px-6 py-4 border-b border-gray-200 dark:border-gray-600">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <FaInfoCircle className="text-gray-600 dark:text-gray-400 text-xl" />
-                  <div className="text-right">
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">شروط وأحكام الاستخدام</h3>
-                    <p className="text-gray-600 dark:text-gray-400 text-sm">يرجى قراءة هذه الشروط بعناية قبل إنشاء حسابك</p>
-                  </div>
-                </div>
-                <button
-                  onClick={() => {
-                    if (termsAccepted) {
-                      setShowTermsModal(false);
-                    } else {
-                      toast.error("يجب الموافقة على الشروط والأحكام للمتابعة");
-                    }
-                  }}
-                  className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors duration-200"
-                >
-                  <FaTimes className="text-gray-500 dark:text-gray-400 text-lg" />
-                </button>
-              </div>
-            </div>
-
-            {/* Modal Content */}
-            <div className="px-6 py-4 overflow-y-auto max-h-[60vh]">
-              <div className="space-y-4">
-                {/* Important Notice */}
-                <div className="bg-primary/10 dark:bg-primary/20 border border-primary/20 dark:border-primary/50 rounded-lg p-4">
-                  <div className="flex items-start gap-3">
-                    <FaExclamationTriangle className="text-primary text-lg flex-shrink-0 mt-0.5" />
-                    <p className="text-primary-darker dark:text-primary-light text-sm leading-relaxed text-right">
-                      <strong>ملاحظة هامة:</strong> يرجى قراءة هذه الشروط بعناية. الموافقة عليها تعني التزامك الكامل بها.
-                    </p>
-                  </div>
-                </div>
-
-                {/* Terms List */}
-                <div className="space-y-3">
-                  <div className="flex items-start gap-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                    <span className="bg-gray-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-medium flex-shrink-0">1</span>
-                    <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed text-right">
-                      <strong>دقة البيانات:</strong> وأنت بتعمل حساب لازم تكون بياناتك صحيحة (اسمك رباعي - رقم الواتساب بتاعك - رقم ولي أمرك).
-                    </p>
-                  </div>
-
-                  <div className="flex items-start gap-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                    <span className="bg-gray-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-medium flex-shrink-0">2</span>
-                    <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed text-right">
-                      <strong>حد الجهاز:</strong> <span className="text-red-600 dark:text-red-400 font-bold">مش هتقدر تفتح الحساب إلا على  اول جهازين بس.</span> اختار الجهاز اللي هتستخدمه بعناية عشان لو غيرت الجهاز مش هتعرف تخش أو تفتح الحساب إلا منه.
-                    </p>
-                  </div>
-
-                  <div className="flex items-start gap-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                    <span className="bg-gray-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-medium flex-shrink-0">3</span>
-                    <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed text-right">
-                      <strong>حفظ كلمة المرور:</strong> لازم تحفظ الباسورد بتاعك وتحافظ عليه في مكان آمن.
-                    </p>
-                  </div>
-
-                  <div className="flex items-start gap-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                    <span className="bg-gray-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-medium flex-shrink-0">4</span>
-                    <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed text-right">
-                      <strong>الالتزام:</strong> يجب الالتزام بمشاهدة الفيديوهات وحل الواجب والامتحانات في المواعيد المحددة.
-                    </p>
-                  </div>
-
-                  <div className="flex items-start gap-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                    <span className="bg-gray-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-medium flex-shrink-0">5</span>
-                    <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed text-right">
-                      <strong>تقارير ولي الأمر:</strong> يتم إرسال تقرير دوري بالمستوى لولي الأمر لمتابعة مستواك الدراسي.
-                    </p>
-                  </div>
-
-                  <div className="flex items-start gap-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                    <span className="bg-gray-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-medium flex-shrink-0">6</span>
-                    <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed text-right">
-                      <strong>عدم الالتزام:</strong> أي طالب غير ملتزم مش هيكمل معانا وسيتم إنهاء اشتراكه فوراً.
-                    </p>
-                  </div>
-
-                  <div className="flex items-start gap-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                    <span className="bg-gray-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-medium flex-shrink-0">7</span>
-                    <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed text-right">
-                      <strong>فترة الاشتراك:</strong> الاشتراك لحد امتحانات الدور الأول وليس هناك استرجاع لسعر الكورس .
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Modal Footer */}
-            <div className="bg-gray-50 dark:bg-gray-700 px-6 py-4 border-t border-gray-200 dark:border-gray-600">
-              <div className="space-y-4">
-                {/* Acceptance Checkbox */}
-                <div className="flex items-start gap-3 p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-600">
-                  <input
-                    type="checkbox"
-                    id="acceptTerms"
-                    checked={termsAccepted}
-                    onChange={(e) => setTermsAccepted(e.target.checked)}
-                    className="mt-1 w-4 h-4 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary dark:focus:ring-primary dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                  />
-                  <label htmlFor="acceptTerms" className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed cursor-pointer text-right">
-                    أوافق على جميع الشروط والأحكام المذكورة أعلاه وأتعهد بالالتزام بها كاملة.
-                  </label>
-                </div>
-
-                {/* Action Buttons */}
-                <div className="flex gap-3">
-                  <button
-                    onClick={() => {
-                      if (termsAccepted) {
-                        setShowTermsModal(false);
-                        toast.success("تم قبول الشروط والأحكام بنجاح");
-                      } else {
-                        toast.error("يجب الموافقة على الشروط والأحكام أولاً");
-                      }
-                    }}
-                    disabled={!termsAccepted}
-                    className={`flex-1 px-4 py-2.5 rounded-lg font-medium text-sm transition-all duration-200 flex items-center justify-center gap-2 ${termsAccepted
-                      ? 'btn-primary text-white shadow-sm hover:shadow-md'
-                      : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'
-                      }`}
-                  >
-                    <FaCheckCircle className="text-base" />
-                    موافق والمتابعة
-                  </button>
-
-                  <button
-                    onClick={() => {
-                      setShowTermsModal(false);
-                      setTermsAccepted(false);
-                      navigate('/');
-                    }}
-                    className="px-4 py-2.5 bg-gray-500 hover:bg-gray-600 text-white rounded-lg font-medium text-sm transition-all duration-200 flex items-center justify-center gap-2 hover:shadow-sm"
-                  >
-                    <FaTimes className="text-base" />
-                    إلغاء
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Terms and Conditions Modal Removed */}
     </Layout>
   );
 }
