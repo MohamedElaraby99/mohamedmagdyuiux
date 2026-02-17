@@ -1,5 +1,4 @@
-/* Lemonada font is imported in index.html */
-@import url('https://fonts.googleapis.com/css2?family=Playpen+Sans+Arabic:wght@100..800&display=swap');
+/* Cairo font is imported in index.html */
 
 @tailwind base;
 @tailwind components;
@@ -225,50 +224,58 @@
 }
 
 .almarai-light {
-  font-family: "Almarai", sans-serif;
+  font-family: "Cairo", sans-serif;
   font-weight: 300;
   font-style: normal;
 }
 
 .almarai-regular {
-  font-family: "Almarai", sans-serif;
+  font-family: "Cairo", sans-serif;
   font-weight: 400;
   font-style: normal;
 }
 
 .almarai-bold {
-  font-family: "Almarai", sans-serif;
+  font-family: "Cairo", sans-serif;
   font-weight: 700;
   font-style: normal;
 }
 
 .almarai-extrabold {
-  font-family: "Almarai", sans-serif;
+  font-family: "Cairo", sans-serif;
   font-weight: 800;
   font-style: normal;
 }
 
-/* Global Lemonada Font Application */
+/* Cairo Font Utility */
+.font-cairo {
+  font-family: "Cairo", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+  font-variation-settings: "slnt" 0;
+}
+
+/* Global Cairo Font Application */
 html {
-  font-family: 'Almarai', cursive;
+  font-family: 'Cairo', sans-serif;
 }
 
 /* Set default font weight for better readability */
 body {
-  font-family: 'Almarai', cursive;
+  font-family: 'Cairo', sans-serif;
   font-weight: 400;
   font-optical-sizing: auto;
   font-style: normal;
 }
 
-/* Ensure all text elements use Lemonada */
+/* Ensure all text elements use Cairo */
 h1,
 h2,
 h3,
 h4,
 h5,
 h6 {
-  font-family: 'Playpen Sans Arabic', cursive;
+  font-family: 'Cairo', sans-serif;
   font-optical-sizing: auto;
 }
 
@@ -281,7 +288,7 @@ textarea,
 select,
 label,
 a {
-  font-family: 'Almarai', cursive;
+  font-family: 'Cairo', sans-serif;
 }
 
 * {
@@ -289,12 +296,12 @@ a {
   padding: 0;
   box-sizing: border-box;
   outline: none;
-  font-family: 'Almarai', sans-serif;
+  font-family: 'Cairo', sans-serif;
 }
 
 body {
   min-height: 100vh;
-  font-family: 'Almarai', sans-serif;
+  font-family: 'Cairo', sans-serif;
 }
 
 input:disabled,

@@ -7,13 +7,14 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        'sans': ['Lemonada', 'cursive'],
-        'lemonada': ['Lemonada', 'cursive'],
-        'inter': ['Inter', 'sans-serif'],
-        'lato': ['Lato', 'sans-serif'],
-        'nunito-sans': ['Nunito Sans', 'sans-serif'],
-        'open-sans': ['Open Sans', 'sans-serif'],
-        'roboto': ['Roboto', 'sans-serif'],
+        'sans': ['Cairo', 'sans-serif'],
+        'cairo': ['Cairo', 'sans-serif'],
+        'lemonada': ['Cairo', 'sans-serif'],
+        'inter': ['Cairo', 'sans-serif'],
+        'lato': ['Cairo', 'sans-serif'],
+        'nunito-sans': ['Cairo', 'sans-serif'],
+        'open-sans': ['Cairo', 'sans-serif'],
+        'roboto': ['Cairo', 'sans-serif'],
       },
       colors: {
         'input-bg': '#ffffff',
