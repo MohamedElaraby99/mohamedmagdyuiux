@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Layout from "../Layout/Layout";
 import heroPng from "../assets/images/hero.png";
+import iconLine from "../assets/image copy 3.png";
 import { getAllBlogs } from "../Redux/Slices/BlogSlice";
 import { getFeaturedSubjects } from "../Redux/Slices/SubjectSlice";
 import { getFeaturedCourses } from "../Redux/Slices/CourseSlice";
@@ -10,6 +11,7 @@ import { getAllStages } from "../Redux/Slices/StageSlice";
 import { generateImageUrl } from "../utils/fileUtils";
 import AnimatedHero from "../Components/AnimatedHero";
 import FeaturesSection from "../Components/FeaturesSection";
+import TestimonialsSection from "../Components/TestimonialsSection";
 import { CONTACT, SOCIAL_MEDIA, PAYMENT } from "../Constants/LayoutConfig";
 // Lazy load components
 const FAQAccordion = lazy(() => import("../Components/FAQAccordion"));
@@ -141,7 +143,8 @@ export default function HomePage() {
 
 
       {/* Featured Courses Section */}
-      <section className={`py-20 bg-white dark:bg-gray-800 transition-all duration-700 ease-out ${heroLoaded
+      {/* Featured Courses Section */}
+      <section className={`py-20 bg-[#FDFDF5] dark:bg-gray-900 transition-all duration-700 ease-out ${heroLoaded
         ? 'opacity-100 translate-y-0'
         : 'opacity-0 translate-y-8'
         }`}
@@ -149,17 +152,15 @@ export default function HomePage() {
         style={{ transitionDelay: '200ms' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Section Header */}
-          <div className={`text-center mb-16 transition-all duration-700 ease-out ${heroLoaded
+          <div className={`flex flex-col items-center justify-center mb-16 transition-all duration-700 ease-out ${heroLoaded
             ? 'opacity-100 scale-100'
             : 'opacity-0 scale-95'
             }`}
             style={{ transitionDelay: '400ms' }}>
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
-              كورساتنا المتاحة للعام 2025/2026
+            <h2 className="text-4xl md:text-5xl font-bold text-primary mb-2">
+              كورساتنا
             </h2>
-            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-              اكتشف مجموعة واسعة من الكورسات التعليمية المميزة
-            </p>
+            <img src={iconLine} alt="underline" className="w-32 md:w-48 h-auto object-contain" />
           </div>
 
           {featuredLoading ? (
@@ -168,111 +169,122 @@ export default function HomePage() {
               <p className="text-gray-600 dark:text-gray-400">جاري تحميل الكورسات المميزة...</p>
             </div>
           ) : featuredCourses && featuredCourses.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div className="flex flex-col gap-8">
               {featuredCourses.slice(0, 6).map((course, index) => (
                 <div
                   key={course._id}
-                  className={`relative rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-700 ease-out group h-[50vh] ${heroLoaded
+                  className={`bg-[#f9f9f9] dark:bg-gray-800 border-2 border-primary/10 rounded-[2.5rem] overflow-hidden hover:shadow-xl transition-all duration-500 ease-out flex flex-col lg:flex-row group ${heroLoaded
                     ? 'opacity-100 translate-y-0 scale-100'
                     : 'opacity-0 translate-y-8 scale-95'
                     }`}
                   style={{
-                    transitionDelay: `${600 + (index * 100)}ms`,
-                    transitionProperty: 'opacity, transform, scale'
+                    transitionDelay: `${600 + (index * 100)}ms`
                   }}
                 >
-                  {/* Full Background Image */}
-                  <div className="absolute inset-0">
-                    {course.image?.secure_url ? (
-                      <img
-                        src={generateImageUrl(course.image.secure_url)}
-                        alt={course.title}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                        onError={(e) => {
-                          e.target.style.display = 'none';
-                          e.target.nextSibling.style.display = 'block';
-                        }}
-                      />
-                    ) : null}
+                  {/* Image Side (Right in RTL) */}
+                  <div className="relative w-full lg:w-[40%] h-64 lg:h-auto shrink-0 p-4">
+                    <div className="w-full h-full rounded-[2rem] overflow-hidden relative shadow-lg">
+                      {course.image?.secure_url ? (
+                        <img
+                          src={generateImageUrl(course.image.secure_url)}
+                          alt={course.title}
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gradient-to-br from-primary via-purple-600 to-primary-dark flex items-center justify-center">
+                          <FaBookOpen className="text-6xl text-white opacity-40" />
+                        </div>
+                      )}
+                      {/* Overlay gradient */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
 
-                    {/* Fallback gradient for missing/broken images */}
-                    <div className={`w-full h-full bg-gradient-to-br from-primary via-purple-600 to-primary-dark ${course.image?.secure_url ? 'hidden' : 'flex'} items-center justify-center`}>
-                      <FaBookOpen className="text-8xl text-white opacity-40" />
+                      {/* Title Translate Overlay (Optional aesthetic) */}
+                      <div className="absolute bottom-4 right-4 text-white">
+                        <h4 className="font-bold text-lg drop-shadow-md">UI/UX DESIGN</h4>
+                        <p className="text-xs opacity-90">Crafting Digital Experiences</p>
+                      </div>
                     </div>
                   </div>
 
-                  {/* Gradient Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent group-hover:from-black/95 transition-all duration-500"></div>
-
-                  {/* Stage Badge */}
-                  <div className="absolute top-4 right-4 z-20">
-                    <span className="px-3 py-1.5 bg-white/95 backdrop-blur-sm text-gray-800 text-xs font-bold rounded-full shadow-lg border border-white/20">
-                      {course.stage?.name || 'غير محدد'}
-                    </span>
-                  </div>
-
-                  <div className="absolute top-4 left-4 z-20">
-                    {(course.price || 0) > 0 ? (
-                      <span className="px-3 py-1.5 bg-primary/90 backdrop-blur-sm text-white text-xs font-bold rounded-full shadow-lg border border-primary/50">{course.price} جنيه</span>
-                    ) : (
-                      <span className="px-3 py-1.5 bg-primary/90 backdrop-blur-sm text-white text-xs font-bold rounded-full shadow-lg border border-primary/50">مجاني ✓</span>
-                    )}
-                  </div>
-
-                  {/* Content Overlay */}
-                  <div className="absolute inset-0 flex flex-col justify-end p-6 z-10">
-                    {/* Course Meta Info */}
-                    <div className="mb-3 space-y-2 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
-                      <div className="flex items-center gap-4 text-white/80 text-sm">
-                        <div className="flex items-center gap-1.5">
-                          <FaUser className="w-3 h-3" />
-                          <span className="font-medium">{course.instructor?.name || 'غير محدد'}</span>
+                  {/* Content Side (Left in RTL) */}
+                  <div className="flex-1 p-6 lg:p-8 flex flex-col justify-between">
+                    <div>
+                      {/* Header */}
+                      <div className="mb-4">
+                        <div className="flex justify-between items-start">
+                          <h3 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white mb-1 leading-tight">
+                            {course.title}
+                          </h3>
                         </div>
-                        <div className="flex items-center gap-1.5">
-                          <FaPlay className="w-3 h-3" />
-                          <span className="font-medium">
-                            {(course.directLessons?.length || 0) +
-                              (course.units?.reduce((total, unit) => total + (unit.lessons?.length || 0), 0) || 0)} درس
+                        <p className="text-primary font-semibold text-lg" dir="ltr">
+                          {course.subtitle || 'UI/UX Diploma'}
+                        </p>
+                      </div>
+
+                      {/* Description */}
+                      <p className="text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
+                        {course.description.length > 150 ? course.description.slice(0, 150) + "..." : course.description}
+                      </p>
+
+                      {/* Stats Grid */}
+                      <div className="grid grid-cols-2 gap-y-4 gap-x-8 mb-8 max-w-lg">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white shrink-0">
+                            <FaClock className="w-4 h-4" />
+                          </div>
+                          <span className="text-gray-700 dark:text-gray-200 font-medium whitespace-nowrap">
+                            {(course.directLessons?.length || 0) * 1.5 + 20}+ ساعة
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white shrink-0">
+                            <FaPlay className="w-4 h-4" />
+                          </div>
+                          <span className="text-gray-700 dark:text-gray-200 font-medium whitespace-nowrap">
+                            +{(course.directLessons?.length || 0) + 15} فيديو
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white shrink-0">
+                            <FaCheckCircle className="w-4 h-4" />
+                          </div>
+                          <span className="text-gray-700 dark:text-gray-200 font-medium whitespace-nowrap">
+                            +70 تاسك
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white shrink-0">
+                            <FaChartLine className="w-4 h-4" />
+                          </div>
+                          <span className="text-gray-700 dark:text-gray-200 font-medium whitespace-nowrap">
+                            +5 مشاريع
                           </span>
                         </div>
                       </div>
                     </div>
 
-                    {/* Course Title */}
-                    <h3 className="text-2xl font-bold text-white mb-2 line-clamp-2 leading-tight drop-shadow-lg">
-                      {course.title}
-                    </h3>
+                    {/* Footer: Price & Actions */}
+                    <div className="flex flex-col sm:flex-row items-center justify-between gap-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+                      <div className="text-2xl lg:text-3xl font-bold text-primary group-hover:scale-110 transition-transform duration-300">
+                        {course.price > 0 ? `${course.price} L.E` : 'مجاني'}
+                      </div>
 
-                    {/* Subject */}
-                    <p className="text-white/80 text-sm mb-4 font-semibold tracking-wide">
-                      {course.description.slice(0, 80)}...
-                    </p>
-
-                    {/* Action Buttons */}
-                    <div className="flex gap-3 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-100">
-                      <Link
-                        to={`/courses/${course._id}`}
-                        className="flex-1 bg-white/20 backdrop-blur-md hover:bg-white/30 text-white text-center py-3.5 px-5 rounded-xl font-bold transition-all duration-300 flex items-center justify-center gap-2 border border-white/30 hover:border-white/50 hover:scale-105 shadow-lg"
-                      >
-                        <FaEye className="w-4 h-4" />
-                        <span>شوف التفاصيل</span>
-                      </Link>
-                      <Link
-                        to="/courses"
-                        className="p-3.5 bg-primary/90 backdrop-blur-md hover:bg-primary text-white rounded-xl transition-all duration-300 flex items-center justify-center border border-primary/50 hover:border-primary-light hover:scale-105 shadow-lg"
-                      >
-                        <FaArrowRight className="w-4 h-4" />
-                      </Link>
+                      <div className="flex items-center gap-3 w-full sm:w-auto">
+                        <Link
+                          to={`/courses/${course._id}`}
+                          className="px-6 py-3 rounded-xl border-2 border-primary text-primary font-bold hover:bg-primary/5 transition-colors w-full sm:w-auto text-center"
+                        >
+                          اعرف أكثر
+                        </Link>
+                        <button
+                          onClick={() => window.location.href = '/signup'}
+                          className="px-8 py-3 rounded-xl bg-primary text-white font-bold shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40 hover:-translate-y-1 transition-all duration-300 w-full sm:w-auto text-center"
+                        >
+                          اشترك دلوقتي
+                        </button>
+                      </div>
                     </div>
                   </div>
-
-                  {/* Hover Effect Indicator */}
-                  <div className="absolute top-4 left-4 opacity-0 group-hover:opacity-100 transition-all duration-500 z-20">
-                    <div className="w-3 h-3 bg-primary-light rounded-full animate-pulse shadow-lg"></div>
-                  </div>
-
-                  {/* Bottom gradient for better text readability */}
-                  <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black/80 to-transparent z-5"></div>
                 </div>
               ))}
             </div>
@@ -302,6 +314,9 @@ export default function HomePage() {
           )}
         </div>
       </section>
+
+      {/* Testimonials Section */}
+      <TestimonialsSection />
 
       {/* Scroll to Top Button */}
       {
