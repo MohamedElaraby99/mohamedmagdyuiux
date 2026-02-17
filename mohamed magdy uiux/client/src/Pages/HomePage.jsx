@@ -222,153 +222,6 @@ export default function HomePage() {
         <AnimatedHero onGetStarted={onGetStarted} />
       </div>
 
-      {/* Stages Section - Educational Levels with Background Images */}
-      <section className={`py-20 bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 transition-all duration-700 ease-out ${heroLoaded
-        ? 'opacity-100 translate-y-0'
-        : 'opacity-0 translate-y-8'
-        }`}
-        dir="rtl"
-        style={{ transitionDelay: '100ms' }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className={`text-center mb-12 transition-all duration-700 ease-out ${heroLoaded
-            ? 'opacity-100 scale-100'
-            : 'opacity-0 scale-95'
-            }`}
-            style={{ transitionDelay: '200ms' }}>
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
-              {isLoggedIn && userStageId
-                ? (stages?.find(s => (s._id || s.id) === userStageId)?.name || 'مرحلتك الدراسية')
-                : 'المراحل الدراسية'}
-            </h2>
-            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-              {isLoggedIn && userStageId
-                ? 'استعرض الكورسات المتاحة لمرحلتك الدراسية'
-                : 'اختر مرحلتك الدراسية لعرض الكورسات المناسبة لك'}
-            </p>
-          </div>
-
-          {stagesLoading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="h-80 bg-gray-200 dark:bg-gray-700 rounded-3xl animate-pulse"></div>
-              ))}
-            </div>
-          ) : stages && stages.length > 0 ? (
-            <div className={`grid gap-8 ${isLoggedIn && userStageId ? 'grid-cols-1 max-w-lg mx-auto' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'}`}>
-              {/* Filter stages: if logged in, show only user's stage; otherwise show all */}
-              {(isLoggedIn && userStageId
-                ? stages.filter(s => (s._id || s.id) === userStageId)
-                : stages
-              ).map((stage, index) => {
-                const stageId = stage._id || stage.id;
-                const stageCourseCount = featuredCourses?.filter(c =>
-                  (c.stage?._id || c.stage?.id || c.stage) === stageId
-                ).length || 0;
-                const stageImage = stage.image?.secure_url;
-                const baseUrl = import.meta.env.VITE_REACT_APP_API_URL?.replace('/api/v1', '') || 'http://localhost:4095';
-
-                return (
-                  <Link
-                    key={stageId}
-                    to={`/courses?stage=${stageId}`}
-                    className={`group relative h-72 md:h-80 rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:scale-[1.03] hover:-translate-y-2 ${heroLoaded
-                      ? 'opacity-100 translate-y-0'
-                      : 'opacity-0 translate-y-8'
-                      }`}
-                    style={{ transitionDelay: `${300 + (index * 100)}ms` }}
-                  >
-                    {/* Background Image */}
-                    <div className="absolute inset-0">
-                      {stageImage ? (
-                        <img
-                          src={stageImage.startsWith('http') ? stageImage : `${baseUrl}${stageImage}`}
-                          alt={stage.name}
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                          onError={(e) => {
-                            e.target.style.display = 'none';
-                          }}
-                        />
-                      ) : null}
-
-                      {/* Fallback gradient when no image */}
-                      {/* Fallback gradient when no image */}
-                      <div className={`absolute inset-0 bg-gradient-to-br from-primary/80 via-primary to-primary-dark ${stageImage ? 'hidden' : ''}`}>
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <FaGraduationCap className="text-9xl text-white opacity-20" />
-                        </div>
-                        {/* Decorative elements */}
-                        <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
-                        <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2"></div>
-                      </div>
-                    </div>
-
-                    {/* Overlay Gradient - Enhanced */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent group-hover:from-black/95 transition-all duration-500"></div>
-
-                    {/* Glow Effect on Hover */}
-                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-t from-primary/20 to-transparent"></div>
-
-                    {/* Course Count Badge */}
-                    <div className="absolute top-5 right-5 z-10">
-                      <div className="flex items-center gap-2 px-4 py-2 bg-white/95 backdrop-blur-md text-primary font-bold rounded-full shadow-lg">
-                        <FaBook className="text-sm" />
-                        <span>{stageCourseCount} كورس</span>
-                      </div>
-                    </div>
-
-                    {/* Content */}
-                    <div className="absolute inset-0 flex flex-col justify-end p-8 z-10">
-                      {/* Stage Name */}
-                      <h3 className="text-3xl md:text-4xl font-bold text-white mb-3 drop-shadow-lg">
-                        {stage.name}
-                      </h3>
-
-                      {/* Description if available */}
-                      {stage.description && (
-                        <p className="text-white/80 text-base mb-4 line-clamp-2 leading-relaxed">
-                          {stage.description}
-                        </p>
-                      )}
-
-                      {/* CTA Button */}
-                      <div className="flex items-center justify-between mt-2">
-                        <span className="text-primary-light font-semibold text-lg group-hover:text-white transition-colors">
-                          استعرض الكورسات
-                        </span>
-                        <div className="w-12 h-12 flex items-center justify-center bg-primary group-hover:bg-primary-dark text-white rounded-full shadow-lg transform group-hover:translate-x-1 transition-all duration-300">
-                          <FaArrowLeft className="text-lg" />
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Border Glow on Hover */}
-                    <div className="absolute inset-0 rounded-3xl border-2 border-transparent group-hover:border-primary/60 transition-all duration-500"></div>
-                  </Link>
-                );
-              })}
-            </div>
-          ) : (
-            <div className="text-center py-12">
-              <FaGraduationCap className="text-6xl text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-500 dark:text-gray-400 text-xl">لا توجد مراحل متاحة حالياً</p>
-            </div>
-          )}
-
-          {/* View All Courses Button - Only show for guests */}
-          {!(isLoggedIn && userStageId) && (
-            <div className="text-center mt-12">
-              <Link
-                to="/courses"
-                className="inline-flex items-center gap-3 px-8 py-4 btn-primary font-bold rounded-xl text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
-              >
-                <span>عرض جميع الكورسات</span>
-                <FaArrowRight />
-              </Link>
-            </div>
-          )}
-        </div>
-      </section>
-
       {/* Featured Courses Section */}
       <section className={`py-20 bg-white dark:bg-gray-800 transition-all duration-700 ease-out ${heroLoaded
         ? 'opacity-100 translate-y-0'
@@ -542,374 +395,11 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
 
-          {/* Section Header */}
-          <div className={`text-center mb-16 transition-all duration-700 ease-out ${heroLoaded
-            ? 'opacity-100 scale-100'
-            : 'opacity-0 scale-95'
-            }`}
-            style={{ transitionDelay: '600ms' }}>
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
-              إيه اللي هتلاقيه على المنصة؟
-            </h2>
-          </div>
+          
 
-          {/* Features Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {/* Feature 1 - Periodic Follow-up */}
-            <div className={`bg-gray-100 dark:bg-gray-700 rounded-lg p-6 relative transition-all duration-500 ease-out ${heroLoaded
-              ? 'opacity-100 translate-y-0 scale-100'
-              : 'opacity-0 translate-y-8 scale-95'
-              }`}
-              style={{ transitionDelay: '800ms' }}>
-              <div className="absolute top-4 right-4">
-                <div className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center">
-                  <FaChartLine className="text-white text-xl" />
-                </div>
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4 text-right pr-16">
-                متابعة دورية وتقييم مستمر
-              </h3>
-              <p className="text-gray-600 dark:text-gray-300 text-right leading-relaxed">
-                تقدمك بيتراجع أسبوعياً، وبنقدملك توصيات حسب احتياجك، ومتابعة أول بأول.
-              </p>
-            </div>
-
-            {/* Feature 2 - Exam Models */}
-            <div className={`bg-gray-100 dark:bg-gray-700 rounded-lg p-6 relative transition-all duration-500 ease-out ${heroLoaded
-              ? 'opacity-100 translate-y-0 scale-100'
-              : 'opacity-0 translate-y-8 scale-95'
-              }`}
-              style={{ transitionDelay: '900ms' }}>
-              <div className="absolute top-4 right-4">
-                <div className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center">
-                  <FaAward className="text-white text-xl" />
-                </div>
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4 text-right pr-16">
-                نماذج امتحانات بنفس النظام
-              </h3>
-              <p className="text-gray-600 dark:text-gray-300 text-right leading-relaxed">
-                امتحانات تفاعلية بنفس شكل امتحانات الثانوية العامة، عشان تعيش جو الامتحان على المنصة.
-              </p>
-            </div>
-
-            {/* Feature 3 - Simplified Explanation */}
-            <div className={`bg-gray-100 dark:bg-gray-700 rounded-lg p-6 relative transition-all duration-500 ease-out ${heroLoaded
-              ? 'opacity-100 translate-y-0 scale-100'
-              : 'opacity-0 translate-y-8 scale-95'
-              }`}
-              style={{ transitionDelay: '1000ms' }}>
-              <div className="absolute top-4 right-4">
-                <div className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center">
-                  <FaCheckCircle className="text-white text-xl" />
-                </div>
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4 text-right pr-16">
-                شرح مبسط ومركز
-              </h3>
-              <p className="text-gray-600 dark:text-gray-300 text-right leading-relaxed">
-                شرح النظريات والمفاهيم زي ما بتفهمها في حياتك اليومية، بعيد عن التعقيد الأكاديمي.
-              </p>
-            </div>
-
-            {/* Feature 4 - Focused Review Videos */}
-            <div className={`bg-gray-100 dark:bg-gray-700 rounded-lg p-6 relative transition-all duration-500 ease-out ${heroLoaded
-              ? 'opacity-100 translate-y-0 scale-100'
-              : 'opacity-0 translate-y-8 scale-95'
-              }`}
-              style={{ transitionDelay: '1100ms' }}>
-              <div className="absolute top-4 right-4">
-                <div className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center">
-                  <FaClock className="text-white text-xl" />
-                </div>
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4 text-right pr-16">
-                فيديوهات مراجعة مركزة ليالي الامتحان
-              </h3>
-              <p className="text-gray-600 dark:text-gray-300 text-right leading-relaxed">
-                فيديوهات مراجعة قصيرة مركزة على أهم النقاط اللي محتاج تذاكرها قبل ما تدخل قاعة الامتحان.
-              </p>
-            </div>
-
-            {/* Feature 5 - Direct Interaction */}
-            <div className={`bg-gray-100 dark:bg-gray-700 rounded-lg p-6 relative transition-all duration-500 ease-out ${heroLoaded
-              ? 'opacity-100 translate-y-0 scale-100'
-              : 'opacity-0 translate-y-8 scale-95'
-              }`}
-              style={{ transitionDelay: '1200ms' }}>
-              <div className="absolute top-4 right-4">
-                <div className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center">
-                  <FaComments className="text-white text-xl" />
-                </div>
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4 text-right pr-16">
-                تفاعل مباشر مع المدرسين
-              </h3>
-              <p className="text-gray-600 dark:text-gray-300 text-right leading-relaxed">
-                أي استفسار أو نقطة مش واضحة تسأل عنها وإحنا هنرد عليها بشكل فوري، وكده مش هتحس إنك لوحدك.
-              </p>
-            </div>
-
-            {/* Feature 6 - Organized Study Plan */}
-            <div className={`bg-gray-100 dark:bg-gray-700 rounded-lg p-6 relative transition-all duration-500 ease-out ${heroLoaded
-              ? 'opacity-100 translate-y-0 scale-100'
-              : 'opacity-0 translate-y-8 scale-95'
-              }`}
-              style={{ transitionDelay: '1300ms' }}>
-              <div className="absolute top-4 right-4">
-                <div className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center">
-                  <FaGraduationCap className="text-white text-xl" />
-                </div>
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4 text-right pr-16">
-                خطة مذاكرة منظمة
-              </h3>
-              <p className="text-gray-600 dark:text-gray-300 text-right leading-relaxed">
-                المنصة بتديك جدول مذاكرة جاهز حسب وقتك ومستواك، عشان تذاكر بتركيز وراحة.
-              </p>
-            </div>
-          </div>
+         
         </div>
       </section>
-
-      {/* Featured Subjects Section */}
-      {/* <section className={`py-20 bg-gray-50 dark:bg-gray-900 transition-all duration-700 ease-out ${
-        heroLoaded 
-          ? 'opacity-100 translate-y-0' 
-          : 'opacity-0 translate-y-8'
-      }`} 
-      dir="rtl"
-      style={{ transitionDelay: '1400ms' }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className={`text-center mb-16 transition-all duration-700 ease-out ${
-            heroLoaded 
-              ? 'opacity-100 scale-100' 
-              : 'opacity-0 scale-95'
-          }`}
-          style={{ transitionDelay: '1600ms' }}>
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
-              المواد الدراسية
-            </h2>
-            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-              اكتشف موادنا الأكثر شعبية وأعلى تقييماً
-            </p>
-          </div>
-
-          {featuredSubjects && featuredSubjects.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {featuredSubjects.slice(0, 6).map((subject, index) => (
-                <div 
-                  key={subject._id} 
-                  className={`transform hover:scale-105 transition-all duration-500 ease-out ${
-                    heroLoaded 
-                      ? 'opacity-100 translate-y-0 scale-100' 
-                      : 'opacity-0 translate-y-8 scale-95'
-                  }`}
-                  style={{ 
-                    transitionDelay: `${1800 + (index * 100)}ms`,
-                    transitionProperty: 'opacity, transform, scale'
-                  }}
-                >
-                  <Suspense fallback={
-                    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 animate-pulse">
-                      <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-4"></div>
-                      <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-1/2"></div>
-                    </div>
-                  }>
-                    <SubjectCard subject={subject} />
-                  </Suspense>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12">
-              <div className="text-6xl mb-4 animate-bounce">📚</div>
-              <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-2">
-                لا توجد مواد مميزة بعد
-              </h3>
-              <p className="text-gray-600 dark:text-gray-300">
-                عد قريباً لمواد رائعة!
-              </p>
-            </div>
-          )}
-        </div>
-      </section> */}
-
-      {/* Instructor Section */}
-      {/* <Suspense fallback={
-        <div className="py-20 bg-white dark:bg-gray-800">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
-              <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/3 mx-auto mb-4 animate-pulse"></div>
-              <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2 mx-auto animate-pulse"></div>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {[1, 2, 3].map(i => (
-                <div key={i} className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 animate-pulse">
-                  <div className="h-32 bg-gray-200 dark:bg-gray-700 rounded-full w-32 mx-auto mb-4"></div>
-                  <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mx-auto mb-2"></div>
-                  <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-1/2 mx-auto"></div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      }>
-        <InstructorSection />
-      </Suspense> */}
-
-
-      {/* Contact Section */}
-      <section className="py-16 px-4 lg:px-8 bg-white dark:bg-gray-900">
-        <div className="max-w-4xl mx-auto">
-          {/* Contact Information */}
-          <div className="space-y-8">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
-                {CONTACT.sectionTitle}
-              </h2>
-              <p className="text-gray-600 dark:text-gray-300">
-                {CONTACT.sectionSubtitle}
-              </p>
-            </div>
-
-            {/* Contact Details */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Phone */}
-              <div className="flex items-center p-4 bg-gray-50 dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300">
-                <div className="flex-shrink-0 w-12 h-12 bg-primary/20 dark:bg-primary/20 rounded-full flex items-center justify-center mr-4">
-                  <FaWhatsapp className="text-primary dark:text-primary-light text-xl" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-gray-900 dark:text-white">{CONTACT.bookingPhoneLabel}</h3>
-                  <a href={`https://wa.me/${CONTACT.bookingPhone.replace(/[^0-9]/g, '')}`} className="text-primary dark:text-primary-light hover:underline">
-                    {CONTACT.bookingPhone}
-                  </a>
-                </div>
-              </div>
-
-              {/* WhatsApp */}
-              <div className="flex items-center p-4 bg-gray-50 dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300">
-                <div className="flex-shrink-0 w-12 h-12 bg-primary/20 dark:bg-primary/20 rounded-full flex items-center justify-center mr-4">
-                  <FaWhatsapp className="text-primary dark:text-primary-light text-xl" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-gray-900 dark:text-white">{CONTACT.supportPhoneLabel}</h3>
-                  <a href={`https://wa.me/${CONTACT.supportPhone.replace(/[^0-9]/g, '')}`} className="text-primary dark:text-primary-light hover:underline">
-                    {CONTACT.supportPhone}
-                  </a>
-                </div>
-              </div>
-            </div>
-
-            {/* Social Media */}
-            <div className="mt-12 text-center">
-              <h3 className="text-2xl font-semibold text-gray-900 dark:text-white mb-8">
-                تابعنا
-              </h3>
-              <div className="flex flex-wrap justify-center gap-6 max-w-md mx-auto">
-                {SOCIAL_MEDIA.facebook.enabled && (
-                  <a
-                    href={SOCIAL_MEDIA.facebook.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group flex flex-col items-center p-4 bg-gray-50 dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:text-primary hover:scale-105"
-                    title="Facebook"
-                  >
-                    <div className="w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mb-2 group-hover:bg-opacity-80 transition-colors">
-                      <FaFacebook className="text-2xl" />
-                    </div>
-                    <span className="text-xs font-medium text-gray-600 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white transition-colors">
-                      {SOCIAL_MEDIA.facebook.label}
-                    </span>
-                  </a>
-                )}
-                {SOCIAL_MEDIA.youtube.enabled && (
-                  <a
-                    href={SOCIAL_MEDIA.youtube.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group flex flex-col items-center p-4 bg-gray-50 dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:text-primary hover:scale-105"
-                    title="YouTube"
-                  >
-                    <div className="w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mb-2 group-hover:bg-opacity-80 transition-colors">
-                      <FaYoutube className="text-2xl" />
-                    </div>
-                    <span className="text-xs font-medium text-gray-600 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white transition-colors">
-                      {SOCIAL_MEDIA.youtube.label}
-                    </span>
-                  </a>
-                )}
-                {SOCIAL_MEDIA.tiktok.enabled && (
-                  <a
-                    href={SOCIAL_MEDIA.tiktok.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group flex flex-col items-center p-4 bg-gray-50 dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:text-primary hover:scale-105"
-                    title="Tiktok"
-                  >
-                    <div className="w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mb-2 group-hover:bg-opacity-80 transition-colors">
-                      <FaTiktok className="text-2xl" />
-                    </div>
-                    <span className="text-xs font-medium text-gray-600 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white transition-colors">
-                      {SOCIAL_MEDIA.tiktok.label}
-                    </span>
-                  </a>
-                )}
-                {SOCIAL_MEDIA.instagram.enabled && (
-                  <a
-                    href={SOCIAL_MEDIA.instagram.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group flex flex-col items-center p-4 bg-gray-50 dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:text-primary hover:scale-105"
-                    title="Instagram"
-                  >
-                    <div className="w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mb-2 group-hover:bg-opacity-80 transition-colors">
-                      <FaInstagram className="text-2xl" />
-                    </div>
-                    <span className="text-xs font-medium text-gray-600 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white transition-colors">
-                      {SOCIAL_MEDIA.instagram.label}
-                    </span>
-                  </a>
-                )}
-              </div>
-            </div>
-
-
-          </div>
-        </div>
-      </section>
-
-      {/* Partner Section */}
-      {/* <section className="py-16 bg-white dark:bg-gray-800" dir="rtl">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-3">
-              شركاؤنا
-            </h2>
-            <p className="text-lg text-gray-600 dark:text-gray-300">
-              شريكنا التقني: 
-              <a
-                href="https://fikra.solutions/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-semibold text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300"
-              >
-                Fikra Software
-              </a>
-            </p>
-          </div>
-          <div className="flex items-center justify-center">
-            <a href="https://fikra.solutions/" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center">
-              <img
-                src={fikraLogo}
-                alt="Fikra Software Logo"
-                className="h-24 md:h-32 object-contain drop-shadow-lg hover:opacity-90 transition"
-              />
-            </a>
-          </div>
-        </div>
-      </section> */}
 
       {/* Scroll to Top Button */}
       {
@@ -923,18 +413,6 @@ export default function HomePage() {
           </button>
         )
       }
-
-      {/* Floating WhatsApp Button */}
-      <a
-        href={`https://wa.me/2${PAYMENT.whatsappContact.phone}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="fixed left-8 bottom-8 z-50 p-4 bg-green-500 hover:bg-green-600 text-white rounded-full shadow-lg hover:shadow-xl transform hover:scale-110 transition-all duration-300 group animate-bounce"
-        aria-label="Contact us on WhatsApp"
-        title="تواصل معنا على واتساب"
-      >
-        <FaWhatsapp className="w-6 h-6" />
-      </a>
     </Layout >
   );
 }

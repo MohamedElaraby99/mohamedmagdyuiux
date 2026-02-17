@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { FaPlay, FaArrowLeft } from 'react-icons/fa';
 import { HERO, BRAND } from '../Constants/LayoutConfig';
 import heroImage from '../assets/image.png';
+import creditCardImage from '../assets/image copy.png';
 
 const AnimatedHero = ({ onGetStarted }) => {
   const [isVisible, setIsVisible] = useState(false);
@@ -93,8 +94,12 @@ const AnimatedHero = ({ onGetStarted }) => {
                 className="hero-main-image"
               />
 
-        
-
+              {/* Floating Credit Card */}
+              <img
+                src={creditCardImage}
+                alt="Credit Card"
+                className="hero-credit-card"
+              />
 
             </div>
           </div>
