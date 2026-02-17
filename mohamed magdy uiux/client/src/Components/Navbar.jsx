@@ -119,8 +119,6 @@ export default function Navbar() {
             className="flex items-center gap-3 group"
           >
             <div className="relative">
-              {/* Glow Effect */}
-              <div className="absolute -inset-2 bg-gradient-to-r from-primary/20 to-primary-light/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
 
               {/* Logo Container */}
               <div className="relative rounded-xl group-hover:shadow-xl transition-all duration-300">

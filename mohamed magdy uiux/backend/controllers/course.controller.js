@@ -151,18 +151,7 @@ export const getAllCourses = async (req, res, next) => {
       userStageName: req.user?.stageName
     });
 
-    // If user is logged in and has a stage, filter courses by their stage
-    if (req.user && req.user.stage) {
-      query.stage = req.user.stage;
-
-      // Stage filtering only (category field removed)
-
-    } else {
-
-      if (req.user && !req.user.stage) {
-
-      }
-    }
+    /* Stage filtering removed */
 
     const courses = await Course.find(query)
       .populate('instructor', 'name')
@@ -284,23 +273,7 @@ export const getFeaturedCourses = async (req, res, next) => {
 
     let query = {};
 
-    // Check if this route also needs stage filtering (based on how it's called)
-    const token = req.cookies?.token || req.header('Authorization')?.replace('Bearer ', '');
-    if (token) {
-      try {
-        const userDetails = await jwt.verify(token, process.env.JWT_SECRET);
-        const User = (await import('../models/user.model.js')).default;
-        const user = await User.findById(userDetails.id).populate('stage');
-        if (user && user.stage) {
-          query.stage = user.stage._id;
-
-          // Stage filtering only (category field removed)
-
-        }
-      } catch (error) {
-
-      }
-    }
+    /* Stage filtering removed */
 
     const courses = await Course.find({ ...query, featured: true })
       .populate('instructor', 'name')

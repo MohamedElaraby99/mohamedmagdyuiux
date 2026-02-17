@@ -22,7 +22,7 @@ export default function Signup() {
   const [previewImage, setPreviewImage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
+  /* Removed duplicate showPassword declaration */
   const [captchaSessionId, setCaptchaSessionId] = useState("");
   const [isCaptchaVerified, setIsCaptchaVerified] = useState(false);
   const [captchaReset, setCaptchaReset] = useState(false);
@@ -777,4 +777,3 @@ return (
     {/* Terms and Conditions Modal Removed */}
   </Layout>
 );
-}

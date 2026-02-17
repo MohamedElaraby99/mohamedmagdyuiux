@@ -34,7 +34,7 @@ const register = async (req, res, next) => {
             }
         }
 
-        const { fullName, email, password, phoneNumber, fatherPhoneNumber, governorate, stage, age, adminCode, deviceInfo } = requestBody;
+        const { fullName, email, password, phoneNumber, governorate, age, adminCode, deviceInfo } = requestBody;
 
         // Determine user role based on admin code
         let userRole = 'USER';
@@ -53,8 +53,8 @@ const register = async (req, res, next) => {
             if (!phoneNumber) {
                 return next(new AppError("Phone number is required for regular users", 400));
             }
-            if (!governorate || !stage || !age) {
-                return next(new AppError("Governorate, stage, and age are required for regular users", 400));
+            if (!governorate || !age) {
+                return next(new AppError("Governorate and age are required for regular users", 400));
             }
         } else if (userRole === 'ADMIN') {
             // For ADMIN role: email is required
@@ -94,9 +94,7 @@ const register = async (req, res, next) => {
         if (userRole === 'USER') {
             userData.phoneNumber = phoneNumber;
             if (email) userData.email = email; // Optional email for USER
-            if (fatherPhoneNumber) userData.fatherPhoneNumber = fatherPhoneNumber;
             userData.governorate = governorate;
-            userData.stage = stage;
             userData.age = parseInt(age);
         } else if (userRole === 'ADMIN') {
             userData.email = email;
@@ -204,10 +202,7 @@ const register = async (req, res, next) => {
 
         const token = await user.generateJWTToken();
 
-        // Populate stage for regular users
-        if (user.role !== 'ADMIN' && user.role !== 'SUPER_ADMIN' && user.stage) {
-            await user.populate('stage', 'name');
-        }
+        /* Stage population removed */
 
         res.cookie("token", token, cookieOptions);
 
@@ -326,10 +321,7 @@ const login = async (req, res, next) => {
 
         user.password = undefined;
 
-        // Populate stage for regular users
-        if (user.role !== 'ADMIN' && user.role !== 'SUPER_ADMIN' && user.stage) {
-            await user.populate('stage', 'name');
-        }
+        /* Stage population removed */
 
         // Set access token as httpOnly cookie (long-lived to match JWT expiration)
         res.cookie('token', tokens.accessToken, {
@@ -460,7 +452,7 @@ const refreshToken = async (req, res, next) => {
 const getProfile = async (req, res, next) => {
     try {
         const { id } = req.user;
-        const user = await userModel.findById(id).populate('stage', 'name');
+        const user = await userModel.findById(id);
 
         if (!user) {
             return next(new AppError('User not found', 404));
@@ -471,9 +463,7 @@ const getProfile = async (req, res, next) => {
             fullName: user.fullName,
             email: user.email,
             phoneNumber: user.phoneNumber,
-            fatherPhoneNumber: user.fatherPhoneNumber,
             governorate: user.governorate,
-            stage: user.stage,
             age: user.age,
             role: user.role
         });
@@ -600,7 +590,7 @@ const changePassword = async (req, res, next) => {
 // update profile
 const updateUser = async (req, res, next) => {
     try {
-        const { fullName, phoneNumber, fatherPhoneNumber, governorate, stage, age } = req.body;
+        const { fullName, phoneNumber, governorate, age } = req.body;
         const { id } = req.user;
 
         const user = await userModel.findById(id);
@@ -616,14 +606,8 @@ const updateUser = async (req, res, next) => {
         if (phoneNumber) {
             user.phoneNumber = phoneNumber;
         }
-        if (fatherPhoneNumber) {
-            user.fatherPhoneNumber = fatherPhoneNumber;
-        }
         if (governorate) {
             user.governorate = governorate;
-        }
-        if (stage) {
-            user.stage = stage;
         }
         if (age) {
             user.age = parseInt(age);
@@ -725,11 +709,8 @@ const getAllUsers = async (req, res, next) => {
             page: parseInt(page),
             limit: parseInt(limit),
             sort,
-            select: 'fullName email phoneNumber role isActive createdAt stage governorate age',
-            populate: {
-                path: 'stage',
-                select: 'name _id'
-            }
+            sort,
+            select: 'fullName email phoneNumber role isActive createdAt governorate age'
         };
 
         const users = await userModel.paginate(query, options);
