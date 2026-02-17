@@ -355,7 +355,7 @@ const ExamModal = ({ isOpen, onClose, exam, courseId, lessonId, unitId, examType
                   percentage >= 80 ? 'أداء رائع! واصل التقدم' :
                     percentage >= 70 ? 'أداء جيد! يمكنك تحسينه أكثر' :
                       'لقد نجحت! استمر في التعلم')
-              : 'لا تستسلم، راجع المادة وحاول مرة أخرى'}
+              : 'لا تستسلم، راجع التصنيف وحاول مرة أخرى'}
           </p>
         </div>
 

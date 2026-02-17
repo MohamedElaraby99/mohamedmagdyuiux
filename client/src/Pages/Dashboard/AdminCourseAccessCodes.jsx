@@ -189,7 +189,7 @@ export default function AdminCourseAccessCodes() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    const ts = new Date().toISOString().slice(0,19).replace(/[:T]/g,'-');
+    const ts = new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-');
     a.download = `course-access-codes-${ts}.csv`;
     document.body.appendChild(a);
     a.click();
@@ -280,7 +280,7 @@ export default function AdminCourseAccessCodes() {
       return '';
     }
   };
-  
+
   const getUserEmail = (code) => {
     try {
       if (typeof code.usedBy === 'object' && code.usedBy?.email) {
@@ -304,7 +304,7 @@ export default function AdminCourseAccessCodes() {
         <form onSubmit={onGenerate} className="bg-white dark:bg-gray-800 rounded-xl shadow p-4 mb-6 grid grid-cols-1 md:grid-cols-6 gap-4" dir="rtl">
           <div>
             <label className="block text-sm mb-1">المرحلة</label>
-            <select name="stageId" value={form.stageId} onChange={(e)=>{onChange(e); setForm(p=>({...p, courseId: ""}));}} className="w-full p-2 rounded border dark:bg-gray-700">
+            <select name="stageId" value={form.stageId} onChange={(e) => { onChange(e); setForm(p => ({ ...p, courseId: "" })); }} className="w-full p-2 rounded border dark:bg-gray-700">
               <option value="">اختر المرحلة</option>
               {stages.map((st) => (
                 <option key={st._id} value={st._id}>{st.name}</option>
@@ -352,7 +352,7 @@ export default function AdminCourseAccessCodes() {
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="px-3 py-2 border border-gray-300 rounded text-sm w-full sm:w-64"
               />
-              <select value={courseFilter} onChange={(e)=>setCourseFilter(e.target.value)} className="px-3 py-2 border border-gray-300 rounded text-sm w-full sm:w-64">
+              <select value={courseFilter} onChange={(e) => setCourseFilter(e.target.value)} className="px-3 py-2 border border-gray-300 rounded text-sm w-full sm:w-64">
                 <option value="">كل الكورسات</option>
                 {courses.map(c => (
                   <option key={c._id} value={c._id}>{c.title}</option>
@@ -378,7 +378,7 @@ export default function AdminCourseAccessCodes() {
                 <tr className="text-sm text-gray-500">
                   <th className="p-2"><input type="checkbox" checked={isAllSelected} onChange={toggleSelectAll} /></th>
                   <th className="p-2">الكود</th>
-                  <th className="p-2">المادة</th>
+                  <th className="p-2">التصنيف</th>
                   <th className="p-2 hidden sm:table-cell">الفترة</th>
                   <th className="p-2">الحالة</th>
                   <th className="p-2 hidden md:table-cell">المُستخدم</th>
@@ -390,7 +390,7 @@ export default function AdminCourseAccessCodes() {
               <tbody>
                 {filteredCodes.map((c) => (
                   <tr key={c._id || c.id} className="border-t border-gray-200 dark:border-gray-700">
-                    <td className="p-2"><input type="checkbox" checked={selected.has(c._id || c.id)} onChange={()=>toggleSelectOne(c._id || c.id)} /></td>
+                    <td className="p-2"><input type="checkbox" checked={selected.has(c._id || c.id)} onChange={() => toggleSelectOne(c._id || c.id)} /></td>
                     <td className="p-2 font-mono">
                       <span className="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded">{String(c.code || '')}</span>
                     </td>
@@ -479,14 +479,14 @@ export default function AdminCourseAccessCodes() {
 
                 <div className="space-y-3">
                   <label className="flex items-center gap-2">
-                    <input type="radio" name="exportMode" value="selected" checked={exportMode==='selected'} onChange={()=>setExportMode('selected')} />
+                    <input type="radio" name="exportMode" value="selected" checked={exportMode === 'selected'} onChange={() => setExportMode('selected')} />
                     <span>تصدير الأكواد المحددة ({selected.size})</span>
                   </label>
                   <label className="flex items-start gap-2">
-                    <input type="radio" name="exportMode" value="byCourses" checked={exportMode==='byCourses'} onChange={()=>setExportMode('byCourses')} />
+                    <input type="radio" name="exportMode" value="byCourses" checked={exportMode === 'byCourses'} onChange={() => setExportMode('byCourses')} />
                     <div className="flex-1">
                       <div className="mb-2">تصدير حسب الكورس</div>
-                      <select multiple value={exportCourseIds} onChange={(e)=>setExportCourseIds(Array.from(e.target.selectedOptions).map(o=>o.value))} className="w-full h-40 border rounded p-2 dark:bg-gray-700">
+                      <select multiple value={exportCourseIds} onChange={(e) => setExportCourseIds(Array.from(e.target.selectedOptions).map(o => o.value))} className="w-full h-40 border rounded p-2 dark:bg-gray-700">
                         {courses.map(c => (
                           <option key={c._id} value={c._id}>{c.title}</option>
                         ))}

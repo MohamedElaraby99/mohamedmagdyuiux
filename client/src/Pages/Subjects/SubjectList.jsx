@@ -3,10 +3,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { getAllSubjects } from "../../Redux/Slices/SubjectSlice";
 import Layout from "../../Layout/Layout";
 import SubjectCard from "../../Components/SubjectCard";
-import { 
-  FaSearch, 
-  FaFilter, 
-  FaSort, 
+import {
+  FaSearch,
+  FaFilter,
+  FaSort,
   FaStar,
   FaUsers,
   FaClock
@@ -23,23 +23,23 @@ export default function SubjectList() {
   const [sortBy, setSortBy] = useState("newest");
 
   useEffect(() => {
-    dispatch(getAllSubjects({ 
-      page: currentPage, 
-      category, 
-      search, 
+    dispatch(getAllSubjects({
+      page: currentPage,
+      category,
+      search,
       status,
-      sortBy 
+      sortBy
     }));
   }, [currentPage, category, search, status, sortBy]);
 
   const handleSearch = (e) => {
     e.preventDefault();
-    dispatch(getAllSubjects({ 
-      page: 1, 
-      category, 
-      search, 
+    dispatch(getAllSubjects({
+      page: 1,
+      category,
+      search,
       status,
-      sortBy 
+      sortBy
     }));
   };
 
@@ -62,8 +62,8 @@ export default function SubjectList() {
               {role === "USER" ? "كورساتي" : "Available Courses"}
             </h1>
             <p className="text-lg text-gray-600 dark:text-gray-300">
-              {role === "USER" 
-                ? "استكشف دوراتك الشخصية عبر مختلف المواد" 
+              {role === "USER"
+                ? "استكشف دوراتك الشخصية عبر مختلف التصنيف"
                 : "Explore our comprehensive collection of courses across various subjects"
               }
             </p>
@@ -165,18 +165,17 @@ export default function SubjectList() {
                     {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
                       <button
                         key={page}
-                        onClick={() => dispatch(getAllSubjects({ 
-                          page, 
-                          category, 
-                          search, 
-                          status, 
-                          sortBy 
+                        onClick={() => dispatch(getAllSubjects({
+                          page,
+                          category,
+                          search,
+                          status,
+                          sortBy
                         }))}
-                        className={`px-4 py-2 rounded-lg transition-colors ${
-                          page === currentPage
+                        className={`px-4 py-2 rounded-lg transition-colors ${page === currentPage
                             ? 'bg-green-600 text-white'
                             : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
-                        }`}
+                          }`}
                       >
                         {page}
                       </button>
@@ -192,7 +191,7 @@ export default function SubjectList() {
                 {role === "USER" ? "لا توجد كورسات" : "No courses found"}
               </h3>
               <p className="text-gray-600 dark:text-gray-300 mb-6">
-                {search || category || level 
+                {search || category || level
                   ? (role === "USER" ? "حاول تعديل معايير البحث" : "Try adjusting your search criteria")
                   : (role === "USER" ? "لا توجد كورسات متاحة في الوقت الحالي" : "No courses available at the moment")
                 }

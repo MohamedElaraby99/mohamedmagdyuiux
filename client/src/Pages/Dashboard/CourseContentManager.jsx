@@ -2609,7 +2609,7 @@ const CourseContentManager = () => {
                 onChange={e => setSubjectFilter(e.target.value)}
                 className="w-full sm:w-1/2 p-2 rounded-md border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white text-sm md:text-base text-right"
               >
-                <option value="">كل المواد</option>
+                <option value="">كل التصنيف</option>
                 {subjects?.map(subject => (
                   <option key={subject._id} value={subject._id}>
                     {subject.name || subject.title || subject._id}

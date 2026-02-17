@@ -26,7 +26,7 @@ export default function PrivacyPolicy() {
           {/* Content */}
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 border border-gray-100 dark:border-gray-700" dir="rtl">
             <div className="prose prose-lg dark:prose-invert max-w-none">
-              
+
               {/* Introduction */}
               <section className="mb-8">
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 flex items-center">
@@ -34,8 +34,8 @@ export default function PrivacyPolicy() {
                   مقدمة
                 </h2>
                 <p className="text-gray-700 dark:text-gray-300 mb-4">
-                 المنصة ملتزمة بحماية خصوصيتك. 
-                  تشرح سياسة الخصوصية هذه كيف نجمع ونستخدم ونكشف ونحمي معلوماتك 
+                  المنصة ملتزمة بحماية خصوصيتك.
+                  تشرح سياسة الخصوصية هذه كيف نجمع ونستخدم ونكشف ونحمي معلوماتك
                   عند استخدام منصة إدارة التعلم الخاصة بنا.
                 </p>
                 <p className="text-gray-700 dark:text-gray-300">
@@ -62,7 +62,7 @@ export default function PrivacyPolicy() {
                         </p>
                       </div>
                     </div>
-                    
+
                     <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-red-200 dark:border-red-800">
                       <h4 className="font-semibold text-gray-900 dark:text-white mb-3">العقوبات المطبقة:</h4>
                       <ul className="space-y-2 text-gray-700 dark:text-gray-300">
@@ -84,14 +84,14 @@ export default function PrivacyPolicy() {
                         </li>
                       </ul>
                     </div>
-                    
+
                     <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-4 border border-green-200 dark:border-green-800">
                       <h4 className="font-semibold text-green-800 dark:text-green-200 mb-2">ما يعتبر انتهاكاً:</h4>
                       <ul className="space-y-1 text-green-700 dark:text-green-300 text-sm">
                         <li>• تسجيل شاشة الفيديوهات التعليمية</li>
                         <li>• مشاركة روابط المحتوى مع أشخاص آخرين</li>
                         <li>• نشر المحتوى على وسائل التواصل الاجتماعي</li>
-                        <li>• حفظ أو تحميل المواد التعليمية</li>
+                        <li>• حفظ أو تحميلالتصنيفالتعليمية</li>
                         <li>• إعادة توزيع المحتوى بأي شكل من الأشكال</li>
                       </ul>
                     </div>
@@ -105,7 +105,7 @@ export default function PrivacyPolicy() {
                   <FaDatabase className="ml-3 text-green-600" />
                   المعلومات التي نجمعها
                 </h2>
-                
+
                 <div className="space-y-6">
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">المعلومات الشخصية</h3>
@@ -274,7 +274,7 @@ export default function PrivacyPolicy() {
                     نحتفظ بمعلوماتك الشخصية طالما كان حسابك نشطاً أو كما هو مطلوب لتقديم الخدمات.
                   </p>
                   <p className="text-gray-700 dark:text-gray-300">
-                    عند إغلاق حسابك، قد نحتفظ ببعض المعلومات لفترة محدودة للامتثال للقوانين 
+                    عند إغلاق حسابك، قد نحتفظ ببعض المعلومات لفترة محدودة للامتثال للقوانين
                     أو لحل النزاعات أو لتنفيذ اتفاقياتنا.
                   </p>
                 </div>
@@ -369,11 +369,11 @@ export default function PrivacyPolicy() {
                 </h2>
                 <div className="space-y-4">
                   <p className="text-gray-700 dark:text-gray-300">
-                    منصتنا مخصصة للأطفال من سن 5 سنوات وما فوق. نحن نجمع معلومات محدودة من الأطفال 
+                    منصتنا مخصصة للأطفال من سن 5 سنوات وما فوق. نحن نجمع معلومات محدودة من الأطفال
                     ونحصل على موافقة الوالدين عند الحاجة.
                   </p>
                   <p className="text-gray-700 dark:text-gray-300">
-                    إذا كنت أحد الوالدين وتعتقد أن طفلك قد قدم لنا معلومات شخصية، 
+                    إذا كنت أحد الوالدين وتعتقد أن طفلك قد قدم لنا معلومات شخصية،
                     يرجى الاتصال بنا فوراً.
                   </p>
                 </div>
@@ -386,7 +386,7 @@ export default function PrivacyPolicy() {
                 </h2>
                 <div className="space-y-4">
                   <p className="text-gray-700 dark:text-gray-300">
-                    قد نحدث هذه السياسة من وقت لآخر. سنقوم بنشر أي تغييرات على هذه الصفحة 
+                    قد نحدث هذه السياسة من وقت لآخر. سنقوم بنشر أي تغييرات على هذه الصفحة
                     وإخطارك عبر البريد الإلكتروني إذا كانت التغييرات مهمة.
                   </p>
                   <p className="text-gray-700 dark:text-gray-300">
@@ -395,11 +395,11 @@ export default function PrivacyPolicy() {
                 </div>
               </section>
 
-      
+
               {/* Footer */}
               <div className="border-t border-gray-200 dark:border-gray-700 pt-6 mt-8">
                 <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
-                  من خلال استخدام خدماتنا، فإنك توافق على جمع واستخدام معلوماتك 
+                  من خلال استخدام خدماتنا، فإنك توافق على جمع واستخدام معلوماتك
                   كما هو موضح في سياسة الخصوصية هذه.
                 </p>
               </div>

@@ -38,7 +38,7 @@ export const createGroup = asyncHandler(async (req, res) => {
   if (subjects && subjects.length > 0) {
     const existingSubjects = await Subject.find({ _id: { $in: subjects } });
     if (existingSubjects.length !== subjects.length) {
-      throw new ApiError(400, "بعض المواد المحددة غير موجودة");
+      throw new ApiError(400, "بعضالتصنيفالمحددة غير موجودة");
     }
   }
 
@@ -84,18 +84,18 @@ export const getAllGroups = asyncHandler(async (req, res) => {
 
   // Build query
   const query = {};
-  
+
   if (search) {
     query.$or = [
       { name: { $regex: search, $options: 'i' } },
       { description: { $regex: search, $options: 'i' } }
     ];
   }
-  
+
   if (instructor) {
     query.instructor = instructor;
   }
-  
+
   if (status) {
     query.status = status;
   }
@@ -155,9 +155,9 @@ export const updateGroup = asyncHandler(async (req, res) => {
 
   // Check if new name conflicts with existing groups (excluding current group)
   if (updateData.name && updateData.name !== existingGroup.name) {
-    const nameConflict = await Group.findOne({ 
-      name: updateData.name, 
-      _id: { $ne: id } 
+    const nameConflict = await Group.findOne({
+      name: updateData.name,
+      _id: { $ne: id }
     });
     if (nameConflict) {
       throw new ApiError(400, "اسم المجموعة موجود بالفعل");
@@ -179,7 +179,7 @@ export const updateGroup = asyncHandler(async (req, res) => {
   if (updateData.subjects && updateData.subjects.length > 0) {
     const existingSubjects = await Subject.find({ _id: { $in: updateData.subjects } });
     if (existingSubjects.length !== updateData.subjects.length) {
-      throw new ApiError(400, "بعض المواد المحددة غير موجودة");
+      throw new ApiError(400, "بعضالتصنيفالمحددة غير موجودة");
     }
   }
 
@@ -188,9 +188,9 @@ export const updateGroup = asyncHandler(async (req, res) => {
     updateData,
     { new: true, runValidators: true }
   ).populate('instructor', 'name email bio specialization experience')
-   .populate('subjects', 'name description')
-   .populate('students', 'fullName email phoneNumber')
-   .populate('createdBy', 'fullName');
+    .populate('subjects', 'name description')
+    .populate('students', 'fullName email phoneNumber')
+    .populate('createdBy', 'fullName');
 
   res.status(200).json(
     new ApiResponse(200, updatedGroup, "تم تحديث المجموعة بنجاح")
@@ -296,13 +296,13 @@ export const getGroupsStats = asyncHandler(async (req, res) => {
   const activeGroups = await Group.countDocuments({ status: 'active' });
   const inactiveGroups = await Group.countDocuments({ status: 'inactive' });
   const completedGroups = await Group.countDocuments({ status: 'completed' });
-  
+
   const totalStudents = await Group.aggregate([
     { $group: { _id: null, total: { $sum: '$currentStudents' } } }
   ]);
 
-  const averageStudentsPerGroup = totalStudents.length > 0 
-    ? Math.round(totalStudents[0].total / totalGroups * 100) / 100 
+  const averageStudentsPerGroup = totalStudents.length > 0
+    ? Math.round(totalStudents[0].total / totalGroups * 100) / 100
     : 0;
 
   const stats = {

@@ -100,7 +100,7 @@ export default function Navbar() {
     { name: "إدارة المستخدمين", path: "/admin/users", icon: FaUser },
     { name: "إدارة المدونة", path: "/admin/blogs", icon: FaBlog },
     { name: "إدارة الأسئلة والأجوبة", path: "/admin/qa", icon: FaQuestionCircle },
-    { name: "إدارة المواد", path: "/admin/subjects", icon: FaGraduationCap },
+    { name: "إدارة التصنيف", path: "/admin/subjects", icon: FaGraduationCap },
   ];
 
   return (

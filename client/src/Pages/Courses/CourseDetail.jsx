@@ -549,11 +549,13 @@ export default function CourseDetail() {
                 </div>
               </div>
 
-              <div className="absolute top-3 right-3 sm:top-6 sm:right-6">
-                <span className="px-2 py-1 sm:px-3 sm:py-1 bg-white bg-opacity-90 text-gray-800 text-xs sm:text-sm font-medium rounded-full">
-                  {currentCourse.stage?.name || 'غير محدد'}
-                </span>
-              </div>
+              {currentCourse.stage?.name && (
+                <div className="absolute top-3 right-3 sm:top-6 sm:right-6">
+                  <span className="px-2 py-1 sm:px-3 sm:py-1 bg-white bg-opacity-90 text-gray-800 text-xs sm:text-sm font-medium rounded-full">
+                    {currentCourse.stage.name}
+                  </span>
+                </div>
+              )}
             </div>
 
             {/* Course Info */}
@@ -665,12 +667,9 @@ export default function CourseDetail() {
                     <div className="space-y-2 sm:space-y-3 mb-4 sm:mb-6">
                       <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                         <FaBookOpen className="text-gray-400 flex-shrink-0" />
-                        <span className="truncate">المادة: {currentCourse.subject?.title || 'غير محدد'}</span>
+                        <span className="truncate">التصنيف: {currentCourse.subject?.title || 'غير محدد'}</span>
                       </div>
-                      <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-600 dark:text-gray-400">
-                        <FaGraduationCap className="text-gray-400 flex-shrink-0" />
-                        <span className="truncate">المرحلة: {currentCourse.stage?.name || 'غير محدد'}</span>
-                      </div>
+
                     </div>
 
                     {/* Redeem Access Code - Only show if course is NOT purchased */}

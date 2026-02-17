@@ -277,7 +277,7 @@ export default function HomePage() {
                           اعرف أكثر
                         </Link>
                         <button
-                          onClick={() => window.location.href = '/signup'}
+                          onClick={() => window.location.href = '/courses/' + course._id}
                           className="px-8 py-3 rounded-xl bg-primary text-white font-bold shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40 hover:-translate-y-1 transition-all duration-300 w-full sm:w-auto text-center"
                         >
                           اشترك دلوقتي

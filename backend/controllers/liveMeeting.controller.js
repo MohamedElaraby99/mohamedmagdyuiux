@@ -47,7 +47,7 @@ export const createLiveMeeting = asyncHandler(async (req, res, next) => {
   // Validate subject exists
   const subjectExists = await Subject.findById(subject);
   if (!subjectExists) {
-    return next(new AppError('المادة غير موجودة', 404));
+    return next(new AppError('التصنيف غير موجودة', 404));
   }
 
   // Validate attendees if provided

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { FaPlay, FaArrowLeft } from 'react-icons/fa';
+import { FaPlay, FaArrowLeft, FaTimes } from 'react-icons/fa';
 import { HERO, BRAND } from '../Constants/LayoutConfig';
 import heroImage from '../assets/image.png';
 import creditCardImage from '../assets/image copy.png';
@@ -11,6 +11,7 @@ const AnimatedHero = ({ onGetStarted }) => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const navigate = useNavigate();
   const { isLoggedIn } = useSelector((state) => state.auth);
+  const [showVideo, setShowVideo] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => setIsVisible(true), 100);
@@ -78,7 +79,10 @@ const AnimatedHero = ({ onGetStarted }) => {
                 <FaArrowLeft className="hero-btn-icon" />
               </button>
 
-              <button className="hero-btn-secondary">
+              <button
+                className="hero-btn-secondary"
+                onClick={() => setShowVideo(true)}
+              >
                 <FaPlay className="hero-play-icon" />
                 <span>فيديو التفاصيل</span>
               </button>
@@ -105,6 +109,35 @@ const AnimatedHero = ({ onGetStarted }) => {
           </div>
         </div>
       </section>
+
+      {/* Video Modal */}
+      {showVideo && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 transition-opacity duration-300"
+          onClick={() => setShowVideo(false)}
+        >
+          <div
+            className="relative w-full max-w-4xl bg-black rounded-2xl overflow-hidden shadow-2xl transform transition-all duration-300 scale-100 border border-white/10"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setShowVideo(false)}
+              className="absolute top-4 right-4 z-10 p-2 text-white/70 hover:text-white bg-black/40 hover:bg-black/60 rounded-full backdrop-blur-md transition-all duration-200"
+            >
+              <FaTimes size={20} />
+            </button>
+            <div className="aspect-video w-full">
+              <iframe
+                className="w-full h-full"
+                src="https://www.youtube.com/embed/ODpB9-MCa5s?autoplay=1"
+                title="YouTube video player"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+              ></iframe>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -167,7 +167,7 @@ const CourseModal = ({ course, onClose, isOpen }) => {
 
 
           <div>
-            <label className="block text-sm font-medium mb-1">المادة *</label>
+            <label className="block text-sm font-medium mb-1">التصنيف *</label>
             <select
               name="subject"
               value={formData.subject}
@@ -175,7 +175,7 @@ const CourseModal = ({ course, onClose, isOpen }) => {
               className="w-full p-2 border border-gray-300 rounded-md"
               required
             >
-              <option value="">اختر المادة</option>
+              <option value="">اختر التصنيف</option>
               {subjects?.map((subject) => (
                 <option key={subject._id} value={subject._id}>
                   {subject.name || subject.title || subject._id}

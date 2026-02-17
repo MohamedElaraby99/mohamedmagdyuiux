@@ -236,7 +236,6 @@ export default function Students() {
         'البريد الإلكتروني': student.email || '',
         'رقم الهاتف': student.phoneNumber || '',
         'رقم هاتف ولي الأمر': student.fatherPhoneNumber || '',
-        'المرحلة': student.stage?.name || '',
         'المحافظة': student.governorate || '',
         'العمر': student.age || '',
         'التاريخ': new Date(student.createdAt).toLocaleDateString('ar-EG'),
@@ -1024,7 +1023,7 @@ export default function Students() {
                             <thead>
                               <tr className="border-b border-gray-200 dark:border-gray-700">
                                 <th className="text-right py-2">اسم الامتحان</th>
-                                <th className="text-right py-2">المادة</th>
+                                <th className="text-right py-2">التصنيف</th>
                                 <th className="text-right py-2">الدرجة</th>
                                 <th className="text-right py-2">النهاية العظمى</th>
                                 <th className="text-right py-2">النسبة المئوية</th>

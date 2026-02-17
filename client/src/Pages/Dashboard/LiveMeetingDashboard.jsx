@@ -408,7 +408,7 @@ const LiveMeetingDashboard = () => {
                 onChange={(e) => setSubjectFilter(e.target.value)}
                 className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               >
-                <option value="">جميع المواد</option>
+                <option value="">جميع التصنيف</option>
                 {subjects.map((subject) => (
                   <option key={subject._id} value={subject._id}>{subject.title}</option>
                 ))}
@@ -693,7 +693,7 @@ const LiveMeetingDashboard = () => {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      المادة * {subjects?.length > 0 && <span className="text-xs text-gray-500">({subjects.length} متاح)</span>}
+                      التصنيف * {subjects?.length > 0 && <span className="text-xs text-gray-500">({subjects.length} متاح)</span>}
                     </label>
                     <select
                       required
@@ -701,13 +701,13 @@ const LiveMeetingDashboard = () => {
                       onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
                       className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     >
-                      <option value="">اختر المادة</option>
+                      <option value="">اختر التصنيف</option>
                       {subjects && subjects.length > 0 ? (
                         subjects.map((subject) => (
                           <option key={subject._id} value={subject._id}>{subject.title}</option>
                         ))
                       ) : (
-                        <option value="" disabled>جاري تحميل المواد...</option>
+                        <option value="" disabled>جاري تحميل التصنيف...</option>
                       )}
                     </select>
                   </div>
@@ -871,7 +871,7 @@ const LiveMeetingDashboard = () => {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      المادة * {subjects?.length > 0 && <span className="text-xs text-gray-500">({subjects.length} متاح)</span>}
+                      التصنيف * {subjects?.length > 0 && <span className="text-xs text-gray-500">({subjects.length} متاح)</span>}
                     </label>
                     <select
                       required
@@ -879,7 +879,7 @@ const LiveMeetingDashboard = () => {
                       onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
                       className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     >
-                      <option value="">اختر المادة</option>
+                      <option value="">اختر التصنيف</option>
                       {subjects.map((subject) => (
                         <option key={subject._id} value={subject._id}>{subject.title}</option>
                       ))}

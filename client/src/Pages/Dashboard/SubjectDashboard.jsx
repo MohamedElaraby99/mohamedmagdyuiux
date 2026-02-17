@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { 
-  getAllSubjects, 
-  createSubject, 
-  updateSubject, 
+import {
+  getAllSubjects,
+  createSubject,
+  updateSubject,
   deleteSubject,
   toggleFeatured
 } from "../../Redux/Slices/SubjectSlice";
@@ -11,11 +11,11 @@ import { getAllInstructors } from "../../Redux/Slices/InstructorSlice";
 import Layout from "../../Layout/Layout";
 import SubjectCard from "../../Components/SubjectCard";
 import { generateImageUrl } from "../../utils/fileUtils";
-import { 
-  FaPlus, 
-  FaEdit, 
-  FaTrash, 
-  FaStar, 
+import {
+  FaPlus,
+  FaEdit,
+  FaTrash,
+  FaStar,
   FaSearch,
   FaFilter,
   FaTimes,
@@ -77,7 +77,7 @@ export default function SubjectDashboard() {
 
   const handleCreateSubject = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
@@ -105,7 +105,7 @@ export default function SubjectDashboard() {
 
   const handleEditSubject = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
@@ -137,7 +137,7 @@ export default function SubjectDashboard() {
   };
 
   const handleDeleteSubject = async (subjectId) => {
-    if (window.confirm('هل أنت متأكد من حذف هذه المادة الدراسية؟')) {
+    if (window.confirm('هل أنت متأكد من حذف هذه التصنيف الدراسية؟')) {
       try {
         await dispatch(deleteSubject(subjectId));
       } catch (error) {
@@ -172,7 +172,7 @@ export default function SubjectDashboard() {
       ...prev,
       [name]: type === 'checkbox' ? checked : type === 'file' ? files[0] : value
     }));
-    
+
     if (errors[name]) {
       setErrors(prev => ({
         ...prev,
@@ -183,7 +183,7 @@ export default function SubjectDashboard() {
 
   const filteredSubjects = subjects.filter(subject => {
     const matchesSearch = subject.title.toLowerCase().includes(search.toLowerCase()) ||
-                         subject.description.toLowerCase().includes(search.toLowerCase());
+      subject.description.toLowerCase().includes(search.toLowerCase());
     return matchesSearch;
   });
 
@@ -195,10 +195,10 @@ export default function SubjectDashboard() {
           <div className="flex items-center justify-between mb-8">
             <div>
               <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-2">
-                إدارة المواد الدراسية
+                إدارةالتصنيف
               </h1>
               <p className="text-gray-600 dark:text-gray-300">
-                إدارة الكورسات  والمواد الدراسية لمنصتك
+                إدارة الكورسات  والتصنيف الدراسية لمنصتك
               </p>
             </div>
             <button
@@ -206,7 +206,7 @@ export default function SubjectDashboard() {
               className="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg transition-colors duration-200"
             >
               <FaPlus />
-                              إضافة مادة دراسية
+              إضافة مادة دراسية
             </button>
           </div>
 
@@ -217,7 +217,7 @@ export default function SubjectDashboard() {
                 <FaSearch className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                 <input
                   type="text"
-                  placeholder="البحث في المواد الدراسية..."
+                  placeholder="البحث فيالتصنيف ..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   className="w-full pr-10 pl-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
@@ -234,7 +234,7 @@ export default function SubjectDashboard() {
           {loading ? (
             <div className="text-center py-12">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
-              <p className="mt-4 text-gray-600 dark:text-gray-300">جاري تحميل المواد الدراسية...</p>
+              <p className="mt-4 text-gray-600 dark:text-gray-300">جاري تحميلالتصنيف ...</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -272,27 +272,26 @@ export default function SubjectDashboard() {
               </div>
 
               <form onSubmit={handleCreateSubject} className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      العنوان *
-                    </label>
-                    <input
-                      type="text"
-                      name="title"
-                      value={formData.title}
-                      onChange={handleInputChange}
-                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-right ${
-                        errors.title ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    العنوان *
+                  </label>
+                  <input
+                    type="text"
+                    name="title"
+                    value={formData.title}
+                    onChange={handleInputChange}
+                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-right ${errors.title ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
                       }`}
-                    placeholder="عنوان المادة الدراسية"
-                    />
-                    {errors.title && (
-                      <p className="text-red-500 text-sm mt-1">{errors.title}</p>
-                    )}
-                  </div>
+                    placeholder="عنوان التصنيف الدراسية"
+                  />
+                  {errors.title && (
+                    <p className="text-red-500 text-sm mt-1">{errors.title}</p>
+                  )}
+                </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     الوصف *
                   </label>
                   <textarea
@@ -300,10 +299,9 @@ export default function SubjectDashboard() {
                     value={formData.description}
                     onChange={handleInputChange}
                     rows="3"
-                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-right ${
-                      errors.description ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
-                    }`}
-                    placeholder="وصف المادة الدراسية"
+                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-right ${errors.description ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                      }`}
+                    placeholder="وصف التصنيف الدراسية"
                   />
                   {errors.description && (
                     <p className="text-red-500 text-sm mt-1">{errors.description}</p>
@@ -319,9 +317,8 @@ export default function SubjectDashboard() {
                       name="instructor"
                       value={formData.instructor}
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white ${
-                        errors.instructor ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
-                      }`}
+                      className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white ${errors.instructor ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                        }`}
                     >
                       <option value="">اختر المدرس</option>
                       {instructors.map((instructor) => (
@@ -336,16 +333,15 @@ export default function SubjectDashboard() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    صورة المادة الدراسية *
+                    صورة التصنيف الدراسية *
                   </label>
                   <input
                     type="file"
                     name="image"
                     onChange={handleInputChange}
                     accept="image/*"
-                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white ${
-                      errors.image ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
-                    }`}
+                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white ${errors.image ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                      }`}
                   />
                   {errors.image && (
                     <p className="text-red-500 text-sm mt-1">{errors.image}</p>
@@ -398,7 +394,7 @@ export default function SubjectDashboard() {
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-xl font-semibold text-gray-800 dark:text-white">
-                  تعديل المادة الدراسية
+                  تعديل التصنيف الدراسية
                 </h3>
                 <button
                   onClick={() => {
@@ -414,27 +410,26 @@ export default function SubjectDashboard() {
 
               <form onSubmit={handleEditSubject} className="space-y-4">
                 {/* Same form fields as create modal */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     العنوان *
-                    </label>
-                    <input
-                      type="text"
-                      name="title"
-                      value={formData.title}
-                      onChange={handleInputChange}
-                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-right ${
-                        errors.title ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                  </label>
+                  <input
+                    type="text"
+                    name="title"
+                    value={formData.title}
+                    onChange={handleInputChange}
+                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-right ${errors.title ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
                       }`}
-                    placeholder="عنوان المادة الدراسية"
-                    />
-                    {errors.title && (
-                      <p className="text-red-500 text-sm mt-1">{errors.title}</p>
-                    )}
-                  </div>
+                    placeholder="عنوان التصنيف الدراسية"
+                  />
+                  {errors.title && (
+                    <p className="text-red-500 text-sm mt-1">{errors.title}</p>
+                  )}
+                </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     الوصف *
                   </label>
                   <textarea
@@ -442,10 +437,9 @@ export default function SubjectDashboard() {
                     value={formData.description}
                     onChange={handleInputChange}
                     rows="3"
-                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-right ${
-                      errors.description ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
-                    }`}
-                    placeholder="وصف المادة الدراسية"
+                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-right ${errors.description ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                      }`}
+                    placeholder="وصف التصنيف الدراسية"
                   />
                   {errors.description && (
                     <p className="text-red-500 text-sm mt-1">{errors.description}</p>
@@ -461,9 +455,8 @@ export default function SubjectDashboard() {
                       name="instructor"
                       value={formData.instructor}
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white ${
-                        errors.instructor ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
-                      }`}
+                      className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white ${errors.instructor ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                        }`}
                     >
                       <option value="">اختر المدرس</option>
                       {instructors.map((instructor) => (
@@ -480,9 +473,9 @@ export default function SubjectDashboard() {
                 {/* Image Upload Section */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    صورة المادة الدراسية
+                    صورة التصنيف الدراسية
                   </label>
-                  
+
                   {/* Current Image Preview */}
                   {selectedSubject?.image?.secure_url && !formData.image && (
                     <div className="mb-4">
@@ -533,9 +526,8 @@ export default function SubjectDashboard() {
                     name="image"
                     onChange={handleInputChange}
                     accept="image/*"
-                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white ${
-                      errors.image ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
-                    }`}
+                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white ${errors.image ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                      }`}
                   />
                   {errors.image && (
                     <p className="text-red-500 text-sm mt-1">{errors.image}</p>
@@ -565,7 +557,7 @@ export default function SubjectDashboard() {
                     className="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors duration-200"
                   >
                     <FaSave />
-                    تحديث المادة الدراسية
+                    تحديث التصنيف الدراسية
                   </button>
                 </div>
               </form>

@@ -21,7 +21,7 @@ const CourseDetailsModal = ({ course, onClose }) => {
           <div><span className="font-semibold">الوصف:</span> {course.description}</div>
           {course.instructor && <div><span className="font-semibold">المدرس:</span> {course.instructor.name}</div>}
 
-          {course.category && <div><span className="font-semibold">فئة المرحلة:</span> {course.category.name}</div>}
+       
           <div><span className="font-semibold">عدد الوحدات:</span> {course.units?.length || 0}</div>
           <div><span className="font-semibold">مقدمة:</span> {course.directLessons?.length || 0}</div>
         </div>

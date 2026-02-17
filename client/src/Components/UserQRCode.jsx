@@ -118,11 +118,7 @@ const UserQRCode = ({ userData }) => {
                 <strong>رقم الطالب:</strong> {userData?.studentId}
               </p>
             )}
-            {userData?.role !== 'ADMIN' && userData?.role !== 'SUPER_ADMIN' && (
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                <strong>المرحلة:</strong> {userData?.stage?.name || userData?.stage || 'غير محدد'}
-              </p>
-            )}
+           
           </div>
 
           <div className="flex items-center gap-4">

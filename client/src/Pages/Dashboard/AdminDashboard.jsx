@@ -463,7 +463,7 @@ export default function AdminDashboard() {
                   className="group p-3 lg:p-4 bg-gradient-to-r from-red-500 to-red-600 rounded-lg lg:rounded-xl text-white hover:from-red-600 hover:to-red-700 transition-all duration-200 transform hover:scale-105"
                 >
                   <FaGraduationCap className="text-lg lg:text-2xl mx-auto mb-1 lg:mb-2 group-hover:scale-110 transition-transform duration-200" />
-                  <span className="text-xs lg:text-sm font-medium">لوحة المواد</span>
+                  <span className="text-xs lg:text-sm font-medium">لوحة التصنيف</span>
                 </button>
                 <button
                   onClick={() => navigate("/admin/users")}
