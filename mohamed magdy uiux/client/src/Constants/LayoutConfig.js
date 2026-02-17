@@ -183,7 +183,7 @@ export const PAYMENT = {
 // ============================================
 export const SIDEBAR = {
     // عنوان السايدبار
-    title: "منصة م/ كريم جابر",
+    title: "Magdy Academy",
     // إظهار رصيد المحفظة
     showWalletBalance: true,
     // ألوان السايدبار

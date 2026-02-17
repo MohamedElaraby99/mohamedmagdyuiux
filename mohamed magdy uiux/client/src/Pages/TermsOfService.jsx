@@ -174,7 +174,7 @@ export default function TermsOfService() {
                 <div className="space-y-4">
                   <p className="text-gray-700 dark:text-gray-300">
                     جميع المحتوى على هذه المنصة، بما في ذلك الكورسات والمواد والبرامج،
-                    مملوك لشركة منصة  كريم جابر أو المرخصين لها ومحمي بقوانين حقوق النشر.
+                    مملوك لشركة منصة  Magdy Academy أو المرخصين لها ومحمي بقوانين حقوق النشر.
                   </p>
                   <p className="text-gray-700 dark:text-gray-300">
                     لا يجوز لك إعادة إنتاج أو توزيع أو إنشاء أعمال مشتقة دون إذن صريح.
@@ -251,7 +251,7 @@ export default function TermsOfService() {
                 </h2>
                 <div className="space-y-4">
                   <p className="text-gray-700 dark:text-gray-300">
-                    تقدم شركة منصة  كريم جابر المحتوى التعليمي والخدمات "كما هي" دون ضمانات.
+                    تقدم شركة منصة  Magdy Academy المحتوى التعليمي والخدمات "كما هي" دون ضمانات.
                   </p>
                   <p className="text-gray-700 dark:text-gray-300">
                     نحن لسنا مسؤولين عن أي أضرار غير مباشرة أو عرضية أو تبعية.

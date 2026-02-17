@@ -1208,9 +1208,6 @@ html.light .textarea {
   transition: transform 0.5s ease;
 }
 
-.hero-main-image:hover {
-  transform: perspective(800px) rotateY(0deg) scale(1.02);
-}
 
 /* Floating Credit Card */
 .hero-credit-card {
@@ -1219,13 +1216,7 @@ html.light .textarea {
   left: -30px;
   width: 160px;
   height: auto;
-  border-radius: 14px;
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
-  transform: rotate(-8deg);
   z-index: 5;
-  animation: heroFloat 4s ease-in-out infinite;
-  animation-delay: 1.5s;
-  transition: transform 0.4s ease;
 }
 
 .hero-credit-card:hover {
