@@ -39,14 +39,13 @@ const FeaturesSection = () => {
                         </div>
                     </div>
 
-                    <div className="relative">
-                        <div className="relative z-10">
+                    <div className="relative lg:col-span-2 mt-8">
+                        <div className="relative z-10 flex justify-center">
                             <img
                                 src={icon3}
                                 alt="Platform Overview"
-                                className="w-full h-auto object-contain transition-transform duration-700"
+                                className="w-full max-w-5xl h-auto object-contain transition-transform duration-700 hover:scale-105"
                             />
-
                         </div>
                     </div>
 

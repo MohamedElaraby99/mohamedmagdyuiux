@@ -124,94 +124,7 @@ export default function HomePage() {
     window.location.href = '/signup';
   };
 
-  // APK Download Handler
-  const handleAPKDownload = () => {
-    // Create a download link for the APK file
-    const link = document.createElement('a');
-    link.href = '/downloads/mrayman.apk'; // Update this path to your APK file location
-    link.download = 'mrayman.apk';
-    link.target = '_blank';
 
-    // Fallback for mobile browsers
-    if (navigator.userAgent.toLowerCase().indexOf('android') > -1) {
-      // For Android devices, open the download directly
-      window.open('/downloads/mrayman.apk', '_blank');
-    } else {
-      // For other devices, trigger download
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
-
-    // Show download started message
-    if (window.toast) {
-      window.toast.success('بدأ تحميل التطبيق...');
-    }
-  };
-
-  // Google Play Store redirect (for future when app is published)
-  const handlePlayStoreRedirect = () => {
-    // Replace with your actual Google Play Store URL when published
-    // Show a "Coming Soon" message instead of redirecting
-    if (window.toast) {
-      window.toast.info('قريباً على Google Play!');
-    } else {
-      alert('قريباً على Google Play!');
-    }
-  };
-
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
-  };
-
-  const stats = [
-    { icon: FaUsers, number: "10K+", label: "طالب مسجل", color: "text-purple-600" },
-    { icon: FaGraduationCap, number: "100+", label: "مادة متاحة", color: "text-purple-600" },
-    { icon: FaStar, number: "4.9", label: "متوسط التقييم", color: "text-yellow-600" },
-    { icon: FaAward, number: "50+", label: "مدرس خبير", color: "text-purple-600" }
-  ];
-
-  const features = [
-    {
-      icon: FaRocket,
-      title: "تعلم بوتيرتك الخاصة",
-      description: "جداول تعلم مرنة تناسب نمط حياتك والتزاماتك.",
-      color: "text-purple-600",
-      bgColor: "bg-purple-50 dark:bg-purple-900/20"
-    },
-    {
-      icon: FaLightbulb,
-      title: "دورات بقيادة الخبراء",
-      description: "تعلم من المحترفين في المجال مع سنوات من الخبرة العملية.",
-      color: "text-purple-600",
-      bgColor: "bg-purple-50 dark:bg-purple-900/20"
-    },
-    {
-      icon: FaShieldAlt,
-      title: "التعلم المعتمد",
-      description: "احصل على شهادات معترف بها من أفضل الشركات في العالم.",
-      color: "text-purple-600",
-      bgColor: "bg-purple-50 dark:bg-purple-900/20"
-    },
-    {
-      icon: FaGlobe,
-      title: "المجتمع العالمي",
-      description: "تواصل مع المتعلمين من جميع أنحاء العالم وشارك الخبرات.",
-      color: "text-purple-600",
-      bgColor: "bg-purple-50 dark:bg-purple-900/20"
-    }
-  ];
-
-  const categories = [
-    { icon: FaCode, name: "البرمجة", count: "150+ دورة", color: "bg-purple-500" },
-    { icon: FaPalette, name: "التصميم", count: "120+ دورة", color: "bg-purple-500" },
-    { icon: FaChartLine, name: "الأعمال", count: "200+ دورة", color: "bg-purple-500" },
-    { icon: FaBookOpen, name: "التسويق", count: "180+ دورة", color: "bg-purple-500" }
-  ];
 
   return (
     <Layout>
@@ -222,6 +135,10 @@ export default function HomePage() {
         }`}>
         <AnimatedHero onGetStarted={onGetStarted} />
       </div>
+
+      {/* Features Section */}
+      <FeaturesSection />
+
 
       {/* Featured Courses Section */}
       <section className={`py-20 bg-white dark:bg-gray-800 transition-all duration-700 ease-out ${heroLoaded
@@ -385,9 +302,6 @@ export default function HomePage() {
           )}
         </div>
       </section>
-
-      {/* Features Section */}
-      <FeaturesSection />
 
       {/* Scroll to Top Button */}
       {
