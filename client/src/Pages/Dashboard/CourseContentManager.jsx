@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAdminCourses } from '../../Redux/Slices/CourseSlice';
-import { getAllStages } from '../../Redux/Slices/StageSlice';
+
 import { getAllSubjects } from '../../Redux/Slices/SubjectSlice';
 import Layout from '../../Layout/Layout';
 import { FaChevronDown, FaChevronRight, FaEdit, FaBookOpen, FaSearch, FaBook, FaLayerGroup } from 'react-icons/fa';
@@ -2555,26 +2555,22 @@ const LessonContentModal = ({ courseId, unitId, lessonId, onClose }) => {
 const CourseContentManager = () => {
   const dispatch = useDispatch();
   const { courses, loading } = useSelector(state => state.course);
-  const { stages } = useSelector(state => state.stage);
   const { subjects } = useSelector(state => state.subject);
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [expandedUnit, setExpandedUnit] = useState(null);
   const [selectedLesson, setSelectedLesson] = useState(null);
   const [search, setSearch] = useState('');
-  const [stageFilter, setStageFilter] = useState('');
   const [subjectFilter, setSubjectFilter] = useState('');
 
   useEffect(() => {
     dispatch(getAdminCourses());
-    dispatch(getAllStages());
     dispatch(getAllSubjects());
   }, [dispatch]);
 
   const filteredCourses = courses.filter(course => {
     const matchesSearch = course.title.toLowerCase().includes(search.toLowerCase());
-    const matchesStage = !stageFilter || (course.stage && course.stage._id === stageFilter);
     const matchesSubject = !subjectFilter || (course.subject && course.subject._id === subjectFilter);
-    return matchesSearch && matchesStage && matchesSubject;
+    return matchesSearch && matchesSubject;
   });
 
   return (
@@ -2594,16 +2590,6 @@ const CourseContentManager = () => {
               />
             </div>
             <div className="flex gap-2 flex-col sm:flex-row">
-              <select
-                value={stageFilter}
-                onChange={e => setStageFilter(e.target.value)}
-                className="w-full sm:w-1/2 p-2 rounded-md border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white text-sm md:text-base text-right"
-              >
-                <option value="">كل المراحل</option>
-                {stages?.map(stage => (
-                  <option key={stage._id} value={stage._id}>{stage.name}</option>
-                ))}
-              </select>
               <select
                 value={subjectFilter}
                 onChange={e => setSubjectFilter(e.target.value)}
@@ -2636,7 +2622,7 @@ const CourseContentManager = () => {
                   <FaBook className="text-green-500 text-lg" />
                   <div className="flex-1 min-w-0 text-right">
                     <div className="font-bold text-gray-900 dark:text-white truncate text-sm md:text-base">{course.title}</div>
-                    <div className="text-xs text-gray-500 dark:text-gray-400 truncate">{course.stage?.name}</div>
+
                   </div>
                 </div>
               ))
