@@ -1003,9 +1003,9 @@ html.light .textarea {
   position: relative;
   background: linear-gradient(135deg, #6C2BD9 0%, #7C3AED 30%, #5B21B6 70%, #4C1D95 100%);
   border-radius: 0 0 40px 40px;
-  padding: 60px 0 80px;
+  padding: 80px 0 100px;
   overflow: hidden;
-  min-height: 520px;
+  min-height: 700px;
 }
 
 .hero-bg-decorations {
@@ -1203,9 +1203,6 @@ html.light .textarea {
   max-width: 580px;
   height: auto;
   border-radius: 20px;
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
-  transform: perspective(800px) rotateY(-3deg);
-  transition: transform 0.5s ease;
 }
 
 
@@ -1481,9 +1478,9 @@ html.light .textarea {
 
 @media (max-width: 640px) {
   .hero-section {
-    padding: 40px 0 60px;
+    padding: 60px 0 80px;
     border-radius: 0 0 24px 24px;
-    min-height: auto;
+    min-height: 550px;
   }
 
   .hero-title {
