@@ -28,7 +28,9 @@ import {
   FaUserSecret,
   FaChartBar,
   FaQrcode,
+  FaUser,
 } from "react-icons/fa";
+import logo2 from "../assets/logo2.png";
 import { BRAND, SIDEBAR } from "../Constants/LayoutConfig";
 
 export default function Sidebar({ hideBar = false }) {
@@ -143,11 +145,20 @@ export default function Sidebar({ hideBar = false }) {
           <label htmlFor="sidebar-drawer" className="drawer-overlay"></label>
           <div className="min-h-full w-64 bg-white dark:bg-gray-900 text-base-content p-3 relative shadow-2xl" style={{ zIndex: 10000 }} dir="rtl">
             {/* Header */}
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-bold text-primary dark:text-primary-light">
-                {SIDEBAR.title || BRAND.fullName}
-              </h2>
-              <button onClick={closeSidebar} className="text-red-500 hover:text-red-700">
+            <div className="flex items-center justify-between mb-6">
+              <Link to="/" onClick={closeSidebar} className="flex items-center gap-3">
+                <div className="relative">
+                  <img
+                    src={logo2}
+                    alt="Logo"
+                    className="w-10 h-10 object-contain"
+                  />
+                </div>
+              </Link>
+              <button
+                onClick={closeSidebar}
+                className="w-8 h-8 flex items-center justify-center rounded-full bg-red-50 text-red-500 hover:bg-red-100 hover:text-red-600 transition-all duration-300"
+              >
                 <AiFillCloseCircle size={20} />
               </button>
             </div>
@@ -387,41 +398,27 @@ export default function Sidebar({ hideBar = false }) {
                   </button>
                 </div>
               ) : (
-                <div className="w-full flex flex-col gap-2 items-center justify-center">
+                <div className="w-full flex flex-col gap-3 items-center justify-center px-1">
                   {/* Sign In Button */}
                   <Link
                     to="/login"
                     onClick={closeSidebar}
-                    className="w-full group relative overflow-hidden rounded-lg bg-gradient-to-r from-green-500 to-green-600 p-0.5 hover:from-green-600 hover:to-green-700 transition-all duration-300"
+                    className="flex items-center justify-center gap-2 w-full px-4 py-2.5 border-2 rounded-xl font-bold transition-all duration-300 hover:scale-[1.02] active:scale-95"
+                    style={{ borderColor: '#6C2BD9', color: '#6C2BD9' }}
                   >
-                    <div className="relative flex items-center justify-center gap-2 rounded-[8px] bg-white dark:bg-gray-800 px-3 py-2 transition-all duration-300 group-hover:bg-transparent">
-                      <div className="relative z-10 flex items-center gap-2">
-                        <svg className="w-3 h-3 text-green-500 group-hover:text-white transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
-                        </svg>
-                        <span className="font-semibold text-xs text-green-500 group-hover:text-white transition-colors duration-300">
-                          تسجيل الدخول
-                        </span>
-                      </div>
-                    </div>
+                    <FaUser className="w-4 h-4" />
+                    تسجيل الدخول
                   </Link>
 
                   {/* Sign Up Button */}
                   <Link
                     to="/signup"
                     onClick={closeSidebar}
-                    className="w-full group relative overflow-hidden rounded-lg bg-gradient-to-r from-green-500 to-emerald-500 p-0.5 hover:from-green-600 hover:to-emerald-600 transition-all duration-300"
+                    className="flex items-center justify-center gap-2 w-full px-4 py-2.5 text-white rounded-xl font-bold transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-95"
+                    style={{ background: 'linear-gradient(135deg, #6C2BD9, #7C3AED)' }}
                   >
-                    <div className="relative flex items-center justify-center gap-2 rounded-[8px] bg-white dark:bg-gray-800 px-3 py-2 transition-all duration-300 group-hover:bg-transparent">
-                      <div className="relative z-10 flex items-center gap-2">
-                        <svg className="w-3 h-3 text-green-500 group-hover:text-white transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
-                        </svg>
-                        <span className="font-semibold text-xs text-green-500 group-hover:text-white transition-colors duration-300">
-                          إنشاء حساب
-                        </span>
-                      </div>
-                    </div>
+                    <FaPlus className="w-4 h-4" />
+                    إنشاء حساب
                   </Link>
                 </div>
               )}
