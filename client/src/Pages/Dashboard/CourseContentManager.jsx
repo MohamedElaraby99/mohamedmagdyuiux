@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAdminCourses } from '../../Redux/Slices/CourseSlice';
-
 import { getAllSubjects } from '../../Redux/Slices/SubjectSlice';
 import Layout from '../../Layout/Layout';
 import { FaChevronDown, FaChevronRight, FaEdit, FaBookOpen, FaSearch, FaBook, FaLayerGroup } from 'react-icons/fa';

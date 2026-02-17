@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getEssayExamSubmissions, gradeEssaySubmission } from '../../Redux/Slices/EssayExamSlice';
-import { getAllStages } from '../../Redux/Slices/StageSlice';
+
 import { getAdminCourses } from '../../Redux/Slices/CourseSlice';
 import { toast } from 'react-hot-toast';
 import Layout from '../../Layout/Layout';
@@ -14,16 +14,14 @@ const EssayExamDashboard = () => {
   const dispatch = useDispatch();
   const { submissions, loading } = useSelector(state => state.essayExam);
   const { userData } = useSelector(state => state.auth);
-  const { stages } = useSelector(state => state.stage);
   const { courses } = useSelector(state => state.course);
-  
+
   const [selectedExam, setSelectedExam] = useState(null);
   const [examIdInput, setExamIdInput] = useState('');
   const [courseIdInput, setCourseIdInput] = useState('');
   const [lessonIdInput, setLessonIdInput] = useState('');
   const [unitIdInput, setUnitIdInput] = useState('');
   const [availableExams, setAvailableExams] = useState([]);
-  const [selectedStageId, setSelectedStageId] = useState('');
   const [selectedCourseId, setSelectedCourseId] = useState('');
   const [selectedLessonId, setSelectedLessonId] = useState('');
   const [selectedSubmission, setSelectedSubmission] = useState(null);
@@ -46,8 +44,7 @@ const EssayExamDashboard = () => {
       setExamIdInput(examId);
       handleLoadExamById(examId);
     }
-    // Preload stages and courses for filters
-    dispatch(getAllStages());
+    // Preload courses for filters
     dispatch(getAdminCourses());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -154,7 +151,7 @@ const EssayExamDashboard = () => {
 
       toast.success('تم تصحيح التقديم بنجاح');
       setGradingModal(false);
-      
+
       // Refresh submissions
       dispatch(getEssayExamSubmissions({
         examId: selectedExam._id,
@@ -203,7 +200,7 @@ const EssayExamDashboard = () => {
   };
   const filteredSubmissions = submissionList.filter(submission => {
     const matchesSearch = submission.user?.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         submission.user?.email?.toLowerCase().includes(searchTerm.toLowerCase());
+      submission.user?.email?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = !statusFilter || submission.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
@@ -240,22 +237,8 @@ const EssayExamDashboard = () => {
               اختر الامتحان للمراجعة والتصحيح
             </h2>
 
-            {/* Filters: Stage -> Course -> Lesson */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mt-2">
-              <select
-                value={selectedStageId}
-                onChange={(e) => {
-                  setSelectedStageId(e.target.value);
-                  setSelectedCourseId('');
-                  setSelectedLessonId('');
-                }}
-                className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white text-right"
-              >
-                <option value="">كل المراحل</option>
-                {stages?.map(s => (
-                  <option key={s._id} value={s._id}>{s.name}</option>
-                ))}
-              </select>
+            {/* Filters: Course -> Lesson */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-2">
               <select
                 value={selectedCourseId}
                 onChange={(e) => {
@@ -266,8 +249,7 @@ const EssayExamDashboard = () => {
               >
                 <option value="">كل الدورات</option>
                 {courses
-                  ?.filter(c => !selectedStageId || c.stage?._id === selectedStageId)
-                  .map(c => (
+                  ?.map(c => (
                     <option key={c._id} value={c._id}>{c.title}</option>
                   ))}
               </select>
@@ -347,7 +329,7 @@ const EssayExamDashboard = () => {
                       className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-right bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white"
                     />
                   </div>
-                  
+
                   <select
                     value={statusFilter}
                     onChange={(e) => setStatusFilter(e.target.value)}
@@ -486,7 +468,7 @@ const EssayExamDashboard = () => {
                                           </span>
                                         )}
                                       </div>
-                                      
+
                                       {userSubmission.grade == null && (
                                         <button
                                           onClick={() => openGradingModal(submission, qIndex)}

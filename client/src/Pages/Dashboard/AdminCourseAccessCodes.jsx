@@ -3,16 +3,15 @@ import { useDispatch, useSelector } from "react-redux";
 import Layout from "../../Layout/Layout";
 import { axiosInstance } from "../../Helpers/axiosInstance";
 import { getAllCourses } from "../../Redux/Slices/CourseSlice";
-import { getAllStages } from "../../Redux/Slices/StageSlice";
+
 import { adminGenerateCourseAccessCodes, adminListCourseAccessCodes, adminDeleteCourseAccessCode, adminBulkDeleteCourseAccessCodes } from "../../Redux/Slices/CourseAccessSlice";
 
 export default function AdminCourseAccessCodes() {
   const dispatch = useDispatch();
   const { courses } = useSelector((s) => s.course);
-  const { stages } = useSelector((s) => s.stage);
   const { admin, error } = useSelector((s) => s.courseAccess);
 
-  const [form, setForm] = useState({ stageId: "", courseId: "", quantity: 1, accessStartAt: "", accessEndAt: "" });
+  const [form, setForm] = useState({ courseId: "", quantity: 1, accessStartAt: "", accessEndAt: "" });
   const [searchTerm, setSearchTerm] = useState("");
   const [showOnlyUsed, setShowOnlyUsed] = useState(false);
   const [courseFilter, setCourseFilter] = useState("");
@@ -26,7 +25,6 @@ export default function AdminCourseAccessCodes() {
 
   useEffect(() => {
     dispatch(getAllCourses());
-    dispatch(getAllStages({ page: 1, limit: 100 }));
   }, [dispatch]);
 
   const [page, setPage] = useState(1);
@@ -303,20 +301,10 @@ export default function AdminCourseAccessCodes() {
         <h1 className="text-3xl font-bold mb-6">أكواد الوصول للكورسات</h1>
         <form onSubmit={onGenerate} className="bg-white dark:bg-gray-800 rounded-xl shadow p-4 mb-6 grid grid-cols-1 md:grid-cols-6 gap-4" dir="rtl">
           <div>
-            <label className="block text-sm mb-1">المرحلة</label>
-            <select name="stageId" value={form.stageId} onChange={(e) => { onChange(e); setForm(p => ({ ...p, courseId: "" })); }} className="w-full p-2 rounded border dark:bg-gray-700">
-              <option value="">اختر المرحلة</option>
-              {stages.map((st) => (
-                <option key={st._id} value={st._id}>{st.name}</option>
-              ))}
-            </select>
-          </div>
-          <div>
             <label className="block text-sm mb-1">الكورس</label>
-            <select name="courseId" value={form.courseId} onChange={onChange} className="w-full p-2 rounded border dark:bg-gray-700" disabled={!form.stageId}>
-              <option value="">{form.stageId ? 'اختر كورس' : 'اختر المرحلة أولاً'}</option>
+            <select name="courseId" value={form.courseId} onChange={onChange} className="w-full p-2 rounded border dark:bg-gray-700">
+              <option value="">اختر كورس</option>
               {courses
-                .filter((c) => !form.stageId || c.stage?._id === form.stageId)
                 .map((c) => (
                   <option key={c._id} value={c._id}>{c.title}</option>
                 ))}
