@@ -1005,10 +1005,11 @@ html.light .textarea {
   background-color: var(--color-bg-cream, #F5F0EB);
 }
 
+
 .hero-section {
   position: relative;
   background: linear-gradient(135deg, #6C2BD9 0%, #7C3AED 30%, #5B21B6 70%, #4C1D95 100%);
-  border-radius: 0 0 40px 40px;
+  border-radius: 0 0 0 40px;
   padding: 40px 0 60px;
   overflow: hidden;
   min-height: 550px;
@@ -1068,6 +1069,7 @@ html.light .textarea {
   z-index: 2;
 }
 
+
 /* Text Content */
 .hero-text-content {
   transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
@@ -1103,26 +1105,26 @@ html.light .textarea {
   color: rgba(255, 255, 255, 0.85);
   font-style: italic;
   margin-bottom: 32px;
-  max-width: 500px;
+  max-width: 700px;
 }
 
 .hero-actions {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 20px;
   flex-wrap: wrap;
 }
 
 .hero-btn-primary {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 14px 32px;
+  gap: 10px;
+  padding: 16px 40px;
   background: #FFFFFF;
   color: #6C2BD9;
   font-family: 'Alexandria', sans-serif;
   font-weight: 700;
-  font-size: 1rem;
+  font-size: 1.1rem;
   border-radius: 50px;
   border: 2px solid #FFFFFF;
   cursor: pointer;
@@ -1139,8 +1141,8 @@ html.light .textarea {
 }
 
 .hero-btn-icon {
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
   transition: transform 0.3s ease;
 }
 
@@ -1151,13 +1153,13 @@ html.light .textarea {
 .hero-btn-secondary {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  padding: 14px 24px;
+  gap: 12px;
+  padding: 16px 28px;
   background: transparent;
   color: #FFFFFF;
   font-family: 'Alexandria', sans-serif;
   font-weight: 600;
-  font-size: 1rem;
+  font-size: 1.1rem;
   border: none;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -1169,9 +1171,9 @@ html.light .textarea {
 }
 
 .hero-play-icon {
-  width: 40px;
-  height: 40px;
-  padding: 12px;
+  width: 48px;
+  height: 48px;
+  padding: 14px;
   background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(4px);
   border-radius: 50%;
@@ -1204,20 +1206,24 @@ html.light .textarea {
   padding: 20px;
 }
 
+
 .hero-main-image {
   width: 100%;
-  max-width: 580px;
+  max-width: 1400px;
   height: auto;
   border-radius: 20px;
+  transform-origin: center;
+  transform: scale(1.2);
 }
 
 
 /* Floating Credit Card */
 .hero-credit-card {
   position: absolute;
-  bottom: -10px;
-  left: -30px;
-  width: 160px;
+  max-width: 120px;
+  bottom: 34px;
+  left: 10px;
+  width: 200px;
   height: auto;
   z-index: 5;
 }
@@ -1452,6 +1458,7 @@ html.light .textarea {
   }
 }
 
+
 /* Responsive Hero */
 @media (max-width: 1024px) {
   .hero-container {
@@ -1469,12 +1476,13 @@ html.light .textarea {
   }
 
   .hero-title {
-    font-size: 2.2rem;
+    font-size: 3rem;
   }
 
   .hero-description {
     margin-left: auto;
     margin-right: auto;
+    font-size: 1.3rem;
   }
 
   .hero-actions {
@@ -1492,21 +1500,21 @@ html.light .textarea {
   }
 
   .hero-title {
-    font-size: 1.7rem;
+    font-size: 2.4rem;
   }
 
   .hero-description {
-    font-size: 1rem;
+    font-size: 1.2rem;
   }
 
   .hero-btn-primary {
-    padding: 12px 24px;
-    font-size: 0.9rem;
+    padding: 14px 28px;
+    font-size: 1rem;
   }
 
   .hero-btn-secondary {
-    padding: 12px 16px;
-    font-size: 0.9rem;
+    padding: 14px 20px;
+    font-size: 1rem;
   }
 
   .hero-mockup-screen {
@@ -1523,13 +1531,13 @@ html.light .textarea {
   }
 
   .badge-number {
-    font-size: 1rem;
+    font-size: 1.1rem;
   }
 
   .hero-credit-card {
-    width: 110px;
-    bottom: -5px;
-    left: -15px;
+    width: 130px;
+    bottom: -8px;
+    left: -20px;
   }
 }
 
