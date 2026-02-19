@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { FaTimes, FaFilePdf, FaVideo, FaClipboardList, FaDumbbell, FaPlay, FaEye, FaSpinner, FaCheckCircle, FaTrophy, FaClock } from 'react-icons/fa';
+import { FaTimes, FaFilePdf, FaVideo, FaClipboardList, FaDumbbell, FaPlay, FaEye, FaSpinner, FaCheckCircle, FaTrophy, FaClock, FaImage } from 'react-icons/fa';
 import CustomVideoPlayer from './CustomVideoPlayer';
 import PDFViewer from './PDFViewer';
+import ImageViewer from './ImageViewer';
 import ExamModal from './Exam/ExamModal';
 import EssayExamModal from './EssayExamModal';
 import useLessonData from '../Helpers/useLessonData';
@@ -43,6 +44,11 @@ const OptimizedLessonContentModal = ({ isOpen, onClose, courseId, lessonId, unit
   // PDFViewer state
   const [pdfViewerOpen, setPdfViewerOpen] = useState(false);
   const [currentPdf, setCurrentPdf] = useState(null);
+
+  // ImageViewer state
+  const [imageViewerOpen, setImageViewerOpen] = useState(false);
+  const [currentImage, setCurrentImage] = useState(null);
+
 
   // Reset tab when lesson changes
   useEffect(() => {
@@ -185,6 +191,13 @@ const OptimizedLessonContentModal = ({ isOpen, onClose, courseId, lessonId, unit
     // If it's just a filename, assume it's in the pdfs folder
     return generateFileUrl(url, 'pdfs');
   };
+
+  const isImageFile = (url) => {
+    if (!url) return false;
+    const extension = url.split('.').pop().toLowerCase();
+    return ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'].includes(extension);
+  };
+
 
   const handleUrlChange = (e) => {
     const url = e.target.value;
@@ -522,7 +535,7 @@ const OptimizedLessonContentModal = ({ isOpen, onClose, courseId, lessonId, unit
           </p>
           {lesson.lockedPdfsCount > 0 && (
             <p className="text-sm text-red-600 dark:text-red-400">
-              يوجد {lesson.lockedPdfsCount} ملف PDF في انتظارك بعد حل امتحان المدخل
+              يوجد {lesson.lockedPdfsCount} ملف في انتظارك بعد حل امتحان المدخل
             </p>
           )}
           <button
@@ -537,55 +550,83 @@ const OptimizedLessonContentModal = ({ isOpen, onClose, courseId, lessonId, unit
 
     return (
       <div className="space-y-4">
-        {lesson.pdfs?.map((pdf, index) => (
-          <div key={pdf._id} className="bg-gradient-to-br from-red-50 to-pink-100 dark:from-gray-800 dark:to-gray-900 p-4 sm:p-6 rounded-xl border border-red-200 dark:border-gray-700">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 bg-red-100 dark:bg-red-900 rounded-lg">
-                <FaFilePdf className="text-red-600 dark:text-red-400 text-lg sm:text-xl" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="font-semibold text-lg sm:text-xl text-gray-800 dark:text-gray-200 break-words">{pdf.title || pdf.fileName}</div>
-                <div className="text-sm text-red-600 dark:text-red-400 font-medium">ملف PDF</div>
-                {pdf.publishDate && (
-                  <div className="mt-1 flex items-center gap-2 text-green-600 dark:text-green-400 text-xs">
-                    <FaClock />
-                    <span>تاريخ النشر: {new Date(pdf.publishDate).toLocaleDateString('ar')} {new Date(pdf.publishDate).toLocaleTimeString('ar', { hour: '2-digit', minute: '2-digit' })}</span>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 border border-gray-200 dark:border-gray-600">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                <div className="flex items-center gap-3 flex-1 min-w-0">
-                  <FaFilePdf className="text-red-500 text-xl sm:text-2xl flex-shrink-0" />
-                  <div className="flex-1 min-w-0">
-                    <div className="font-medium text-sm sm:text-base break-words">{pdf.title || pdf.fileName}</div>
-                    <div className="text-xs sm:text-sm text-gray-500">مستند PDF قابل للعرض</div>
-                  </div>
+        {lesson.pdfs?.map((pdf, index) => {
+          const isImage = isImageFile(pdf.url);
+          return (
+            <div key={pdf._id} className={`bg-gradient-to-br ${isImage ? 'from-blue-50 to-cyan-100' : 'from-red-50 to-pink-100'} dark:from-gray-800 dark:to-gray-900 p-4 sm:p-6 rounded-xl border ${isImage ? 'border-blue-200' : 'border-red-200'} dark:border-gray-700`}>
+              <div className="flex items-center gap-3 mb-4">
+                <div className={`p-2 ${isImage ? 'bg-blue-100 dark:bg-blue-900' : 'bg-red-100 dark:bg-red-900'} rounded-lg`}>
+                  {isImage ? (
+                    <FaImage className="text-blue-600 dark:text-blue-400 text-lg sm:text-xl" />
+                  ) : (
+                    <FaFilePdf className="text-red-600 dark:text-red-400 text-lg sm:text-xl" />
+                  )}
                 </div>
-                <button
-                  onClick={() => {
-                    // Check if access has expired before opening PDF
-                    if (isAccessExpired) {
-                      return;
-                    }
-                    setCurrentPdf(pdf);
-                    setPdfViewerOpen(true);
-                  }}
-                  className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-3 sm:px-4 py-2 rounded-lg transition-all duration-200 hover:shadow-lg text-sm sm:text-base w-full sm:w-auto justify-center"
-                  disabled={isAccessExpired}
-                >
-                  <FaEye />
-                  عرض المستند
-                </button>
+                <div className="flex-1 min-w-0">
+                  <div className="font-semibold text-lg sm:text-xl text-gray-800 dark:text-gray-200 break-words">{pdf.title || pdf.fileName}</div>
+                  <div className={`text-sm ${isImage ? 'text-blue-600 dark:text-blue-400' : 'text-red-600 dark:text-red-400'} font-medium`}>
+                    {isImage ? 'صورة' : 'ملف PDF'}
+                  </div>
+                  {pdf.publishDate && (
+                    <div className="mt-1 flex items-center gap-2 text-green-600 dark:text-green-400 text-xs">
+                      <FaClock />
+                      <span>تاريخ النشر: {new Date(pdf.publishDate).toLocaleDateString('ar')} {new Date(pdf.publishDate).toLocaleTimeString('ar', { hour: '2-digit', minute: '2-digit' })}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 border border-gray-200 dark:border-gray-600">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                  <div className="flex items-center gap-3 flex-1 min-w-0">
+                    {isImage ? (
+                      <div className="w-12 h-12 rounded overflow-hidden flex-shrink-0 border border-gray-200">
+                        <img
+                          src={generateFileUrl(pdf.url)}
+                          alt={pdf.title}
+                          className="w-full h-full object-cover"
+                          onError={(e) => { e.target.src = 'https://via.placeholder.com/150?text=Image'; }}
+                        />
+                      </div>
+                    ) : (
+                      <FaFilePdf className="text-red-500 text-xl sm:text-2xl flex-shrink-0" />
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <div className="font-medium text-sm sm:text-base break-words">{pdf.title || pdf.fileName}</div>
+                      <div className="text-xs sm:text-sm text-gray-500">
+                        {isImage ? 'عرض الصورة' : 'مستند PDF قابل للعرض'}
+                      </div>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => {
+                      // Check if access has expired before opening
+                      if (isAccessExpired) {
+                        return;
+                      }
+                      if (isImage) {
+                        setCurrentImage(pdf);
+                        setImageViewerOpen(true);
+                      } else {
+                        setCurrentPdf(pdf);
+                        setPdfViewerOpen(true);
+                      }
+                    }}
+                    className={`flex items-center gap-2 ${isImage ? 'bg-blue-600 hover:bg-blue-700' : 'bg-red-600 hover:bg-red-700'} text-white px-3 sm:px-4 py-2 rounded-lg transition-all duration-200 hover:shadow-lg text-sm sm:text-base w-full sm:w-auto justify-center`}
+                    disabled={isAccessExpired}
+                  >
+                    <FaEye />
+                    {isImage ? 'عرض الصورة' : 'عرض المستند'}
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     );
   };
+
 
   const renderExamContent = () => {
     // Check if content is locked (entry exam required)
@@ -1292,6 +1333,20 @@ const OptimizedLessonContentModal = ({ isOpen, onClose, courseId, lessonId, unit
           />
         );
       })()}
+
+      {/* Image Viewer */}
+      {imageViewerOpen && currentImage && (
+        <ImageViewer
+          imageUrl={currentImage.url}
+          title={currentImage.title || currentImage.fileName || "Image"}
+          isOpen={imageViewerOpen}
+          onClose={() => {
+            setImageViewerOpen(false);
+            setCurrentImage(null);
+          }}
+        />
+      )}
+
 
       {/* Exam Modal */}
       {examModalOpen && selectedExam && (
