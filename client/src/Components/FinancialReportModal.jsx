@@ -21,7 +21,7 @@ const FinancialReportModal = ({ isOpen, onClose }) => {
       const now = new Date();
       const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
       const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-      
+
       setReportData({
         startDate: firstDay.toISOString().split('T')[0],
         endDate: lastDay.toISOString().split('T')[0],
@@ -88,7 +88,7 @@ const FinancialReportModal = ({ isOpen, onClose }) => {
       }
 
       setFetchedReportData(reportResponse.data.data);
-      
+
     } catch (error) {
 
       showErrorToast('حدث خطأ أثناء جلب بيانات التقرير');
@@ -112,9 +112,9 @@ const FinancialReportModal = ({ isOpen, onClose }) => {
   // Format numbers with Arabic-Indic numerals
   const formatAmount = (num) => {
     const value = safeNumber(num);
-    return value.toLocaleString('ar-EG', { 
-      minimumFractionDigits: 0, 
-      maximumFractionDigits: 2 
+    return value.toLocaleString('ar-EG', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2
     });
   };
 
@@ -169,7 +169,7 @@ const FinancialReportModal = ({ isOpen, onClose }) => {
     const transactions = fetchedReportData.transactions || [];
 
     return (
-      <div ref={componentRef} className="p-8 bg-white" style={{ fontFamily: 'Amiri, Cairo, sans-serif', direction: 'rtl' }}>
+      <div ref={componentRef} className="p-8 bg-white" style={{ fontFamily: 'Amiri, Alexandria, sans-serif', direction: 'rtl' }}>
         <style>{`
           @page {
             size: A4;
@@ -177,7 +177,7 @@ const FinancialReportModal = ({ isOpen, onClose }) => {
           }
           @media print {
             body {
-              font-family: 'Amiri', 'Cairo', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+              font-family: 'Amiri', 'Alexandria', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
               direction: rtl;
               text-align: right;
             }
@@ -299,7 +299,7 @@ const FinancialReportModal = ({ isOpen, onClose }) => {
       <div style={{ position: 'absolute', left: '-9999px', top: '-9999px' }}>
         <PrintableReport />
       </div>
-      
+
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
           {/* Header */}
@@ -376,12 +376,12 @@ const FinancialReportModal = ({ isOpen, onClose }) => {
                 معاينة التقرير
               </h3>
               <div className="text-sm text-gray-600 dark:text-gray-400 space-y-1" dir="rtl">
-                <p>• نوع التقرير: {reportData.reportType === 'comprehensive' ? 'تقرير شامل' : 
-                                    reportData.reportType === 'income' ? 'تقرير الإيرادات' :
-                                    reportData.reportType === 'expenses' ? 'تقرير المصروفات' : 'ملخص مالي'}</p>
-                <p>• الفترة: {reportData.startDate && reportData.endDate ? 
-                             `${formatDate(reportData.startDate)} - ${formatDate(reportData.endDate)}` : 
-                             'غير محدد'}</p>
+                <p>• نوع التقرير: {reportData.reportType === 'comprehensive' ? 'تقرير شامل' :
+                  reportData.reportType === 'income' ? 'تقرير الإيرادات' :
+                    reportData.reportType === 'expenses' ? 'تقرير المصروفات' : 'ملخص مالي'}</p>
+                <p>• الفترة: {reportData.startDate && reportData.endDate ?
+                  `${formatDate(reportData.startDate)} - ${formatDate(reportData.endDate)}` :
+                  'غير محدد'}</p>
                 <p>• سيتم تضمين جميع المعاملات المالية في هذه الفترة</p>
                 <p>• التقرير سيكون بصيغة PDF قابلة للطباعة</p>
               </div>
@@ -409,7 +409,7 @@ const FinancialReportModal = ({ isOpen, onClose }) => {
                   <span>جاري الإنشاء...</span>
                 </>
               ) : (
-                <>  
+                <>
                   <FaPrint />
                   <span>طباعة التقرير</span>
                 </>
@@ -420,11 +420,10 @@ const FinancialReportModal = ({ isOpen, onClose }) => {
 
         {/* Toast Notification */}
         {toast.show && (
-          <div className={`fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg transform transition-all duration-300 ${
-            toast.type === 'success' 
-              ? 'bg-green-500 text-white' 
-              : 'bg-red-500 text-white'
-          }`}>
+          <div className={`fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg transform transition-all duration-300 ${toast.type === 'success'
+            ? 'bg-green-500 text-white'
+            : 'bg-red-500 text-white'
+            }`}>
             <div className="flex items-center space-x-2 rtl:space-x-reverse" dir="rtl">
               <span>{toast.message}</span>
             </div>

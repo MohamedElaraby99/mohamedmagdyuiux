@@ -18,7 +18,7 @@
 // ============================================
 export const BRAND = {
     // اسم المنصة
-    platformName: "Magdy Academy",
+    platformName: "E-learning Platform",
     // اسم المعلم
     teacherName: "Magdy Academy",
     // الاسم الكامل
@@ -153,13 +153,13 @@ export const FOOTER = {
 export const PAYMENT = {
     // واتساب للحصول على كود شحن
     whatsappForCodes: {
-        phone: "01080808667",
+        phone: "01028510498",
         label: "للحصول على كود شحن - تواصل معنا على واتساب",
         enabled: true,
     },
     // رقم واتساب للتواصل
     whatsappContact: {
-        phone: "01080808667",
+        phone: "01028510498",
         label: "رقم الواتساب",
         description: "متاح على مدار 24/7",
         enabled: true,

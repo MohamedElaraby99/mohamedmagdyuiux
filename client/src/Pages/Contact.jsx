@@ -63,9 +63,9 @@ export default function Contact() {
   }
 
   const contactInfo = {
-    phone: "01080808667",
+    phone: "01028510498",
     whatsapp: "01555559887",
-    vodafoneCash: "01080808667",
+    vodafoneCash: "01028510498",
     email: "softwarefikra@gmail.com",
     support: "softwarefikra@gmail.com",
     address: "Mansoura, 18 Street Torel, Egypt",
