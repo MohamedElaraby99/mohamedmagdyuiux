@@ -397,7 +397,7 @@ export default function Signup() {
               </div>
             </div>
 
-            <h2 className="text-4xl font-bold text-primary dark:text-white mb-6 bg-gradient-to-r from-primary to-primary-dark bg-clip-text text-transparent">
+            <h2 className="text-4xl font-bold text-primary dark:text-white mb-8 py-2 leading-relaxed bg-gradient-to-r from-primary to-primary-dark bg-clip-text text-transparent">
               انضم إلى منصتنا التعليمية
             </h2>
             <p className="text-lg text-gray-600 dark:text-gray-300">
