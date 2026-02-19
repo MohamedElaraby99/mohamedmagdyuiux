@@ -8,14 +8,16 @@ const LessonModal = ({ lesson, unitId, lessonId, courseId, onClose, isOpen }) =>
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     title: lesson?.title || '',
-    description: lesson?.description || ''
+    description: lesson?.description || '',
+    isFree: lesson?.isFree || false
   });
 
   useEffect(() => {
     if (lesson) {
       setFormData({
         title: lesson.title || '',
-        description: lesson.description || ''
+        description: lesson.description || '',
+        isFree: lesson.isFree || false
       });
     }
   }, [lesson]);
@@ -36,7 +38,8 @@ const LessonModal = ({ lesson, unitId, lessonId, courseId, onClose, isOpen }) =>
     try {
       const updateData = {
         title: formData.title,
-        description: formData.description
+        description: formData.description,
+        isFree: formData.isFree
       };
 
       await dispatch(updateLesson({
@@ -95,6 +98,21 @@ const LessonModal = ({ lesson, unitId, lessonId, courseId, onClose, isOpen }) =>
                 rows="6"
                 placeholder="أدخل وصف الدرس"
               />
+            </div>
+            <div className="flex items-center gap-3 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={formData.isFree}
+                  onChange={(e) => handleInputChange('isFree', e.target.checked)}
+                  className="sr-only peer"
+                />
+                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
+              </label>
+              <div>
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">مجاني (متاح بدون شراء)</span>
+                <p className="text-xs text-gray-500 dark:text-gray-400">الطلاب هيقدروا يشوفوا الدرس ده من غير ما يشتروا الكورس</p>
+              </div>
             </div>
           </div>
         </div>

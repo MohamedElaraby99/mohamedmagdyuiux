@@ -19,8 +19,7 @@ const OptimizedLessonContentModal = ({ isOpen, onClose, courseId, lessonId, unit
   const navigate = useNavigate();
   const { lesson, courseInfo, loading, error, refetch } = useLessonData(courseId, lessonId, unitId);
 
-  // Check if lesson is free (price is 0, undefined, or null)
-  const isLessonFree = !lesson?.price || lesson.price <= 0;
+  const isLessonFree = lesson?.isFree || (!lesson?.price || lesson.price <= 0);
 
   // Check if the entire course is purchased
   const isCoursePurchased = coursePurchaseStatus?.[courseId] || false;

@@ -23,10 +23,11 @@ const CourseStructureModal = ({ courseId, onClose, isOpen }) => {
   const [showAddDirectLesson, setShowAddDirectLesson] = useState(false);
   const [selectedLesson, setSelectedLesson] = useState(null);
   const [selectedUnit, setSelectedUnit] = useState(null);
-  const [newUnit, setNewUnit] = useState({ title: '', description: '' });
+  const [newUnit, setNewUnit] = useState({ title: '', description: '', isFree: false });
   const [newLesson, setNewLesson] = useState({
     title: '',
-    description: ''
+    description: '',
+    isFree: false
   });
 
   // Only fetch if modal is open and currentCourse is not the right one
@@ -55,7 +56,7 @@ const CourseStructureModal = ({ courseId, onClose, isOpen }) => {
       })).unwrap();
       toast.success('Unit added successfully');
       setShowAddUnit(false);
-      setNewUnit({ title: '', description: '' });
+      setNewUnit({ title: '', description: '', isFree: false });
       refreshCourse();
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to add unit');
@@ -122,7 +123,8 @@ const CourseStructureModal = ({ courseId, onClose, isOpen }) => {
       setShowAddDirectLesson(false);
       setNewLesson({
         title: '',
-        description: ''
+        description: '',
+        isFree: false
       });
       refreshCourse();
     } catch (error) {
@@ -212,6 +214,11 @@ const CourseStructureModal = ({ courseId, onClose, isOpen }) => {
                     <h4 className="font-medium text-gray-900 dark:text-white">
                       {unit.title}
                     </h4>
+                    {unit.isFree && (
+                      <span className="text-xs font-semibold text-green-700 bg-green-100 dark:text-green-300 dark:bg-green-900/40 px-2 py-0.5 rounded-full">
+                        مجاني
+                      </span>
+                    )}
                     <span className="text-xs text-gray-500 bg-gray-200 dark:bg-gray-600 px-2 py-1 rounded sr-only">
                       ID: {unit._id}
                     </span>
@@ -257,9 +264,16 @@ const CourseStructureModal = ({ courseId, onClose, isOpen }) => {
                       <div className="flex items-center gap-3 flex-1">
                         <FaGripVertical className="text-gray-400" />
                         <div className="flex-1">
-                          <h5 className="font-medium text-gray-900 dark:text-white">
-                            {lesson.title}
-                          </h5>
+                          <div className="flex items-center gap-2">
+                            <h5 className="font-medium text-gray-900 dark:text-white">
+                              {lesson.title}
+                            </h5>
+                            {lesson.isFree && (
+                              <span className="text-[10px] font-semibold text-green-700 bg-green-100 dark:text-green-300 dark:bg-green-900/40 px-1.5 py-0.5 rounded-full">
+                                مجاني
+                              </span>
+                            )}
+                          </div>
                           {lesson.description && (
                             <p className="text-gray-600 dark:text-gray-400 text-sm">
                               {lesson.description}
@@ -313,9 +327,16 @@ const CourseStructureModal = ({ courseId, onClose, isOpen }) => {
                 <div className="flex items-center gap-3 flex-1">
                   <FaGripVertical className="text-gray-400" />
                   <div className="flex-1">
-                    <h5 className="font-medium text-gray-900 dark:text-white">
-                      {lesson.title}
-                    </h5>
+                    <div className="flex items-center gap-2">
+                      <h5 className="font-medium text-gray-900 dark:text-white">
+                        {lesson.title}
+                      </h5>
+                      {lesson.isFree && (
+                        <span className="text-[10px] font-semibold text-green-700 bg-green-100 dark:text-green-300 dark:bg-green-900/40 px-1.5 py-0.5 rounded-full">
+                          مجاني
+                        </span>
+                      )}
+                    </div>
                     {lesson.description && (
                       <p className="text-gray-600 dark:text-gray-400 text-sm">
                         {lesson.description}
@@ -372,6 +393,18 @@ const CourseStructureModal = ({ courseId, onClose, isOpen }) => {
                     placeholder="ادخل وصف الوحدة"
                   />
                 </div>
+                <div className="flex items-center gap-3">
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={newUnit.isFree}
+                      onChange={(e) => setNewUnit({ ...newUnit, isFree: e.target.checked })}
+                      className="sr-only peer"
+                    />
+                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
+                  </label>
+                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">مجاني (متاح بدون شراء)</span>
+                </div>
               </div>
               <div className="flex gap-2 mt-6">
                 <button
@@ -417,10 +450,22 @@ const CourseStructureModal = ({ courseId, onClose, isOpen }) => {
                     placeholder="ادخل وصف الوحدة"
                   />
                 </div>
+                <div className="flex items-center gap-3">
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={selectedUnit.isFree || false}
+                      onChange={(e) => setSelectedUnit({ ...selectedUnit, isFree: e.target.checked })}
+                      className="sr-only peer"
+                    />
+                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
+                  </label>
+                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">مجاني (متاح بدون شراء)</span>
+                </div>
               </div>
               <div className="flex gap-2 mt-6">
                 <button
-                  onClick={() => handleUpdateUnit(selectedUnit._id, { title: selectedUnit.title, description: selectedUnit.description, price: selectedUnit.price })}
+                  onClick={() => handleUpdateUnit(selectedUnit._id, { title: selectedUnit.title, description: selectedUnit.description, price: selectedUnit.price, isFree: selectedUnit.isFree })}
                   className="flex-1 bg-green-600 text-white py-2 rounded-md hover:bg-green-700"
                 >
                   تعديل الوحدة
@@ -461,6 +506,18 @@ const CourseStructureModal = ({ courseId, onClose, isOpen }) => {
                     rows="3"
                     placeholder="ادخل وصف الدرس"
                   />
+                </div>
+                <div className="flex items-center gap-3">
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={newLesson.isFree}
+                      onChange={(e) => setNewLesson({ ...newLesson, isFree: e.target.checked })}
+                      className="sr-only peer"
+                    />
+                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
+                  </label>
+                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">مجاني (متاح بدون شراء)</span>
                 </div>
               </div>
               <div className="flex gap-2 mt-6">

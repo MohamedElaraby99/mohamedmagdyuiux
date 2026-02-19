@@ -19,6 +19,10 @@ const lessonSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
+  isFree: {
+    type: Boolean,
+    default: false
+  },
   content: {
     type: String,
     trim: true,
@@ -161,6 +165,10 @@ const unitSchema = new mongoose.Schema({
   price: {
     type: Number,
     default: 0
+  },
+  isFree: {
+    type: Boolean,
+    default: false
   },
   lessons: [lessonSchema]
 }, {

@@ -848,7 +848,7 @@ export const getCourseStats = async (req, res, next) => {
 export const addUnitToCourse = async (req, res, next) => {
   try {
     const { courseId } = req.params;
-    const { title, description, price } = req.body.unitData;
+    const { title, description, price, isFree } = req.body.unitData;
     if (!title) {
       return res.status(400).json({ success: false, message: 'Unit title is required' });
     }
@@ -856,7 +856,7 @@ export const addUnitToCourse = async (req, res, next) => {
     if (!course) {
       return res.status(404).json({ success: false, message: 'Course not found' });
     }
-    course.units.push({ title, description, price, lessons: [] });
+    course.units.push({ title, description, price, isFree: isFree || false, lessons: [] });
     await course.save();
     return res.status(200).json({ success: true, message: 'Unit added', data: { course } });
   } catch (error) {
@@ -869,7 +869,7 @@ export const addLessonToUnit = async (req, res, next) => {
   try {
     const { courseId, unitId } = req.params;
     const { lessonData } = req.body;
-    const { title, description, price, content } = lessonData;
+    const { title, description, price, content, isFree } = lessonData;
     if (!title) {
       return res.status(400).json({ success: false, message: 'Lesson title is required' });
     }
@@ -881,7 +881,7 @@ export const addLessonToUnit = async (req, res, next) => {
     if (!unit) {
       return res.status(404).json({ success: false, message: 'Unit not found' });
     }
-    unit.lessons.push({ title, description, price, content });
+    unit.lessons.push({ title, description, price, content, isFree: isFree || false });
     await course.save();
     return res.status(200).json({ success: true, message: 'Lesson added to unit', data: { course } });
   } catch (error) {
@@ -894,7 +894,7 @@ export const addDirectLessonToCourse = async (req, res, next) => {
   try {
     const { courseId } = req.params;
     const { lessonData } = req.body;
-    const { title, description, price, content } = lessonData;
+    const { title, description, price, content, isFree } = lessonData;
     if (!title) {
       return res.status(400).json({ success: false, message: 'Lesson title is required' });
     }
@@ -902,7 +902,7 @@ export const addDirectLessonToCourse = async (req, res, next) => {
     if (!course) {
       return res.status(404).json({ success: false, message: 'Course not found' });
     }
-    course.directLessons.push({ title, description, price, content });
+    course.directLessons.push({ title, description, price, content, isFree: isFree || false });
     await course.save();
     return res.status(200).json({ success: true, message: 'Direct lesson added', data: { course } });
   } catch (error) {
@@ -915,7 +915,7 @@ export const updateLesson = async (req, res, next) => {
   try {
     const { courseId, lessonId } = req.params;
     const { unitId, lessonData } = req.body;
-    const { title, description, price } = lessonData;
+    const { title, description, price, isFree } = lessonData;
     if (!title) {
       return res.status(400).json({ success: false, message: 'Lesson title is required' });
     }
@@ -924,7 +924,6 @@ export const updateLesson = async (req, res, next) => {
       return res.status(404).json({ success: false, message: 'Course not found' });
     }
     if (unitId) {
-      // Update lesson in unit
       const unit = course.units.id(unitId);
       if (!unit) {
         return res.status(404).json({ success: false, message: 'Unit not found' });
@@ -936,8 +935,8 @@ export const updateLesson = async (req, res, next) => {
       lesson.title = title;
       lesson.description = description;
       lesson.price = price;
+      lesson.isFree = isFree || false;
     } else {
-      // Update direct lesson
       const lesson = course.directLessons.id(lessonId);
       if (!lesson) {
         return res.status(404).json({ success: false, message: 'Direct lesson not found' });
@@ -945,6 +944,7 @@ export const updateLesson = async (req, res, next) => {
       lesson.title = title;
       lesson.description = description;
       lesson.price = price;
+      lesson.isFree = isFree || false;
     }
     await course.save();
     return res.status(200).json({ success: true, message: 'Lesson updated', data: { course } });
@@ -1076,7 +1076,7 @@ export const updateUnit = async (req, res, next) => {
   try {
     const { courseId, unitId } = req.params;
     const { unitData } = req.body;
-    const { title, description, price } = unitData;
+    const { title, description, price, isFree } = unitData;
     if (!title) {
       return res.status(400).json({ success: false, message: 'Unit title is required' });
     }
@@ -1091,6 +1091,7 @@ export const updateUnit = async (req, res, next) => {
     unit.title = title;
     unit.description = description;
     unit.price = price;
+    unit.isFree = isFree || false;
     await course.save();
     return res.status(200).json({ success: true, message: 'Unit updated', data: { course } });
   } catch (error) {

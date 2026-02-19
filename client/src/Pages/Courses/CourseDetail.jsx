@@ -343,11 +343,24 @@ export default function CourseDetail() {
 
     // Admin users have unrestricted access
     if (user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN') {
-      // Store lesson info including unit context for the optimized modal
       const lessonInfo = {
         lessonId: item._id,
         courseId: currentCourse._id,
-        unitId: unitId, // Will be null for درس
+        unitId: unitId,
+        title: item.title
+      };
+      setSelectedLesson(lessonInfo);
+      setShowLessonModal(true);
+      return;
+    }
+
+    // Free lessons/units are accessible to all logged-in users
+    const parentUnit = unitId ? currentCourse?.units?.find(u => u._id === unitId) : null;
+    if (item.isFree || parentUnit?.isFree) {
+      const lessonInfo = {
+        lessonId: item._id,
+        courseId: currentCourse._id,
+        unitId: unitId,
         title: item.title
       };
       setSelectedLesson(lessonInfo);
@@ -401,6 +414,20 @@ export default function CourseDetail() {
 
     // Admin users have access to all content
     if (user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN') {
+      return (
+        <WatchButton
+          item={item}
+          purchaseType={purchaseType}
+          onWatch={(item, purchaseType) => handleWatchClick(item, purchaseType, unitId)}
+          variant="primary"
+          showButton={showButton}
+        />
+      );
+    }
+
+    // Free lessons/units are accessible to all logged-in users
+    const parentUnit = unitId ? currentCourse?.units?.find(u => u._id === unitId) : null;
+    if ((item.isFree || parentUnit?.isFree) && user && isLoggedIn) {
       return (
         <WatchButton
           item={item}
@@ -743,9 +770,16 @@ export default function CourseDetail() {
                             <FaPlay className="text-white text-sm" />
                           </div>
                           <div className="min-w-0 flex-1">
-                            <h4 className="font-medium text-gray-900 dark:text-white text-sm sm:text-base truncate">
-                              {lesson.title}
-                            </h4>
+                            <div className="flex items-center gap-2">
+                              <h4 className="font-medium text-gray-900 dark:text-white text-sm sm:text-base truncate">
+                                {lesson.title}
+                              </h4>
+                              {lesson.isFree && (
+                                <span className="text-[10px] font-semibold text-green-700 bg-green-100 dark:text-green-300 dark:bg-green-900/40 px-1.5 py-0.5 rounded-full flex-shrink-0">
+                                  مجاني
+                                </span>
+                              )}
+                            </div>
                             <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 line-clamp-2 sm:line-clamp-1">
                               {lesson.description}
                             </p>
@@ -817,9 +851,16 @@ export default function CourseDetail() {
                                       <FaPlay className="text-white text-xs" />
                                     </div>
                                     <div className="min-w-0 flex-1">
-                                      <h5 className="font-medium text-gray-900 dark:text-white text-sm truncate">
-                                        {lesson.title}
-                                      </h5>
+                                      <div className="flex items-center gap-2">
+                                        <h5 className="font-medium text-gray-900 dark:text-white text-sm truncate">
+                                          {lesson.title}
+                                        </h5>
+                                        {(lesson.isFree || unit.isFree) && (
+                                          <span className="text-[10px] font-semibold text-green-700 bg-green-100 dark:text-green-300 dark:bg-green-900/40 px-1.5 py-0.5 rounded-full flex-shrink-0">
+                                            مجاني
+                                          </span>
+                                        )}
+                                      </div>
                                       <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2">
                                         {lesson.description}
                                       </p>
