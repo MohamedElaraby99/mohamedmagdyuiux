@@ -247,12 +247,18 @@ export default function Signup() {
     if (isAdminRegistration) {
       // For admin users: email is required
       requestData.email = signupData.email;
-    } else {
-      // For regular users: phone number is required, email is optional
+
+
+      // For regular users: phone number is required
       requestData.phoneNumber = signupData.phoneNumber;
-      if (signupData.email) {
-        requestData.email = signupData.email; // Include email if provided
+
+      // Do not send email for regular users as the field is removed from UI
+      // This prevents autofill from sending 'superadmin@api.com'
+      /*
+      if (signupData.email && signupData.email.trim() !== "") {
+        requestData.email = signupData.email;
       }
+      */
     }
 
     // Handle avatar file separately if present
