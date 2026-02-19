@@ -212,7 +212,7 @@ export default function HomePage() {
                       {/* Header */}
                       <div className="mb-4">
                         <div className="flex justify-between items-start">
-                          <h3 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white mb-1 leading-tight">
+                          <h3 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white mb-1" style={{ lineHeight: '1.8' }}>
                             {course.title}
                           </h3>
                         </div>
