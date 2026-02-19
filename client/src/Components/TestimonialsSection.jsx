@@ -88,7 +88,7 @@ const TestimonialsSection = () => {
                     </div>
                 ) : (
                     <div className="text-center text-gray-500 dark:text-gray-400 py-12">
-                        la yugad araa huna al aan
+                        لا يوجد اراء حاليا
                     </div>
                 )}
             </div>

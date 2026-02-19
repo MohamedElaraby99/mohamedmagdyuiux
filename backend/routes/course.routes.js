@@ -38,13 +38,13 @@ router.get('/', async (req, res, next) => {
       // Try to verify the token and set user info
       const userDetails = await jwt.verify(token, process.env.JWT_SECRET);
 
-      // Fetch full user data including stage
-      const user = await User.findById(userDetails.id).populate('stage');
+      // Fetch full user data
+      const user = await User.findById(userDetails.id);
       if (user) {
         req.user = {
           ...userDetails,
-          stage: user.stage?._id,
-          stageName: user.stage?.name
+          // stage: user.stage?._id, // Stage removed
+          // stageName: user.stage?.name // Stage removed
         };
 
       }

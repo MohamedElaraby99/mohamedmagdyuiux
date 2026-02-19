@@ -8,36 +8,19 @@ const getCourseNotifications = async (req, res) => {
   try {
     const userId = req.user.id;
 
-    // Get user details to find their stage
-    const user = await User.findById(userId);
-
-    if (!user?.stage) {
-      return res.status(200).json({
-        success: true,
-        message: 'User stage not found',
-        data: []
-      });
-    }
-
-    // Extract stage ID - handle both ObjectId and object with _id
-    const userStageId = user.stage._id || user.stage;
-
-    // Get all courses that match the user's stage
-    const stageCourses = await Course.find({
-      stage: userStageId
-      // Remove status filter to get all courses, not just active ones
-    });
+    // Get all courses (since stage concept is removed)
+    const stageCourses = await Course.find({});
 
     if (!stageCourses || stageCourses.length === 0) {
       return res.status(200).json({
         success: true,
-        message: 'No courses found for user stage',
+        message: 'No courses found',
         data: []
       });
     }
 
     const courseIds = stageCourses.map(course => course._id);
-    
+
     // Get courses with recent updates (last 30 days)
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
@@ -61,11 +44,11 @@ const getCourseNotifications = async (req, res) => {
 
     // Generate notifications based on course updates
     const notifications = [];
-    
+
     for (const course of coursesWithUpdates) {
       // Check lessons from both units and direct lessons
       const allLessons = [];
-      
+
       // Add lessons from units
       if (course.units && course.units.length > 0) {
         course.units.forEach(unit => {
@@ -74,7 +57,7 @@ const getCourseNotifications = async (req, res) => {
           }
         });
       }
-      
+
       // Add direct lessons
       if (course.directLessons && course.directLessons.length > 0) {
         allLessons.push(...course.directLessons);
@@ -90,12 +73,12 @@ const getCourseNotifications = async (req, res) => {
       // Create notifications for recent lessons (last 7 days for testing)
       const sevenDaysAgo = new Date();
       sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-      
-      const recentLessons = allLessons.filter(lesson => 
+
+      const recentLessons = allLessons.filter(lesson =>
         new Date(lesson.createdAt || lesson.updatedAt || course.createdAt) >= sevenDaysAgo
       );
 
-      const recentVideos = allVideos.filter(video => 
+      const recentVideos = allVideos.filter(video =>
         new Date(video.createdAt || video.updatedAt || course.createdAt) >= sevenDaysAgo
       );
 
@@ -223,34 +206,20 @@ const markAllNotificationsAsRead = async (req, res) => {
     // Use the same user identifier style as the getter for consistency
     const userId = req.user.id || req.user._id;
 
-    // Load fresh user to reliably access populated stage
-    const user = await User.findById(userId).select('stage');
-    if (!user?.stage) {
-      return res.status(200).json({
-        success: true,
-        message: 'No stage found for user; nothing to mark as read'
-      });
-    }
+    // Get all courses (since stage concept is removed)
+    const coursesWithUpdates = await Course.find({});
 
-    // Extract stage ID - handle both ObjectId and object with _id
-    const userStageId = user.stage._id || user.stage;
-
-    // Get all courses that match the user's stage (same scope as getter)
-    const coursesWithUpdates = await Course.find({
-      stage: userStageId
-    });
-    
     // Generate notification IDs for all current notifications (mirror getter logic)
     const allNotificationIds = [];
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-    
+
     for (const course of coursesWithUpdates) {
       // Add course update notification
       if (new Date(course.updatedAt) >= sevenDaysAgo) {
         allNotificationIds.push(`course_${course._id}`);
       }
-      
+
       // Add lesson notifications
       const allLessons = [];
       if (course.units && course.units.length > 0) {
@@ -263,31 +232,31 @@ const markAllNotificationsAsRead = async (req, res) => {
       if (course.directLessons && course.directLessons.length > 0) {
         allLessons.push(...course.directLessons);
       }
-      
-      const recentLessons = allLessons.filter(lesson => 
+
+      const recentLessons = allLessons.filter(lesson =>
         new Date(lesson.createdAt || lesson.updatedAt || course.createdAt) >= sevenDaysAgo
       );
-      
+
       recentLessons.forEach(lesson => {
         allNotificationIds.push(`lesson_${lesson._id}_${course._id}`);
       });
-      
+
       // Add video notifications
       const allVideos = [];
       allLessons.forEach(lesson => {
         const videos = lesson.videos || [];
         allVideos.push(...videos.map(video => ({ ...video, lessonTitle: lesson.title })));
       });
-      
-      const recentVideos = allVideos.filter(video => 
+
+      const recentVideos = allVideos.filter(video =>
         new Date(video.createdAt || video.updatedAt || course.createdAt) >= sevenDaysAgo
       );
-      
+
       recentVideos.forEach(video => {
         allNotificationIds.push(`video_${video._id}_${course._id}`);
       });
     }
-    
+
     // Mark all notifications as read
     if (allNotificationIds.length > 0) {
       const ops = allNotificationIds.map(notificationId => ({
