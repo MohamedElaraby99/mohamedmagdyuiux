@@ -100,15 +100,19 @@ export default function Signup() {
     setCaptchaSessionId("");
   }
 
+
   // Enhanced error handler function
   function validateForm() {
     const errors = [];
     const newFieldErrors = {};
 
+
     // Check CAPTCHA verification
+    /* 
     if (!isCaptchaVerified || !captchaSessionId) {
       errors.push("🔒 يرجى التحقق من رمز الأمان أولاً");
     }
+    */
 
     /* Removed terms acceptance check */
 
@@ -140,7 +144,7 @@ export default function Signup() {
         newFieldErrors.email = "الإيميل مش صح";
       }
     } else {
-      // For regular users: phone number is required, email is optional
+      // For regular users: phone number is required
       if (!signupData.phoneNumber || signupData.phoneNumber.trim() === "") {
         errors.push("📱 اكتب رقم التليفون بتاعك - ده هيبقى اسم المستخدم بتاعك");
         newFieldErrors.phoneNumber = "اكتب رقم التليفون";
@@ -149,31 +153,11 @@ export default function Signup() {
         newFieldErrors.phoneNumber = "رقم التليفون مش صح";
       }
 
-      if (!signupData.governorate || signupData.governorate.trim() === "") {
-        errors.push("🏙️ اختار المدينة اللي انت ساكن فيها");
-        newFieldErrors.governorate = "اختار مدينتك";
-      }
-
-
-
-      if (!signupData.age || signupData.age.trim() === "") {
-        errors.push("🎂 اكتب عمرك الحقيقي");
-        newFieldErrors.age = "اكتب عمرك";
-      } else {
-        const age = parseInt(signupData.age);
-        if (isNaN(age) || age < 5 || age > 100) {
-          errors.push("🎂 العمر ده مش معقول - لازم يكون ما بين 5 و 100 سنة");
-          newFieldErrors.age = "عمر مش معقول";
-        }
-      }
-
       // Validate email if provided (optional for regular users)
       if (signupData.email && signupData.email.trim() !== "" && !signupData.email.match(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g)) {
         errors.push("📧 الإيميل ده مش صح - اكتبه صح كده (مثال: ahmed@gmail.com)");
         newFieldErrors.email = "الإيميل مش صح";
       }
-
-      /* Removed father phone number validation */
     }
 
     // Update field errors state
@@ -269,8 +253,6 @@ export default function Signup() {
       if (signupData.email) {
         requestData.email = signupData.email; // Include email if provided
       }
-      requestData.governorate = signupData.governorate;
-      requestData.age = signupData.age;
     }
 
     // Handle avatar file separately if present
@@ -529,10 +511,11 @@ export default function Signup() {
                 </div>
               </div>
 
+
               {/* Enhanced Submit Button */}
               <button
                 type="submit"
-                disabled={isLoading || !isCaptchaVerified}
+                disabled={isLoading}
                 className="group relative w-full flex justify-center py-4 px-6 border border-transparent text-lg font-semibold rounded-xl text-white btn-primary focus:outline-none focus:ring-4 focus:ring-primary/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl shadow-lg overflow-hidden"
               >
                 {/* Button Background Glow */}
