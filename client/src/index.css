@@ -1051,6 +1051,34 @@ html.light .textarea {
   background: rgba(255, 255, 255, 0.03);
 }
 
+.icon1 {
+  position: absolute;
+  top: 16%;
+  left: 95%;
+  transform: translate(-50%, -50%);
+  width: 50px;
+  height: 50px;
+}
+
+.icon2 {
+  position: absolute;
+  top: 79%;
+  left: 27%;
+  transform: translate(-50%, -50%);
+  width: 40px;
+  height: 40px
+}
+
+.icon3 {
+  position: absolute;
+  top: 50%;
+  left: 72px;
+  width: 518px;
+  height: 141px;
+  z-index: 100;
+}
+
+
 .hero-dots {
   position: absolute;
   inset: 0;

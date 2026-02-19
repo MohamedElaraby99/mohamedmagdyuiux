@@ -313,6 +313,16 @@ export default function CourseDetail() {
       return;
     }
 
+
+    if (walletBalance < currentCourse.price) {
+      setAlertMessage('رصيد المحفظة غير كافي. سيتم تحويلك إلى صفحة المحفظة للشحن.');
+      setShowErrorAlert(true);
+      setTimeout(() => {
+        navigate('/wallet');
+      }, 2000);
+      return;
+    }
+
     setShowCoursePurchaseModal(true);
   };
 

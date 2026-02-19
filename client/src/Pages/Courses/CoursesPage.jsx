@@ -277,7 +277,8 @@ export default function CoursesPage() {
                     <div className="flex gap-2">
                       <Link
                         to={`/courses/${course._id}`}
-                        className="flex-1 btn-primary hover:bg-primary-dark text-white text-center py-2 px-4 rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
+                        className="flex-1 bg-accent hover:bg-accent/80 text-white text-center py-2 px-4 rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
+
                       >
                         <FaEye />
                         <span>عرض التفاصيل</span>
@@ -285,7 +286,7 @@ export default function CoursesPage() {
                       {(course.price || 0) > 0 ? (
                         <Link
                           to={`/courses/${course._id}`}
-                          className="flex-1 bg-accent hover:bg-accent/80 text-white text-center py-2 px-4 rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
+                        className="flex-1 btn-primary hover:bg-primary-dark text-white text-center py-2 px-4 rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
                         >
                           <FaGraduationCap />
                           <span>شراء الكورس</span>
