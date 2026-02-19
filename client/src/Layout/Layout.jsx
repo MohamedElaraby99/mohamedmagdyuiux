@@ -7,7 +7,7 @@ import TokenExpirationWarning from "../Components/TokenExpirationWarning";
 export default function Layout({ children, hideBar, hideNav, hideFooter }) {
   return (
     <>
-    <link href="https://fonts.googleapis.com/css2?family=Playpen+Sans+Arabic:wght@100..800&display=swap" rel="stylesheet"></link>
+
       <main className="min-h-[100vh] bg-white dark:bg-base-200">
         {/* Token expiration warning */}
         <TokenExpirationWarning />

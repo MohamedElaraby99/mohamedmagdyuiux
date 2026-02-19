@@ -169,7 +169,7 @@ const FinancialReportModal = ({ isOpen, onClose }) => {
     const transactions = fetchedReportData.transactions || [];
 
     return (
-      <div ref={componentRef} className="p-8 bg-white" style={{ fontFamily: 'Amiri, Alexandria, sans-serif', direction: 'rtl' }}>
+      <div ref={componentRef} className="p-8 bg-white" style={{ fontFamily: 'Alexandria, sans-serif', direction: 'rtl' }}>
         <style>{`
           @page {
             size: A4;
@@ -177,7 +177,7 @@ const FinancialReportModal = ({ isOpen, onClose }) => {
           }
           @media print {
             body {
-              font-family: 'Amiri', 'Alexandria', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+              font-family: 'Alexandria', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
               direction: rtl;
               text-align: right;
             }

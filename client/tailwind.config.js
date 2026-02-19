@@ -7,14 +7,14 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        'sans': ['Cairo', 'sans-serif'],
-        'cairo': ['Cairo', 'sans-serif'],
-        'lemonada': ['Cairo', 'sans-serif'],
-        'inter': ['Cairo', 'sans-serif'],
-        'lato': ['Cairo', 'sans-serif'],
-        'nunito-sans': ['Cairo', 'sans-serif'],
-        'open-sans': ['Cairo', 'sans-serif'],
-        'roboto': ['Cairo', 'sans-serif'],
+        'sans': ['Alexandria', 'sans-serif'],
+        'alexandria': ['Alexandria', 'sans-serif'],
+        'lemonada': ['Alexandria', 'sans-serif'],
+        'inter': ['Alexandria', 'sans-serif'],
+        'lato': ['Alexandria', 'sans-serif'],
+        'nunito-sans': ['Alexandria', 'sans-serif'],
+        'open-sans': ['Alexandria', 'sans-serif'],
+        'roboto': ['Alexandria', 'sans-serif'],
       },
       colors: {
         'input-bg': '#ffffff',
