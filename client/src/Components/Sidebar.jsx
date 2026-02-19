@@ -29,6 +29,7 @@ import {
   FaChartBar,
   FaQrcode,
   FaUser,
+  FaQuoteRight
 } from "react-icons/fa";
 import logo2 from "../assets/logo2.png";
 import { BRAND, SIDEBAR } from "../Constants/LayoutConfig";
@@ -325,6 +326,17 @@ export default function Sidebar({ hideBar = false }) {
                             >
                               <FaVideo size={14} className="text-gray-500 dark:text-slate-100" />
                               إدارة الجلسات المباشرة
+                            </Link>
+                          </li>
+
+                          <li>
+                            <Link
+                              to="/admin/testimonials"
+                              className="flex gap-3 items-center text-xs text-gray-600 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition-colors py-1.5 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700"
+                              onClick={closeSidebar}
+                            >
+                              <FaQuoteRight size={14} className="text-gray-500 dark:text-slate-100" />
+                              إدارة الآراء
                             </Link>
                           </li>
 

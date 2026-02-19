@@ -49,7 +49,8 @@ import {
   FaServer,
   FaList,
   FaBuilding,
-  FaVideo
+  FaVideo,
+  FaQuoteRight
 } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -507,6 +508,14 @@ export default function AdminDashboard() {
                 >
                   <FaClipboardCheck className="text-lg lg:text-2xl mx-auto mb-1 lg:mb-2 group-hover:scale-110 transition-transform duration-200" />
                   <span className="text-xs lg:text-sm font-medium">امتحانات الكورسات</span>
+                </button>
+
+                <button
+                  onClick={() => navigate("/admin/testimonials")}
+                  className="group p-3 lg:p-4 bg-gradient-to-r from-pink-500 to-pink-600 rounded-lg lg:rounded-xl text-white hover:from-pink-600 hover:to-pink-700 transition-all duration-200 transform hover:scale-105"
+                >
+                  <FaQuoteRight className="text-lg lg:text-2xl mx-auto mb-1 lg:mb-2 group-hover:scale-110 transition-transform duration-200" />
+                  <span className="text-xs lg:text-sm font-medium">إدارة الآراء</span>
                 </button>
               </div>
             </div>

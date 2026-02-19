@@ -24,6 +24,7 @@ import AttendanceSliceReducer from "./Slices/AttendanceSlice"
 import GroupsSliceReducer from "./Slices/GroupsSlice"
 import UsersSliceReducer from "./Slices/UsersSlice"
 import FinancialSliceReducer from "./Slices/FinancialSlice"
+import TestimonialSliceReducer from "./Slices/TestimonialSlice"
 
 const store = configureStore({
   reducer: {
@@ -52,7 +53,8 @@ const store = configureStore({
     attendance: AttendanceSliceReducer,
     groups: GroupsSliceReducer,
     users: UsersSliceReducer,
-    financial: FinancialSliceReducer
+    financial: FinancialSliceReducer,
+    testimonial: TestimonialSliceReducer
   },
   devTools: true
 })
