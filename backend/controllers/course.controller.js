@@ -372,18 +372,19 @@ export const getCourseById = async (req, res, next) => {
         });
         return {
           ...unit,
+          isFree: unit.isFree || false,
           lessons: unit.lessons?.map(lesson => {
             const lessonData = {
               _id: lesson._id,
               title: lesson.title,
               description: lesson.description,
               price: lesson.price,
+              isFree: lesson.isFree || false,
               content: lesson.content,
               videosCount: lesson.videos?.length || 0,
               pdfsCount: lesson.pdfs?.length || 0,
               examsCount: lesson.exams?.length || 0,
               trainingsCount: lesson.trainings?.length || 0
-              // Exclude actual videos, pdfs, exams, trainings for security
             };
             console.log(`  📚 Lesson "${lesson.title}":`, {
               videos: lesson.videos?.length || 0,
@@ -406,12 +407,12 @@ export const getCourseById = async (req, res, next) => {
           title: lesson.title,
           description: lesson.description,
           price: lesson.price,
+          isFree: lesson.isFree || false,
           content: lesson.content,
           videosCount: lesson.videos?.length || 0,
           pdfsCount: lesson.pdfs?.length || 0,
           examsCount: lesson.exams?.length || 0,
           trainingsCount: lesson.trainings?.length || 0
-          // Exclude actual videos, pdfs, exams, trainings for security
         };
         console.log(`📚 Lesson "${lesson.title}":`, {
           videos: lesson.videos?.length || 0,
@@ -630,6 +631,7 @@ export const getLessonById = async (req, res, next) => {
       title: lesson.title,
       description: lesson.description,
       price: lesson.price,
+      isFree: lesson.isFree || false,
       content: lesson.content,
       hasEntryExam: hasEntryExam,
       contentUnlocked: contentUnlocked,

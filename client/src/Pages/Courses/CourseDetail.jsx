@@ -1087,8 +1087,7 @@ export default function CourseDetail() {
                     <FaUser />
                     <span>سجل دخول للمشاهدة</span>
                   </button>
-                ) : hasContentAccess() ? (
-                  // User has access - show watch button
+                ) : (hasContentAccess() || previewItem.isFree) ? (
                   <button
                     onClick={() => {
                       setShowPreviewModal(false);
@@ -1100,7 +1099,6 @@ export default function CourseDetail() {
                     <span>مشاهدة</span>
                   </button>
                 ) : (
-                  // User is logged in but doesn't have access - show message to purchase course or enter code
                   <div className="flex-1 px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-lg text-center text-sm flex items-center justify-center gap-2">
                     <FaLock className="text-gray-400" />
                     <span>اشتري الكورس أو فعّل كود</span>
