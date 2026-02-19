@@ -1409,7 +1409,7 @@ const LessonContentModal = ({ courseId, unitId, lessonId, onClose }) => {
         {tab === 'pdfs' && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <div className="font-semibold text-gray-900 dark:text-white text-right">إضافة ملف PDF (رفع ملف، عنوان، اسم الملف)</div>
+              <div className="font-semibold text-gray-900 dark:text-white text-right">إضافة ملف (PDF أو صورة)</div>
               <button
                 onClick={() => toggleSection('pdfs')}
                 className="text-green-600 hover:text-green-800 flex items-center gap-1"
@@ -1420,12 +1420,43 @@ const LessonContentModal = ({ courseId, unitId, lessonId, onClose }) => {
             </div>
             {openSections.pdfs && (
               <>
-                {/* PDF Details */}
+                {/* PDF/Image Details */}
                 <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 space-y-4">
-                  <h3 className="font-medium text-gray-900 dark:text-white text-right">تفاصيل ملف PDF</h3>
+                  <h3 className="font-medium text-gray-900 dark:text-white text-right">تفاصيل الملف</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="md:col-span-2">
-                      <input type="file" accept=".pdf" onChange={handlePdfFileChange} disabled={uploading} className="w-full p-2 border rounded text-right" />
+                      <input
+                        type="file"
+                        accept=".pdf,image/*"
+                        onChange={async (e) => {
+                          const file = e.target.files[0];
+                          if (!file) return;
+                          setUploading(true);
+                          const formData = new FormData();
+                          formData.append('file', file);
+                          try {
+                            const res = await axiosInstance.post('/upload/file', formData, {
+                              headers: { 'Content-Type': 'multipart/form-data' },
+                            });
+                            if (res.data.success) {
+                              setNewPdf(pdf => ({
+                                ...pdf,
+                                url: res.data.url,
+                                fileName: res.data.fileName || file.name,
+                              }));
+                              toast.success('تم رفع الملف بنجاح');
+                            } else {
+                              toast.error(res.data.message || 'فشل في رفع الملف');
+                            }
+                          } catch (err) {
+                            toast.error('فشل في رفع الملف');
+                          } finally {
+                            setUploading(false);
+                          }
+                        }}
+                        disabled={uploading}
+                        className="w-full p-2 border rounded text-right"
+                      />
                       {uploading && <span className="text-green-600 text-xs text-right block mt-1">جاري رفع الملف...</span>}
                     </div>
                     <input type="text" className="p-2 border rounded text-right" placeholder="عنوان الملف (اختياري)" value={newPdf.title} onChange={e => setNewPdf(p => ({ ...p, title: e.target.value }))} />
@@ -1440,16 +1471,16 @@ const LessonContentModal = ({ courseId, unitId, lessonId, onClose }) => {
                       </div>
                     ) : (
                       <button type="button" className="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700" onClick={handleAddPdf} disabled={!newPdf.url.trim()}>
-                        إضافة ملف PDF
+                        إضافة الملف
                       </button>
                     )}
                   </div>
                 </div>
 
-                {/* PDFs List */}
+                {/* Files List */}
                 {pdfs.length > 0 && (
                   <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-                    <h3 className="font-medium text-gray-900 dark:text-white mb-3 text-right">ملفات PDF المضافة ({pdfs.length})</h3>
+                    <h3 className="font-medium text-gray-900 dark:text-white mb-3 text-right">الملفات المضافة ({pdfs.length})</h3>
                     <div className="space-y-3">
                       {pdfs.map((pdf, idx) => (
                         <div key={idx} className="bg-white dark:bg-gray-600 rounded p-3">
@@ -1457,6 +1488,10 @@ const LessonContentModal = ({ courseId, unitId, lessonId, onClose }) => {
                             <div className="flex-1 text-right">
                               <p className="font-medium text-gray-900 dark:text-white">{pdf.title || 'بدون عنوان'}</p>
                               <p className="text-xs text-green-600 dark:text-green-400 mt-1 break-all">{pdf.fileName || pdf.url}</p>
+                              {/* Preview if image */}
+                              {(pdf.url.match(/\.(jpeg|jpg|gif|png|webp)$/i) || pdf.fileName?.match(/\.(jpeg|jpg|gif|png|webp)$/i)) && (
+                                <img src={generateImageUrl(pdf.url)} alt="Preview" className="mt-2 h-20 object-contain rounded border border-gray-200" />
+                              )}
                               {pdf.publishDate && (
                                 <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                                   تاريخ النشر: {formatDateTime(pdf.publishDate)}
@@ -1474,10 +1509,10 @@ const LessonContentModal = ({ courseId, unitId, lessonId, onClose }) => {
                   </div>
                 )}
 
-                {/* Save PDFs Button */}
+                {/* Save Files Button */}
                 <div className="flex justify-end mt-6">
                   <button type="button" className="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 disabled:opacity-50" onClick={handleSavePdfs} disabled={saving}>
-                    {saving ? 'جاري الحفظ...' : 'حفظ ملفات PDF'}
+                    {saving ? 'جاري الحفظ...' : 'حفظ الفيديوهات والملفات'}
                   </button>
                 </div>
               </>
