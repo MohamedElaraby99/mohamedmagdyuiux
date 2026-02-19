@@ -104,10 +104,24 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className="sticky top-0 z-50 dark:bg-gray-900" style={{ backgroundColor: '#F5F0EB' }}>
+    <nav
+      className={`sticky top-0 z-50 transition-all duration-500 ${
+        scrolled
+          ? 'mx-3 sm:mx-5 mt-3 rounded-2xl shadow-lg shadow-purple-500/10'
+          : 'mx-0 mt-0 rounded-none'
+      }`}
+      style={{
+        backgroundColor: darkMode
+          ? (scrolled ? 'rgba(17, 24, 39, 0.7)' : 'rgba(17, 24, 39, 0.5)')
+          : (scrolled ? 'rgba(245, 240, 235, 0.65)' : 'rgba(245, 240, 235, 0.45)'),
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        border: scrolled ? '1px solid rgba(139, 92, 246, 0.12)' : 'none',
+      }}
+    >
 
       {/* Gradient Line at Top */}
-      <div className="absolute top-0 left-0 right-0 h-[2px]" style={{ background: 'linear-gradient(90deg, #8B5CF6, #6C2BD9, #5B21B6)' }}></div>
+      <div className={`absolute top-0 left-0 right-0 h-[2px] ${scrolled ? 'rounded-t-2xl' : ''}`} style={{ background: 'linear-gradient(90deg, #8B5CF6, #6C2BD9, #5B21B6)' }}></div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16 md:h-20">
