@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { FaTimes, FaFilePdf, FaVideo, FaClipboardList, FaDumbbell, FaPlay, FaEye, FaSpinner, FaCheckCircle, FaTrophy, FaClock, FaImage } from 'react-icons/fa';
+import { FaTimes, FaFilePdf, FaVideo, FaClipboardList, FaDumbbell, FaPlay, FaEye, FaSpinner, FaCheckCircle, FaTrophy, FaClock, FaImage, FaDownload } from 'react-icons/fa';
+
 import CustomVideoPlayer from './CustomVideoPlayer';
 import PDFViewer from './PDFViewer';
 import ImageViewer from './ImageViewer';
@@ -598,26 +599,40 @@ const OptimizedLessonContentModal = ({ isOpen, onClose, courseId, lessonId, unit
                       </div>
                     </div>
                   </div>
-                  <button
-                    onClick={() => {
-                      // Check if access has expired before opening
-                      if (isAccessExpired) {
-                        return;
-                      }
-                      if (isImage) {
-                        setCurrentImage(pdf);
-                        setImageViewerOpen(true);
-                      } else {
-                        setCurrentPdf(pdf);
-                        setPdfViewerOpen(true);
-                      }
-                    }}
-                    className={`flex items-center gap-2 ${isImage ? 'bg-blue-600 hover:bg-blue-700' : 'bg-red-600 hover:bg-red-700'} text-white px-3 sm:px-4 py-2 rounded-lg transition-all duration-200 hover:shadow-lg text-sm sm:text-base w-full sm:w-auto justify-center`}
-                    disabled={isAccessExpired}
-                  >
-                    <FaEye />
-                    {isImage ? 'عرض الصورة' : 'عرض المستند'}
-                  </button>
+                  <div className="flex items-center gap-2 w-full sm:w-auto">
+                    <button
+                      onClick={() => {
+                        // Check if access has expired before opening
+                        if (isAccessExpired) {
+                          return;
+                        }
+                        if (isImage) {
+                          setCurrentImage(pdf);
+                          setImageViewerOpen(true);
+                        } else {
+                          setCurrentPdf(pdf);
+                          setPdfViewerOpen(true);
+                        }
+                      }}
+                      className={`flex-1 sm:flex-none flex items-center gap-2 ${isImage ? 'bg-blue-600 hover:bg-blue-700' : 'bg-red-600 hover:bg-red-700'} text-white px-3 sm:px-4 py-2 rounded-lg transition-all duration-200 hover:shadow-lg text-sm sm:text-base justify-center`}
+                      disabled={isAccessExpired}
+                    >
+                      <FaEye />
+                      {isImage ? 'عرض الصورة' : 'عرض المستند'}
+                    </button>
+
+                    <a
+                      href={generateFileUrl(pdf.url)}
+                      download
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`flex-1 sm:flex-none flex items-center gap-2 ${isImage ? 'bg-blue-100 text-blue-700 hover:bg-blue-200' : 'bg-red-100 text-red-700 hover:bg-red-200'} px-3 sm:px-4 py-2 rounded-lg transition-all duration-200 text-sm sm:text-base font-medium justify-center ${isAccessExpired ? 'opacity-50 pointer-events-none' : ''}`}
+                      title="تحميل الملف"
+                    >
+                      <FaDownload />
+                      <span className="hidden sm:inline">تحميل</span>
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>
