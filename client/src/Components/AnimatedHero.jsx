@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { FaPlay, FaArrowLeft, FaTimes } from 'react-icons/fa';
 import { HERO, BRAND } from '../Constants/LayoutConfig';
-import heroImage from '../assets/image.png';
+import heroImage from '../assets/image.webp';
 import creditCardImage from '../assets/image copy.png';
 
 const AnimatedHero = ({ onGetStarted }) => {

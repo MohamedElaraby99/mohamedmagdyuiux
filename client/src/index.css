@@ -1012,7 +1012,8 @@ html.light .textarea {
   border-radius: 0 0 0 40px;
   padding: 40px 0 60px;
   overflow: hidden;
-  min-height: 550px;
+  min-height: 600px;
+  padding-top: 100px;
 }
 
 .hero-bg-decorations {
