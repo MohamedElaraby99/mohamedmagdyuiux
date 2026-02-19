@@ -45,20 +45,17 @@ const userSchema = new Schema({
         required: false,
         trim: true
     },
+
     governorate: {
         type: String,
-        required: function () {
-            return !['ADMIN', 'SUPER_ADMIN'].includes(this.role);
-        },
+        required: false,
         trim: true
     },
 
 
     age: {
         type: Number,
-        required: function () {
-            return !['ADMIN', 'SUPER_ADMIN'].includes(this.role);
-        },
+        required: false,
         min: [5, 'Age must be at least 5'],
         max: [100, 'Age cannot exceed 100']
     },

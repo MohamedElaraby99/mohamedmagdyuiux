@@ -7,7 +7,8 @@ import { isLoggedIn } from "../middleware/auth.middleware.js";
 import upload from '../middleware/multer.middleware.js';
 import { requireDeviceFingerprint, logDeviceFingerprint } from '../middleware/deviceFingerprint.middleware.js';
 
-router.post('/register', upload.single("avatar"), requireCaptchaVerification, logDeviceFingerprint, requireDeviceFingerprint, register);
+
+router.post('/register', upload.single("avatar"), logDeviceFingerprint, requireDeviceFingerprint, register);
 router.post('/login', logDeviceFingerprint, requireDeviceFingerprint, login);
 router.post('/refresh-token', refreshToken);
 router.get('/logout', logout);

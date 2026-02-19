@@ -50,12 +50,11 @@ const register = async (req, res, next) => {
         // Role-specific field validation
         if (userRole === 'USER') {
             // For USER role: phone number is required, email is optional
+
             if (!phoneNumber) {
                 return next(new AppError("Phone number is required for regular users", 400));
             }
-            if (!governorate || !age) {
-                return next(new AppError("Governorate and age are required for regular users", 400));
-            }
+            // Governorate and age are now optional
         } else if (userRole === 'ADMIN') {
             // For ADMIN role: email is required
             if (!email) {
@@ -90,12 +89,15 @@ const register = async (req, res, next) => {
             },
         };
 
+
         // Add role-specific fields
         if (userRole === 'USER') {
             userData.phoneNumber = phoneNumber;
-            if (email) userData.email = email; // Optional email for USER
-            userData.governorate = governorate;
-            userData.age = parseInt(age);
+            if (email && email.trim() !== "") {
+                userData.email = email; // Optional email for USER
+            }
+            if (governorate) userData.governorate = governorate;
+            if (age) userData.age = parseInt(age);
         } else if (userRole === 'ADMIN') {
             userData.email = email;
         }
