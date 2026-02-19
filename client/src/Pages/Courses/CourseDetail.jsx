@@ -8,7 +8,9 @@ import {
   checkCoursePurchaseStatus,
   getWalletBalance
 } from '../../Redux/Slices/PaymentSlice';
-import { PaymentSuccessAlert, PaymentErrorAlert } from '../../Components/ModernAlert';
+
+
+import { PaymentSuccessAlert, PaymentErrorAlert, WalletAlert } from '../../Components/ModernAlert';
 import WatchButton from '../../Components/WatchButton';
 import OptimizedLessonContentModal from '../../Components/OptimizedLessonContentModal';
 import {
@@ -54,6 +56,7 @@ export default function CourseDetail() {
   const [expandedUnits, setExpandedUnits] = useState(new Set());
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
   const [showErrorAlert, setShowErrorAlert] = useState(false);
+  const [showWalletAlert, setShowWalletAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [previewItem, setPreviewItem] = useState(null);
@@ -314,9 +317,10 @@ export default function CourseDetail() {
     }
 
 
+
     if (walletBalance < currentCourse.price) {
       setAlertMessage('رصيد المحفظة غير كافي. سيتم تحويلك إلى صفحة المحفظة للشحن.');
-      setShowErrorAlert(true);
+      setShowWalletAlert(true);
       setTimeout(() => {
         navigate('/wallet');
       }, 2000);
@@ -1175,10 +1179,19 @@ export default function CourseDetail() {
           onClose={() => setShowSuccessAlert(false)}
         />
 
+
         <PaymentErrorAlert
           isVisible={showErrorAlert}
           message={alertMessage}
           onClose={() => setShowErrorAlert(false)}
+        />
+
+        <WalletAlert
+          isVisible={showWalletAlert}
+          type="warning"
+          title="رصيد غير كافي"
+          message={alertMessage}
+          onClose={() => setShowWalletAlert(false)}
         />
       </div>
     </Layout>

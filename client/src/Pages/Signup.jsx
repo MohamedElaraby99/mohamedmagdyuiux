@@ -423,7 +423,7 @@ export default function Signup() {
               {/* Full Name Field */}
               <div className="group">
                 <label htmlFor="fullName" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 text-right">
-                  الاسم الكامل
+                  الاسم
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
@@ -487,42 +487,6 @@ export default function Signup() {
                 </div>
               )}
 
-              {/* Email Field */}
-              <div className="group">
-                <label htmlFor="email" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 text-right">
-                  البريد الإلكتروني {!isAdminRegistration && "(اختياري)"}
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
-                    <FaEnvelope className="h-5 w-5 text-primary group-focus-within:text-primary-dark transition-colors duration-200" />
-                  </div>
-                  <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    required={isAdminRegistration}
-                    className={`block w-full pr-12 pl-4 py-4 border-2 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-4 transition-all duration-300 text-right shadow-sm hover:shadow-md ${fieldErrors.email
-                      ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500'
-                      : 'border-gray-200 dark:border-gray-600 focus:ring-primary/20 focus:border-primary'
-                      }`}
-                    placeholder={isAdminRegistration ? "أدخل بريدك الإلكتروني" : "أدخل بريدك الإلكتروني (اختياري)"}
-                    value={signupData.email}
-                    onChange={handleUserInput}
-                  />
-                  {fieldErrors.email && (
-                    <p className="text-red-500 text-xs mt-1 text-right flex items-center gap-1">
-                      <FaExclamationTriangle className="text-xs" />
-                      {fieldErrors.email}
-                    </p>
-                  )}
-                </div>
-                {!isAdminRegistration && (
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 text-right">
-                    ممكن تسيب الخانة دي فاضية لو مش عايز تستعمل إيميل
-                  </p>
-                )}
-              </div>
-
               {/* Password Field */}
               <div className="group">
                 <label htmlFor="password" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 text-right">
@@ -564,134 +528,6 @@ export default function Signup() {
                   </button>
                 </div>
               </div>
-
-              {/* Father's Phone Number Field Removed */}
-
-              {/* Governorate Field - Only for regular users */}
-              {!isAdminRegistration && (
-                <div className="group">
-                  <label htmlFor="governorate" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 text-right">
-                    المدينة
-                  </label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
-                      <FaMapMarkerAlt className="h-5 w-5 text-primary group-focus-within:text-primary-dark transition-colors duration-200" />
-                    </div>
-                    <select
-                      id="governorate"
-                      name="governorate"
-                      required
-                      className={`block w-full pr-12 pl-4 py-4 border-2 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-4 transition-all duration-300 text-right shadow-sm hover:shadow-md ${fieldErrors.governorate
-                        ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500'
-                        : 'border-gray-200 dark:border-gray-600 focus:ring-primary/20 focus:border-primary'
-                        }`}
-                      value={signupData.governorate}
-                      onChange={handleUserInput}
-                    >
-                      <option value="">اختر المدينة</option>
-                      {egyptianCities.map((gov) => (
-                        <option key={gov.value} value={gov.value}>
-                          {gov.label}
-                        </option>
-                      ))}
-                    </select>
-                    {fieldErrors.governorate && (
-                      <p className="text-red-500 text-xs mt-1 text-right flex items-center gap-1">
-                        <FaExclamationTriangle className="text-xs" />
-                        {fieldErrors.governorate}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              {/* Stage Field Removed */}
-
-              {/* Age Field - Only for regular users */}
-              {!isAdminRegistration && (
-                <div className="group">
-                  <label htmlFor="age" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 text-right">
-                    العمر
-                  </label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
-                      <FaUser className="h-5 w-5 text-primary group-focus-within:text-primary-dark transition-colors duration-200" />
-                    </div>
-                    <input
-                      id="age"
-                      name="age"
-                      type="number"
-                      min="5"
-                      max="100"
-                      required
-                      className={`block w-full pr-12 pl-4 py-4 border-2 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-4 transition-all duration-300 text-right shadow-sm hover:shadow-md ${fieldErrors.age
-                        ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500'
-                        : 'border-gray-200 dark:border-gray-600 focus:ring-primary/20 focus:border-primary'
-                        }`}
-                      placeholder="أدخل عمرك"
-                      value={signupData.age}
-                      onChange={handleUserInput}
-                    />
-                    {fieldErrors.age && (
-                      <p className="text-red-500 text-xs mt-1 text-right flex items-center gap-1">
-                        <FaExclamationTriangle className="text-xs" />
-                        {fieldErrors.age}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              {/* Enhanced Avatar Upload */}
-              <div className="group">
-                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 text-right">
-                  الصورة الشخصية
-                </label>
-                <div className="flex items-center space-x-reverse space-x-4">
-                  <div className="relative">
-                    <div className="w-20 h-20 rounded-full bg-gradient-to-r from-primary/10 to-primary/20 dark:from-primary/20 dark:to-primary/30 flex items-center justify-center border-2 border-gray-200 dark:border-gray-600 overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300">
-                      {previewImage ? (
-                        <img
-                          src={previewImage}
-                          alt="Profile preview"
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <BsPersonCircle className="w-10 h-10 text-gray-400" />
-                      )}
-                    </div>
-                    {previewImage && (
-                      <div className="absolute -top-1 -left-1 w-7 h-7 bg-primary rounded-full flex items-center justify-center shadow-lg">
-                        <FaCamera className="w-4 h-4 text-white" />
-                      </div>
-                    )}
-                  </div>
-                  <div className="flex-1">
-                    <label htmlFor="image_uploads" className="cursor-pointer">
-                      <div className="flex items-center justify-center px-6 py-4 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl hover:border-primary dark:hover:border-primary transition-all duration-300 hover:shadow-md bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600">
-                        <FaUpload className="w-5 h-5 text-primary ml-2" />
-                        <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
-                          {previewImage ? "تغيير الصورة" : "رفع صورة"}
-                        </span>
-                      </div>
-                    </label>
-                    <input
-                      id="image_uploads"
-                      onChange={getImage}
-                      type="file"
-                      accept=".jpg, .jpeg, .png, image/*"
-                      className="hidden"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* CAPTCHA Component */}
-              <CaptchaComponent
-                onVerified={handleCaptchaVerified}
-                onError={handleCaptchaError}
-                reset={captchaReset}
-              />
 
               {/* Enhanced Submit Button */}
               <button
