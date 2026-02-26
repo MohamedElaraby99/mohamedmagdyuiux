@@ -433,6 +433,46 @@ export default function AdminUserDashboard() {
         return { strength: 'strong', color: 'text-green-500', text: 'قوية' };
     };
 
+    const renderPagination = () => {
+        if (!pagination || pagination.totalPages <= 1) return null;
+
+        return (
+            <div className="mt-6 flex justify-center">
+                <div className="flex space-x-2 space-x-reverse">
+                    {Array.from({ length: pagination.totalPages }, (_, i) => (
+                        <button
+                            key={i + 1}
+                            onClick={() => {
+                                let roleFilter = "";
+                                if (activeTab === "users") {
+                                    roleFilter = "USER";
+                                } else if (activeTab === "admins") {
+                                    roleFilter = "ADMIN";
+                                } else {
+                                    roleFilter = filters.role;
+                                }
+
+                                dispatch(getAllUsers({
+                                    page: i + 1,
+                                    limit: pagination.limit || 20,
+                                    role: roleFilter,
+                                    status: filters.status,
+                                    search: filters.search
+                                }));
+                            }}
+                            className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${pagination.currentPage === i + 1
+                                ? "bg-indigo-600 text-white"
+                                : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
+                                }`}
+                        >
+                            {i + 1}
+                        </button>
+                    ))}
+                </div>
+            </div>
+        );
+    };
+
     return (
         <Layout>
             <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-green-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-8" dir="rtl">
@@ -616,7 +656,7 @@ export default function AdminUserDashboard() {
                                                 placeholder="البحث بالاسم أو البريد الإلكتروني"
                                             />
                                         </div>
-                                       
+
                                         {activeTab === "all" && (
                                             <div>
                                                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -761,29 +801,7 @@ export default function AdminUserDashboard() {
                                     </div>
                                 )}
 
-                                {/* Pagination */}
-                                {pagination.totalPages > 1 && (
-                                    <div className="mt-6 flex justify-center">
-                                        <div className="flex space-x-2">
-                                            {Array.from({ length: pagination.totalPages }, (_, i) => (
-                                                <button
-                                                    key={i + 1}
-                                                    onClick={() => dispatch(getAllUsers({
-                                                        page: i + 1,
-                                                        limit: 20,
-                                                        ...filters
-                                                    }))}
-                                                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${pagination.currentPage === i + 1
-                                                        ? "bg-indigo-600 text-white"
-                                                        : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
-                                                        }`}
-                                                >
-                                                    {i + 1}
-                                                </button>
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
+                                {renderPagination()}
                             </div>
                         )}
 
@@ -947,6 +965,7 @@ export default function AdminUserDashboard() {
                                         ))}
                                     </div>
                                 )}
+                                {renderPagination()}
                             </div>
                         )}
 
@@ -1123,6 +1142,7 @@ export default function AdminUserDashboard() {
                                         ))}
                                     </div>
                                 )}
+                                {renderPagination()}
                             </div>
                         )}
                     </div>
@@ -1533,7 +1553,7 @@ export default function AdminUserDashboard() {
                                                     <p className="text-gray-900 dark:text-white font-medium">{selectedUser.phoneNumber || 'غير محدد'}</p>
                                                 )}
                                             </div>
-                                         
+
                                         </div>
                                     </div>
 

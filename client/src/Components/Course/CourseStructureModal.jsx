@@ -7,8 +7,11 @@ import {
   updateUnit,
   deleteUnit,
   getCourseById,
-  deleteLesson
+  deleteLesson,
+  reorderUnits,
+  reorderLessons
 } from '../../Redux/Slices/CourseSlice';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { FaPlus, FaEdit, FaTrash, FaGripVertical, FaTimes } from 'react-icons/fa';
 import { toast } from 'react-hot-toast';
 import LessonModal from './LessonModal';
@@ -173,6 +176,42 @@ const CourseStructureModal = ({ courseId, onClose, isOpen }) => {
     setSelectedLesson(null);
   };
 
+  const onDragEnd = async (result) => {
+    const { destination, source, draggableId, type } = result;
+
+    if (!destination) return;
+
+    if (
+      destination.droppableId === source.droppableId &&
+      destination.index === source.index
+    ) {
+      return;
+    }
+
+    try {
+      if (type === 'unit') {
+        await dispatch(reorderUnits({
+          courseId,
+          unitId: draggableId,
+          newIndex: destination.index
+        })).unwrap();
+        toast.success('تمت إعادة ترتيب الوحدات بنجاح');
+      } else if (type === 'lesson') {
+        const unitId = source.droppableId === 'direct-lessons' ? null : source.droppableId;
+        await dispatch(reorderLessons({
+          courseId,
+          unitId,
+          lessonId: draggableId,
+          newIndex: destination.index
+        })).unwrap();
+        toast.success('تمت إعادة ترتيب الدروس بنجاح');
+      }
+      refreshCourse();
+    } catch (error) {
+      toast.error(error.message || 'فشل في إعادة الترتيب');
+    }
+  };
+
   if (!isOpen) {
     return null;
   }
@@ -195,176 +234,225 @@ const CourseStructureModal = ({ courseId, onClose, isOpen }) => {
 
         {/* Content */}
         <div className="p-6 space-y-6">
-          {/* Units */}
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">وحدات</h3>
-              <button
-                onClick={() => setShowAddUnit(true)}
-                className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700"
-              >
-                <FaPlus className="text-sm" />
-                اضافة وحدة              </button>
-            </div>
+          <DragDropContext onDragEnd={onDragEnd}>
+            {/* Units */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">وحدات</h3>
+                <button
+                  onClick={() => setShowAddUnit(true)}
+                  className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700"
+                >
+                  <FaPlus className="text-sm" />
+                  اضافة وحدة              </button>
+              </div>
 
-            {course?.units?.map((unit) => (
-              <div key={unit._id} className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-3">
-                    <h4 className="font-medium text-gray-900 dark:text-white">
-                      {unit.title}
-                    </h4>
-                    {unit.isFree && (
-                      <span className="text-xs font-semibold text-green-700 bg-green-100 dark:text-green-300 dark:bg-green-900/40 px-2 py-0.5 rounded-full">
-                        مجاني
-                      </span>
-                    )}
-                    <span className="text-xs text-gray-500 bg-gray-200 dark:bg-gray-600 px-2 py-1 rounded sr-only">
-                      ID: {unit._id}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => setSelectedUnit(unit)}
-                      className="text-green-600 hover:text-green-800 p-1"
-                      title="Edit Unit"
-                    >
-                      <FaEdit className="text-sm" />
-                    </button>
-                    <button
-                      onClick={() => handleDeleteUnit(unit._id)}
-                      className="text-red-600 hover:text-red-800 p-1"
-                      title="Delete Unit"
-                    >
-                      <FaTrash className="text-sm" />
-                    </button>
-                    <button
-                      onClick={() => setShowAddLesson({ unitId: unit._id, show: true })}
-                      className="flex items-center gap-2 bg-green-600 text-white px-3 py-1 rounded-md hover:bg-green-700 text-sm"
-                    >
-                      <FaPlus className="text-xs" />
-                      اضافة درس
-                    </button>
-                  </div>
-                </div>
+              <Droppable droppableId="units-list" type="unit">
+                {(provided) => (
+                  <div
+                    {...provided.droppableProps}
+                    ref={provided.innerRef}
+                    className="space-y-4"
+                  >
+                    {course?.units?.map((unit, index) => (
+                      <Draggable key={unit._id} draggableId={unit._id} index={index}>
+                        {(provided) => (
+                          <div
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4"
+                          >
+                            <div className="flex items-center justify-between mb-3">
+                              <div className="flex items-center gap-3">
+                                <span {...provided.dragHandleProps}>
+                                  <FaGripVertical className="text-gray-400 cursor-grab active:cursor-grabbing" />
+                                </span>
+                                <h4 className="font-medium text-gray-900 dark:text-white">
+                                  {unit.title}
+                                </h4>
+                                {unit.isFree && (
+                                  <span className="text-xs font-semibold text-green-700 bg-green-100 dark:text-green-300 dark:bg-green-900/40 px-2 py-0.5 rounded-full">
+                                    مجاني
+                                  </span>
+                                )}
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <button
+                                  onClick={() => setSelectedUnit(unit)}
+                                  className="text-green-600 hover:text-green-800 p-1"
+                                  title="Edit Unit"
+                                >
+                                  <FaEdit className="text-sm" />
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteUnit(unit._id)}
+                                  className="text-red-600 hover:text-red-800 p-1"
+                                  title="Delete Unit"
+                                >
+                                  <FaTrash className="text-sm" />
+                                </button>
+                                <button
+                                  onClick={() => setShowAddLesson({ unitId: unit._id, show: true })}
+                                  className="flex items-center gap-2 bg-green-600 text-white px-3 py-1 rounded-md hover:bg-green-700 text-sm"
+                                >
+                                  <FaPlus className="text-xs" />
+                                  اضافة درس
+                                </button>
+                              </div>
+                            </div>
 
-                {unit.description && (
-                  <p className="text-gray-600 dark:text-gray-400 text-sm mb-3">
-                    {unit.description}
-                  </p>
-                )}
-
-                {/* Lessons in Unit */}
-                <div className="space-y-2">
-                  {unit.lessons?.map((lesson) => (
-                    <div
-                      key={lesson._id}
-                      className="flex items-center justify-between p-3 bg-white dark:bg-gray-600 rounded-md border border-gray-200 dark:border-gray-500"
-                    >
-                      <div className="flex items-center gap-3 flex-1">
-                        <FaGripVertical className="text-gray-400" />
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2">
-                            <h5 className="font-medium text-gray-900 dark:text-white">
-                              {lesson.title}
-                            </h5>
-                            {lesson.isFree && (
-                              <span className="text-[10px] font-semibold text-green-700 bg-green-100 dark:text-green-300 dark:bg-green-900/40 px-1.5 py-0.5 rounded-full">
-                                مجاني
-                              </span>
+                            {unit.description && (
+                              <p className="text-gray-600 dark:text-gray-400 text-sm mb-3">
+                                {unit.description}
+                              </p>
                             )}
-                          </div>
-                          {lesson.description && (
-                            <p className="text-gray-600 dark:text-gray-400 text-sm">
-                              {lesson.description}
-                            </p>
-                          )}
-                          <span className="text-xs text-gray-500 bg-gray-200 dark:bg-gray-600 px-2 py-1 rounded sr-only">
-                            ID: {lesson._id}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={() => openLessonModal(lesson, unit._id, lesson._id)}
-                          className="text-green-600 hover:text-green-800 p-1"
-                        >
-                          <FaEdit className="text-sm" />
-                        </button>
-                        <button
-                          onClick={() => handleDeleteUnitLesson(unit._id, lesson._id)}
-                          className="text-red-600 hover:text-red-800 p-1"
-                          title="Delete Lesson"
-                        >
-                          <FaTrash className="text-sm" />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
 
-          {/* درس */}
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">درس</h3>
-              <button
-                onClick={() => setShowAddDirectLesson(true)}
-                className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700"
-              >
-                <FaPlus className="text-sm" />
-                اضافة درس
-              </button>
+                            {/* Lessons in Unit */}
+                            <Droppable droppableId={unit._id} type="lesson">
+                              {(provided) => (
+                                <div
+                                  {...provided.droppableProps}
+                                  ref={provided.innerRef}
+                                  className="space-y-2"
+                                >
+                                  {unit.lessons?.map((lesson, index) => (
+                                    <Draggable key={lesson._id} draggableId={lesson._id} index={index}>
+                                      {(provided) => (
+                                        <div
+                                          ref={provided.innerRef}
+                                          {...provided.draggableProps}
+                                          className="flex items-center justify-between p-3 bg-white dark:bg-gray-600 rounded-md border border-gray-200 dark:border-gray-500"
+                                        >
+                                          <div className="flex items-center gap-3 flex-1">
+                                            <span {...provided.dragHandleProps}>
+                                              <FaGripVertical className="text-gray-400 cursor-grab active:cursor-grabbing" />
+                                            </span>
+                                            <div className="flex-1">
+                                              <div className="flex items-center gap-2">
+                                                <h5 className="font-medium text-gray-900 dark:text-white">
+                                                  {lesson.title}
+                                                </h5>
+                                                {lesson.isFree && (
+                                                  <span className="text-[10px] font-semibold text-green-700 bg-green-100 dark:text-green-300 dark:bg-green-900/40 px-1.5 py-0.5 rounded-full">
+                                                    مجاني
+                                                  </span>
+                                                )}
+                                              </div>
+                                              {lesson.description && (
+                                                <p className="text-gray-600 dark:text-gray-400 text-sm">
+                                                  {lesson.description}
+                                                </p>
+                                              )}
+                                            </div>
+                                          </div>
+                                          <div className="flex items-center gap-2">
+                                            <button
+                                              onClick={() => openLessonModal(lesson, unit._id, lesson._id)}
+                                              className="text-green-600 hover:text-green-800 p-1"
+                                            >
+                                              <FaEdit className="text-sm" />
+                                            </button>
+                                            <button
+                                              onClick={() => handleDeleteUnitLesson(unit._id, lesson._id)}
+                                              className="text-red-600 hover:text-red-800 p-1"
+                                              title="Delete Lesson"
+                                            >
+                                              <FaTrash className="text-sm" />
+                                            </button>
+                                          </div>
+                                        </div>
+                                      )}
+                                    </Draggable>
+                                  ))}
+                                  {provided.placeholder}
+                                </div>
+                              )}
+                            </Droppable>
+                          </div>
+                        )}
+                      </Draggable>
+                    ))}
+                    {provided.placeholder}
+                  </div>
+                )}
+              </Droppable>
             </div>
 
-            {course?.directLessons?.map((lesson) => (
-              <div
-                key={lesson._id}
-                className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-md border border-gray-200 dark:border-gray-500"
-              >
-                <div className="flex items-center gap-3 flex-1">
-                  <FaGripVertical className="text-gray-400" />
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <h5 className="font-medium text-gray-900 dark:text-white">
-                        {lesson.title}
-                      </h5>
-                      {lesson.isFree && (
-                        <span className="text-[10px] font-semibold text-green-700 bg-green-100 dark:text-green-300 dark:bg-green-900/40 px-1.5 py-0.5 rounded-full">
-                          مجاني
-                        </span>
-                      )}
-                    </div>
-                    {lesson.description && (
-                      <p className="text-gray-600 dark:text-gray-400 text-sm">
-                        {lesson.description}
-                      </p>
-                    )}
-                    <span className="text-xs text-gray-500 bg-gray-200 dark:bg-gray-600 px-2 py-1 rounded sr-only">
-                      ID: {lesson._id}
-                    </span>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => openLessonModal(lesson, null, lesson._id)}
-                    className="text-green-600 hover:text-green-800 p-1"
-                  >
-                    <FaEdit className="text-sm" />
-                  </button>
-                  <button
-                    onClick={() => handleDeleteDirectLesson(lesson._id)}
-                    className="text-red-600 hover:text-red-800 p-1"
-                    title="Delete Direct Lesson"
-                  >
-                    <FaTrash className="text-sm" />
-                  </button>
-                </div>
+            {/* Direct Lessons */}
+            <div className="space-y-4 pt-6">
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">دروس حرة</h3>
+                <button
+                  onClick={() => setShowAddDirectLesson(true)}
+                  className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700"
+                >
+                  <FaPlus className="text-sm" />
+                  اضافة درس
+                </button>
               </div>
-            ))}
-          </div>
+
+              <Droppable droppableId="direct-lessons" type="lesson">
+                {(provided) => (
+                  <div
+                    {...provided.droppableProps}
+                    ref={provided.innerRef}
+                    className="space-y-2"
+                  >
+                    {course?.directLessons?.map((lesson, index) => (
+                      <Draggable key={lesson._id} draggableId={lesson._id} index={index}>
+                        {(provided) => (
+                          <div
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-md border border-gray-200 dark:border-gray-500"
+                          >
+                            <div className="flex items-center gap-3 flex-1">
+                              <span {...provided.dragHandleProps}>
+                                <FaGripVertical className="text-gray-400 cursor-grab active:cursor-grabbing" />
+                              </span>
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2">
+                                  <h5 className="font-medium text-gray-900 dark:text-white">
+                                    {lesson.title}
+                                  </h5>
+                                  {lesson.isFree && (
+                                    <span className="text-[10px] font-semibold text-green-700 bg-green-100 dark:text-green-300 dark:bg-green-900/40 px-1.5 py-0.5 rounded-full">
+                                      مجاني
+                                    </span>
+                                  )}
+                                </div>
+                                {lesson.description && (
+                                  <p className="text-gray-600 dark:text-gray-400 text-sm">
+                                    {lesson.description}
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <button
+                                onClick={() => openLessonModal(lesson, null, lesson._id)}
+                                className="text-green-600 hover:text-green-800 p-1"
+                              >
+                                <FaEdit className="text-sm" />
+                              </button>
+                              <button
+                                onClick={() => handleDeleteDirectLesson(lesson._id)}
+                                className="text-red-600 hover:text-red-800 p-1"
+                                title="Delete Direct Lesson"
+                              >
+                                <FaTrash className="text-sm" />
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </Draggable>
+                    ))}
+                    {provided.placeholder}
+                  </div>
+                )}
+              </Droppable>
+            </div>
+          </DragDropContext>
         </div>
 
         {/* Add Unit Modal */}

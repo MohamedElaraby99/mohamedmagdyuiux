@@ -1128,6 +1128,33 @@ export const updateUnit = async (req, res, next) => {
   }
 };
 
+// Reorder units in a course
+export const reorderUnits = async (req, res, next) => {
+  try {
+    const { courseId } = req.params;
+    const { unitId, newIndex } = req.body;
+    const course = await Course.findById(courseId);
+    if (!course) {
+      return res.status(404).json({ success: false, message: 'Course not found' });
+    }
+
+    const unit = course.units.id(unitId);
+    if (!unit) {
+      return res.status(404).json({ success: false, message: 'Unit not found' });
+    }
+
+    // Remove unit from current position
+    unit.deleteOne();
+    // Insert at new position
+    course.units.splice(newIndex, 0, unit);
+
+    await course.save();
+    return res.status(200).json({ success: true, message: 'Unit reordered', data: { course } });
+  } catch (error) {
+    return next(new AppError(error.message, 500));
+  }
+};
+
 // Reorder lessons in a unit or direct lessons
 export const reorderLessons = async (req, res, next) => {
   try {

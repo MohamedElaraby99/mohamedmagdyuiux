@@ -289,6 +289,22 @@ export const reorderLessons = createAsyncThunk(
   }
 );
 
+// Reorder units by unit ID
+export const reorderUnits = createAsyncThunk(
+  'course/reorderUnits',
+  async ({ courseId, unitId, newIndex }, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.put(`/courses/${courseId}/reorder-units`, {
+        unitId,
+        newIndex
+      });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data);
+    }
+  }
+);
+
 // Update lesson content (videos, pdfs, exams, trainings)
 export const updateLessonContent = createAsyncThunk(
   'course/updateLessonContent',
@@ -567,6 +583,17 @@ const courseSlice = createSlice({
       })
       // Update unit
       .addCase(updateUnit.fulfilled, (state, action) => {
+        const updatedCourse = action.payload.data.course;
+        const index = state.courses.findIndex(course => course._id === updatedCourse._id);
+        if (index !== -1) {
+          state.courses[index] = updatedCourse;
+        }
+        if (state.currentCourse && state.currentCourse._id === updatedCourse._id) {
+          state.currentCourse = updatedCourse;
+        }
+      })
+      // Reorder units
+      .addCase(reorderUnits.fulfilled, (state, action) => {
         const updatedCourse = action.payload.data.course;
         const index = state.courses.findIndex(course => course._id === updatedCourse._id);
         if (index !== -1) {

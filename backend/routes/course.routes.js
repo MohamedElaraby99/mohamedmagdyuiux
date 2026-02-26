@@ -20,6 +20,7 @@ import {
   updateLesson,
   deleteLesson,
   reorderLessons,
+  reorderUnits,
   deleteUnit,
   updateUnit,
   updateLessonContent,
@@ -116,6 +117,7 @@ router.put('/:courseId/lessons/:lessonId/content', isLoggedIn, authorisedRoles('
 
 router.delete('/:courseId/lessons/:lessonId', isLoggedIn, authorisedRoles('ADMIN', 'SUPER_ADMIN', 'INSTRUCTOR'), deleteLesson);
 router.put('/:courseId/reorder-lessons', isLoggedIn, authorisedRoles('ADMIN', 'SUPER_ADMIN', 'INSTRUCTOR'), reorderLessons);
+router.put('/:courseId/reorder-units', isLoggedIn, authorisedRoles('ADMIN', 'SUPER_ADMIN', 'INSTRUCTOR'), reorderUnits);
 
 // Training attempt submission
 router.post('/:courseId/lessons/:lessonId/trainings/:trainingIndex/submit', isLoggedIn, submitTrainingAttempt);
