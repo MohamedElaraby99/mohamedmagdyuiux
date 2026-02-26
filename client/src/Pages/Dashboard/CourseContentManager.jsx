@@ -1330,8 +1330,27 @@ const LessonContentModal = ({ courseId, unitId, lessonId, onClose }) => {
           <button className={`px-3 py-2 rounded-t whitespace-nowrap ${tab === 'exams' ? 'bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 font-bold' : 'text-gray-600 dark:text-gray-300'}`} onClick={() => setTab('exams')}>امتحانات</button>
           <button className={`px-3 py-2 rounded-t whitespace-nowrap ${tab === 'essay-exams' ? 'bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 font-bold' : 'text-gray-600 dark:text-gray-300'}`} onClick={() => setTab('essay-exams')}>امتحانات مقالية</button>
           <button className={`px-3 py-2 rounded-t whitespace-nowrap ${tab === 'trainings' ? 'bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 font-bold' : 'text-gray-600 dark:text-gray-300'}`} onClick={() => setTab('trainings')}>تدريبات</button>
-          <button className={`px-3 py-2 rounded-t whitespace-nowrap ${tab === 'settings' ? 'bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 font-bold' : 'text-gray-600 dark:text-gray-300'}`} onClick={() => setTab('settings')}>⚙️ الإعدادات</button>
+          <button className={`px-3 py-2 rounded-t whitespace-nowrap ${tab === 'settings' ? 'bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 font-bold' : 'text-gray-600 dark:text-gray-300'}`} onClick={() => setTab('settings')}>⚙️ الإعدادات والمهام</button>
         </div>
+
+        {/* Banner indicating active Entry Exam or Task */}
+        {entryExam?.enabled && tab !== 'settings' && (
+          <div
+            className="mb-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-3 flex justify-between items-center cursor-pointer hover:bg-amber-100 dark:hover:bg-amber-900/40 transition-colors"
+            onClick={() => setTab('settings')}
+          >
+            <div className="flex items-center gap-2 text-amber-800 dark:text-amber-200 text-right">
+              <span className="text-xl">🔒</span>
+              <span className="font-semibold text-sm">
+                تم تفعيل {entryExam.type === 'task' ? 'مهمة رفع' : 'امتحان'} كشرط لدخول هذا الدرس.
+              </span>
+            </div>
+            <span className="text-amber-600 dark:text-amber-400 text-xs font-bold underline">
+              تعديل المدخل
+            </span>
+          </div>
+        )}
+
         {tab === 'videos' && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">

@@ -503,6 +503,13 @@ export default function AdminDashboard() {
                   <span className="text-xs lg:text-sm font-medium">الامتحانات المقالية</span>
                 </button>
                 <button
+                  onClick={() => navigate("/admin/pending-tasks")}
+                  className="group p-3 lg:p-4 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg lg:rounded-xl text-white hover:from-blue-600 hover:to-blue-700 transition-all duration-200 transform hover:scale-105"
+                >
+                  <FaClipboardList className="text-lg lg:text-2xl mx-auto mb-1 lg:mb-2 group-hover:scale-110 transition-transform duration-200" />
+                  <span className="text-xs lg:text-sm font-medium">تقييم مهام الطلاب</span>
+                </button>
+                <button
                   onClick={() => navigate("/admin/course-exams")}
                   className="group p-3 lg:p-4 bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg lg:rounded-xl text-white hover:from-purple-600 hover:to-purple-700 transition-all duration-200 transform hover:scale-105"
                 >

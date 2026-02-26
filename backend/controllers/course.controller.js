@@ -384,7 +384,12 @@ export const getCourseById = async (req, res, next) => {
               videosCount: lesson.videos?.length || 0,
               pdfsCount: lesson.pdfs?.length || 0,
               examsCount: lesson.exams?.length || 0,
-              trainingsCount: lesson.trainings?.length || 0
+              trainingsCount: lesson.trainings?.length || 0,
+              entryExam: lesson.entryExam ? {
+                enabled: lesson.entryExam.enabled,
+                type: lesson.entryExam.type,
+                title: lesson.entryExam.title
+              } : null
             };
             console.log(`  📚 Lesson "${lesson.title}":`, {
               videos: lesson.videos?.length || 0,

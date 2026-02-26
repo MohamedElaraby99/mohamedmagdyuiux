@@ -900,7 +900,6 @@ const getAllPendingTasks = asyncHandler(async (req, res) => {
     // Now populate user info manually (aggregate doesn't populate nested object ids easily if we unnested like this)
     // To do this efficiently:
     const userIds = [...new Set(pendingTasks.map(t => t.userId))];
-    const User = require('../models/user.model'); // Ensure we have the model
     const users = await User.find({ _id: { $in: userIds } }, 'fullName email phone');
     const userMap = {};
     users.forEach(u => { userMap[u._id.toString()] = u; });
