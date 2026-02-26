@@ -669,7 +669,7 @@ const clearExamAttempt = asyncHandler(async (req, res) => {
 
 // Take Entry Exam (امتحان المدخل)
 const takeEntryExam = asyncHandler(async (req, res) => {
-    const { courseId, lessonId, unitId, answers, startTime } = req.body;
+    const { courseId, lessonId, unitId, answers, startTime, taskLink, taskImage } = req.body;
 
     const userId = req.user._id || req.user.id;
 
@@ -702,12 +702,58 @@ const takeEntryExam = asyncHandler(async (req, res) => {
     }
 
     // Check if entry exam exists and is enabled
-    if (!lesson.entryExam || !lesson.entryExam.enabled || !lesson.entryExam.questions || lesson.entryExam.questions.length === 0) {
+    if (!lesson.entryExam || !lesson.entryExam.enabled) {
         throw new AppError("Entry exam not found or not enabled", 400);
     }
 
     const entryExam = lesson.entryExam;
+    const isTask = entryExam.type === 'task';
 
+    if (!isTask && (!entryExam.questions || entryExam.questions.length === 0)) {
+        throw new AppError("Entry exam has no questions", 400);
+    }
+
+    // Common attempt data
+    const attemptData = {
+        userId: userId,
+        takenAt: new Date(),
+    };
+
+    if (isTask) {
+        // Handle Task submission
+        if (!taskLink && !taskImage) {
+            throw new AppError("Please provide a link or an image for your task submission", 400);
+        }
+
+        attemptData.taskLink = taskLink || '';
+        attemptData.taskImage = taskImage || '';
+        attemptData.status = 'pending';
+
+        // Check if there is an existing attempt and replace it or update it
+        if (!lesson.entryExam.userAttempts) {
+            lesson.entryExam.userAttempts = [];
+        }
+
+        const existingAttemptIndex = lesson.entryExam.userAttempts.findIndex(a => a.userId.toString() === userId.toString());
+        if (existingAttemptIndex >= 0) {
+            lesson.entryExam.userAttempts[existingAttemptIndex] = attemptData;
+        } else {
+            lesson.entryExam.userAttempts.push(attemptData);
+        }
+
+        await course.save();
+
+        return res.status(200).json({
+            success: true,
+            message: "Task submitted successfully! Please wait for admin review.",
+            data: {
+                contentUnlocked: false,
+                status: 'pending'
+            }
+        });
+    }
+
+    // Handle MCQ submission
     // Calculate results
     const questions = entryExam.questions;
     let correctAnswers = 0;
@@ -743,22 +789,21 @@ const takeEntryExam = asyncHandler(async (req, res) => {
         timeTaken = Math.round((endTime - start) / 1000 / 60);
     }
 
-    // Save the attempt to the entry exam
-    const attemptData = {
-        userId: userId,
-        takenAt: new Date(),
-        score: score,
-        totalQuestions: totalQuestions,
-        answers: detailedAnswers
-    };
+    attemptData.score = score;
+    attemptData.totalQuestions = totalQuestions;
+    attemptData.answers = detailedAnswers;
 
     // Initialize userAttempts array if it doesn't exist
     if (!lesson.entryExam.userAttempts) {
         lesson.entryExam.userAttempts = [];
     }
 
-    // Add the new attempt
-    lesson.entryExam.userAttempts.push(attemptData);
+    const existingAttemptIndex = lesson.entryExam.userAttempts.findIndex(a => a.userId.toString() === userId.toString());
+    if (existingAttemptIndex >= 0) {
+        lesson.entryExam.userAttempts[existingAttemptIndex] = attemptData;
+    } else {
+        lesson.entryExam.userAttempts.push(attemptData);
+    }
 
     // Save the course
     await course.save();
@@ -783,6 +828,151 @@ const takeEntryExam = asyncHandler(async (req, res) => {
     });
 });
 
+// Get all pending entry tasks (for Admin)
+const getAllPendingTasks = asyncHandler(async (req, res) => {
+    // We need to look through courses and aggregate pending tasks.
+    // This could be heavy with many courses, but is acceptable for this scale. 
+    // An alternative is an aggregation pipeline.
+    const pipeline = [
+        {
+            // find courses that have some lessons with task entry exams
+            $match: {
+                $or: [
+                    { 'directLessons.entryExam.type': 'task' },
+                    { 'units.lessons.entryExam.type': 'task' }
+                ]
+            }
+        },
+        {
+            $project: {
+                _id: 1,
+                title: 1,
+                directLessons: 1,
+                units: 1
+            }
+        }
+    ];
+
+    const courses = await Course.aggregate(pipeline);
+
+    // We will collect the tasks here
+    const pendingTasks = [];
+
+    // Helper to extract pending tasks from a list of lessons
+    const extractPending = (lessons, courseId, courseTitle, unitId = null, unitTitle = null) => {
+        lessons.forEach(lesson => {
+            if (lesson.entryExam?.type === 'task' && lesson.entryExam?.userAttempts?.length > 0) {
+                // Find pending attempts
+                const pendingAttempts = lesson.entryExam.userAttempts.filter(a => a.status === 'pending');
+                pendingAttempts.forEach(attempt => {
+                    pendingTasks.push({
+                        courseId,
+                        courseTitle,
+                        unitId,
+                        unitTitle,
+                        lessonId: lesson._id,
+                        lessonTitle: lesson.title,
+                        taskDescription: lesson.entryExam.taskDescription,
+                        userId: attempt.userId,
+                        taskLink: attempt.taskLink,
+                        taskImage: attempt.taskImage,
+                        takenAt: attempt.takenAt,
+                        status: attempt.status
+                    });
+                });
+            }
+        });
+    };
+
+    for (const course of courses) {
+        if (course.directLessons) {
+            extractPending(course.directLessons, course._id, course.title);
+        }
+        if (course.units) {
+            course.units.forEach(unit => {
+                if (unit.lessons) {
+                    extractPending(unit.lessons, course._id, course.title, unit._id, unit.title);
+                }
+            });
+        }
+    }
+
+    // Now populate user info manually (aggregate doesn't populate nested object ids easily if we unnested like this)
+    // To do this efficiently:
+    const userIds = [...new Set(pendingTasks.map(t => t.userId))];
+    const User = require('../models/user.model'); // Ensure we have the model
+    const users = await User.find({ _id: { $in: userIds } }, 'fullName email phone');
+    const userMap = {};
+    users.forEach(u => { userMap[u._id.toString()] = u; });
+
+    const enrichedTasks = pendingTasks.map(t => ({
+        ...t,
+        user: userMap[t.userId.toString()] || { fullName: 'Unknown User' }
+    }));
+
+    // Sort by oldest first
+    enrichedTasks.sort((a, b) => new Date(a.takenAt) - new Date(b.takenAt));
+
+    res.status(200).json({
+        success: true,
+        count: enrichedTasks.length,
+        data: enrichedTasks
+    });
+});
+
+// Review Entry Task (for Admin)
+const reviewEntryTask = asyncHandler(async (req, res) => {
+    const { courseId, lessonId, userId } = req.params;
+    const { status, adminFeedback } = req.body; // status: 'success' | 'failed'
+
+    if (!['success', 'failed'].includes(status)) {
+        throw new AppError("Invalid status. Must be 'success' or 'failed'.", 400);
+    }
+
+    const course = await Course.findById(courseId);
+    if (!course) {
+        throw new AppError("Course not found", 404);
+    }
+
+    let lesson = course.directLessons.id(lessonId);
+    if (!lesson) {
+        for (const unit of course.units) {
+            lesson = unit.lessons.id(lessonId);
+            if (lesson) break;
+        }
+    }
+
+    if (!lesson) {
+        throw new AppError("Lesson not found", 404);
+    }
+
+    if (!lesson.entryExam || lesson.entryExam.type !== 'task') {
+        throw new AppError("This lesson does not have a task-type entry exam", 400);
+    }
+
+    const attempt = lesson.entryExam.userAttempts?.find(a => a.userId.toString() === userId.toString());
+    if (!attempt) {
+        throw new AppError("User has not submitted this task", 404);
+    }
+
+    attempt.status = status;
+    if (adminFeedback !== undefined) {
+        attempt.adminFeedback = adminFeedback;
+    }
+
+    await course.save();
+
+    res.status(200).json({
+        success: true,
+        message: `Task review submitted successfully. User status is now ${status}.`,
+        data: {
+            userId: attempt.userId,
+            status: attempt.status,
+            adminFeedback: attempt.adminFeedback
+        }
+    });
+});
+
 export {
     takeTrainingExam,
     takeFinalExam,
@@ -791,5 +981,7 @@ export {
     getExamStatistics,
     checkExamTaken,
     clearExamAttempt,
-    takeEntryExam
+    takeEntryExam,
+    getAllPendingTasks,
+    reviewEntryTask
 }; 

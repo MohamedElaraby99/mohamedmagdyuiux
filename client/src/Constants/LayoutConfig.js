@@ -115,7 +115,7 @@ export const SOCIAL_MEDIA = {
         enabled: false,
     },
     whatsapp: {
-        url: "https://wa.me/201028510498",
+        url: "https://wa.me/201500814250",
         label: "WhatsApp",
         enabled: true,
     },
@@ -153,13 +153,13 @@ export const FOOTER = {
 export const PAYMENT = {
     // واتساب للحصول على كود شحن
     whatsappForCodes: {
-        phone: "01028510498",
+        phone: "01500814250",
         label: "للحصول على كود شحن - تواصل معنا على واتساب",
         enabled: true,
     },
     // رقم واتساب للتواصل
     whatsappContact: {
-        phone: "01028510498",
+        phone: "01500814250",
         label: "رقم الواتساب",
         description: "متاح على مدار 24/7",
         enabled: true,

@@ -555,10 +555,17 @@ export const getLessonById = async (req, res, next) => {
 
     if (hasEntryExam && userId) {
       // Check if user has attempted the entry exam
-      hasCompletedEntryExam = lesson.entryExam.userAttempts?.some(attempt =>
+      const userAttempt = lesson.entryExam.userAttempts?.find(attempt =>
         attempt.userId.toString() === userId.toString()
-      ) || false;
-      contentUnlocked = hasCompletedEntryExam;
+      );
+
+      hasCompletedEntryExam = !!userAttempt;
+
+      if (lesson.entryExam.type === 'task') {
+        contentUnlocked = hasCompletedEntryExam && userAttempt.status === 'success';
+      } else {
+        contentUnlocked = hasCompletedEntryExam;
+      }
 
     } else if (hasEntryExam && !userId) {
       // User not logged in but entry exam is required
@@ -601,13 +608,16 @@ export const getLessonById = async (req, res, next) => {
     // Process entry exam for response (without correct answers if not taken)
     let processedEntryExam = null;
     if (hasEntryExam) {
+      const uAtt = lesson.entryExam.userAttempts.find(a => a.userId.toString() === userId.toString());
       processedEntryExam = {
         enabled: true,
+        type: lesson.entryExam.type || 'mcq',
+        taskDescription: lesson.entryExam.taskDescription || '',
         title: lesson.entryExam.title || 'امتحان المدخل',
         description: lesson.entryExam.description || '',
         timeLimit: lesson.entryExam.timeLimit || 15,
-        questionsCount: lesson.entryExam.questions.length,
-        questions: lesson.entryExam.questions.map(q => ({
+        questionsCount: lesson.entryExam.questions?.length || 0,
+        questions: lesson.entryExam.questions?.map(q => ({
           _id: q._id,
           question: q.question,
           options: q.options,
@@ -616,12 +626,16 @@ export const getLessonById = async (req, res, next) => {
           // Include correct answer only if user has taken the exam
           correctAnswer: hasCompletedEntryExam ? q.correctAnswer : undefined,
           explanation: hasCompletedEntryExam ? (q.explanation || '') : undefined
-        })),
-        userResult: hasCompletedEntryExam ? {
+        })) || [],
+        userResult: uAtt ? {
           hasTaken: true,
-          takenAt: lesson.entryExam.userAttempts.find(a => a.userId.toString() === userId.toString())?.takenAt,
-          score: lesson.entryExam.userAttempts.find(a => a.userId.toString() === userId.toString())?.score,
-          totalQuestions: lesson.entryExam.userAttempts.find(a => a.userId.toString() === userId.toString())?.totalQuestions
+          takenAt: uAtt.takenAt,
+          score: uAtt.score,
+          totalQuestions: uAtt.totalQuestions,
+          status: uAtt.status,
+          taskImage: uAtt.taskImage,
+          taskLink: uAtt.taskLink,
+          adminFeedback: uAtt.adminFeedback
         } : { hasTaken: false }
       };
     }

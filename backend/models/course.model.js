@@ -114,8 +114,10 @@ const lessonSchema = new mongoose.Schema({
   // When this exists and is enabled, student must complete it to access videos/PDFs
   entryExam: {
     enabled: { type: Boolean, default: false },
+    type: { type: String, enum: ['mcq', 'task'], default: 'mcq' },
     title: { type: String, default: 'امتحان المدخل' },
     description: { type: String, default: '' },
+    taskDescription: { type: String, default: '' }, // For type='task'
     timeLimit: { type: Number, default: 15 }, // Time limit in minutes
     questions: [
       {
@@ -131,15 +133,23 @@ const lessonSchema = new mongoose.Schema({
       {
         userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
         takenAt: { type: Date, default: Date.now },
-        score: { type: Number, required: true },
-        totalQuestions: { type: Number, required: true },
+
+        // Fields for MCQ type
+        score: { type: Number },
+        totalQuestions: { type: Number },
         answers: [
           {
             questionIndex: { type: Number, required: true },
             selectedAnswer: { type: Number, required: true },
             isCorrect: { type: Boolean, required: true }
           }
-        ]
+        ],
+
+        // Fields for Task type
+        taskImage: { type: String }, // Cloudinary URL
+        taskLink: { type: String },
+        status: { type: String, enum: ['pending', 'success', 'failed'], default: 'pending' },
+        adminFeedback: { type: String }
       }
     ]
   }

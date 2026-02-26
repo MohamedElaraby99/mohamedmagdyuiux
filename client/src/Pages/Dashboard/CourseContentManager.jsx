@@ -154,6 +154,8 @@ const LessonContentModal = ({ courseId, unitId, lessonId, onClose }) => {
   // Entry Exam (امتحان المدخل) state
   const [entryExam, setEntryExam] = useState({
     enabled: lesson?.entryExam?.enabled || false,
+    type: lesson?.entryExam?.type || 'mcq',
+    taskDescription: lesson?.entryExam?.taskDescription || '',
     title: lesson?.entryExam?.title || 'امتحان المدخل',
     description: lesson?.entryExam?.description || '',
     timeLimit: lesson?.entryExam?.timeLimit || 15,
@@ -2262,150 +2264,212 @@ const LessonContentModal = ({ courseId, unitId, lessonId, onClose }) => {
               <>
                 {/* Exam Details */}
                 <div className="bg-white dark:bg-gray-700 p-4 rounded-lg border border-gray-200 dark:border-gray-600 space-y-4">
-                  <h4 className="font-medium text-gray-900 dark:text-white text-right">تفاصيل الامتحان</h4>
+                  <h4 className="font-medium text-gray-900 dark:text-white text-right">تفاصيل الامتحان/المهمة</h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 text-right mb-1">عنوان الامتحان</label>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 text-right mb-1">نوع المدخل</label>
+                      <select
+                        value={entryExam.type}
+                        onChange={(e) => setEntryExam(prev => ({ ...prev, type: e.target.value }))}
+                        className="w-full p-2 border rounded text-right"
+                      >
+                        <option value="mcq">امتحان (اختيار من متعدد)</option>
+                        <option value="task">مهمة (رفع ملف/رابط)</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 text-right mb-1">العنوان</label>
                       <input
                         type="text"
                         value={entryExam.title}
                         onChange={(e) => setEntryExam(prev => ({ ...prev, title: e.target.value }))}
                         className="w-full p-2 border rounded text-right"
-                        placeholder="امتحان المدخل"
+                        placeholder={entryExam.type === 'task' ? "عنوان المهمة" : "امتحان المدخل"}
                       />
                     </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 text-right mb-1">الوقت المحدد (دقائق)</label>
-                      <input
-                        type="number"
-                        value={entryExam.timeLimit}
-                        onChange={(e) => setEntryExam(prev => ({ ...prev, timeLimit: parseInt(e.target.value) || 15 }))}
-                        className="w-full p-2 border rounded text-right"
-                        min="5"
-                        max="120"
-                      />
-                    </div>
-                    <div className="md:col-span-2">
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 text-right mb-1">الوصف (اختياري)</label>
+                    {entryExam.type === 'mcq' && (
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 text-right mb-1">الوقت المحدد (دقائق)</label>
+                        <input
+                          type="number"
+                          value={entryExam.timeLimit}
+                          onChange={(e) => setEntryExam(prev => ({ ...prev, timeLimit: parseInt(e.target.value) || 15 }))}
+                          className="w-full p-2 border rounded text-right"
+                          min="5"
+                          max="120"
+                        />
+                      </div>
+                    )}
+                    <div className={entryExam.type === 'task' ? "md:col-span-2" : "md:col-span-1"}>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 text-right mb-1">الوصف العام (اختياري)</label>
                       <textarea
                         value={entryExam.description}
                         onChange={(e) => setEntryExam(prev => ({ ...prev, description: e.target.value }))}
                         className="w-full p-2 border rounded text-right"
                         rows="2"
-                        placeholder="وصف امتحان المدخل..."
+                        placeholder="وصف إضافي..."
                       />
                     </div>
+                    {entryExam.type === 'task' && (
+                      <div className="md:col-span-2">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 text-right mb-1">وصف المهمة المطلوبة (ماذا يجب على الطالب أن يفعل؟)</label>
+                        <textarea
+                          value={entryExam.taskDescription}
+                          onChange={(e) => setEntryExam(prev => ({ ...prev, taskDescription: e.target.value }))}
+                          className="w-full p-2 border rounded text-right border-green-300 focus:ring-green-500"
+                          rows="4"
+                          placeholder="مثال: يرجى تصميم واجهة تطبيق ورفع الرابط أو صورة التصميم هنا..."
+                        />
+                      </div>
+                    )}
                   </div>
                 </div>
 
-                {/* Add Question Form */}
-                <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg border border-green-200 dark:border-green-700 space-y-4">
-                  <h4 className="font-medium text-gray-900 dark:text-white text-right">إضافة سؤال جديد</h4>
-                  <div>
-                    <label className="block text-sm font-medium mb-1 text-right">نص السؤال</label>
-                    <textarea
-                      value={newEntryExamQuestion.question}
-                      onChange={(e) => setNewEntryExamQuestion(prev => ({ ...prev, question: e.target.value }))}
-                      className="w-full p-2 border rounded text-right"
-                      rows="2"
-                      placeholder="اكتب السؤال هنا..."
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1 text-right">عدد الخيارات</label>
-                    <select
-                      value={newEntryExamQuestion.numberOfOptions}
-                      onChange={(e) => setNewEntryExamQuestion(prev => ({ ...prev, numberOfOptions: parseInt(e.target.value) }))}
-                      className="w-full p-2 border rounded text-right"
-                    >
-                      <option value={2}>2 خيارات</option>
-                      <option value={3}>3 خيارات</option>
-                      <option value={4}>4 خيارات</option>
-                    </select>
-                  </div>
-                  <div className="space-y-2">
-                    <label className="block text-sm font-medium text-right">الخيارات</label>
-                    {Array.from({ length: newEntryExamQuestion.numberOfOptions }, (_, i) => (
-                      <div key={i} className="flex items-center gap-2">
+                {/* Add Question Form - ONLY for MCQ */}
+                {entryExam.type === 'mcq' && (
+                  <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg border border-green-200 dark:border-green-700 space-y-4">
+                    <h4 className="font-medium text-gray-900 dark:text-white text-right">إضافة سؤال جديد</h4>
+                    <div>
+                      <label className="block text-sm font-medium mb-1 text-right">نص السؤال</label>
+                      <textarea
+                        value={newEntryExamQuestion.question}
+                        onChange={(e) => setNewEntryExamQuestion(prev => ({ ...prev, question: e.target.value }))}
+                        className="w-full p-2 border rounded text-right"
+                        rows="2"
+                        placeholder="اكتب السؤال هنا..."
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1 text-right">عدد الخيارات</label>
+                      <select
+                        value={newEntryExamQuestion.numberOfOptions}
+                        onChange={(e) => setNewEntryExamQuestion(prev => ({ ...prev, numberOfOptions: parseInt(e.target.value) }))}
+                        className="w-full p-2 border rounded text-right"
+                      >
+                        <option value={2}>2 خيارات</option>
+                        <option value={3}>3 خيارات</option>
+                        <option value={4}>4 خيارات</option>
+                      </select>
+                    </div>
+                    <div className="space-y-2">
+                      <label className="block text-sm font-medium text-right">الخيارات</label>
+                      {Array.from({ length: newEntryExamQuestion.numberOfOptions }, (_, i) => (
+                        <div key={i} className="flex items-center gap-2">
+                          <input
+                            type="radio"
+                            name="entryExamCorrectAnswer"
+                            checked={newEntryExamQuestion.correctAnswer === i}
+                            onChange={() => setNewEntryExamQuestion(prev => ({ ...prev, correctAnswer: i }))}
+                            className="accent-green-600"
+                          />
+                          <input
+                            type="text"
+                            value={newEntryExamQuestion.options[i] || ''}
+                            onChange={(e) => {
+                              const newOptions = [...newEntryExamQuestion.options];
+                              newOptions[i] = e.target.value;
+                              setNewEntryExamQuestion(prev => ({ ...prev, options: newOptions }));
+                            }}
+                            className="flex-1 p-2 border rounded text-right"
+                            placeholder={`الخيار ${i + 1}`}
+                          />
+                          {newEntryExamQuestion.correctAnswer === i && (
+                            <span className="text-green-600 text-sm">✓ صحيح</span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Image Upload for Question */}
+                    <div>
+                      <label className="block text-sm font-medium mb-1 text-right">صورة السؤال (اختياري)</label>
+                      <div className="flex items-center gap-4">
                         <input
-                          type="radio"
-                          name="entryExamCorrectAnswer"
-                          checked={newEntryExamQuestion.correctAnswer === i}
-                          onChange={() => setNewEntryExamQuestion(prev => ({ ...prev, correctAnswer: i }))}
-                          className="accent-green-600"
-                        />
-                        <input
-                          type="text"
-                          value={newEntryExamQuestion.options[i] || ''}
-                          onChange={(e) => {
-                            const newOptions = [...newEntryExamQuestion.options];
-                            newOptions[i] = e.target.value;
-                            setNewEntryExamQuestion(prev => ({ ...prev, options: newOptions }));
+                          type="file"
+                          accept="image/*"
+                          onChange={async (e) => {
+                            const file = e.target.files?.[0];
+                            if (!file) return;
+
+                            // Create FormData and upload
+                            const formData = new FormData();
+                            formData.append('image', file);
+
+                            try {
+                              const response = await axiosInstance.post('/upload/image', formData, {
+                                headers: { 'Content-Type': 'multipart/form-data' }
+                              });
+                              if (response.data.success) {
+                                setNewEntryExamQuestion(prev => ({ ...prev, image: response.data.url }));
+                                toast.success('تم رفع الصورة بنجاح');
+                              }
+                            } catch (error) {
+                              toast.error('فشل في رفع الصورة');
+                            }
                           }}
                           className="flex-1 p-2 border rounded text-right"
-                          placeholder={`الخيار ${i + 1}`}
                         />
-                        {newEntryExamQuestion.correctAnswer === i && (
-                          <span className="text-green-600 text-sm">✓ صحيح</span>
+                        {newEntryExamQuestion.image && (
+                          <div className="relative">
+                            <img
+                              src={generateImageUrl(newEntryExamQuestion.image)}
+                              alt="Question"
+                              className="w-16 h-16 object-cover rounded"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => setNewEntryExamQuestion(prev => ({ ...prev, image: '' }))}
+                              className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center"
+                            >
+                              ×
+                            </button>
+                          </div>
                         )}
                       </div>
-                    ))}
-                  </div>
-
-                  {/* Image Upload for Question */}
-                  <div>
-                    <label className="block text-sm font-medium mb-1 text-right">صورة السؤال (اختياري)</label>
-                    <div className="flex items-center gap-4">
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={async (e) => {
-                          const file = e.target.files?.[0];
-                          if (!file) return;
-
-                          // Create FormData and upload
-                          const formData = new FormData();
-                          formData.append('image', file);
-
-                          try {
-                            const response = await axiosInstance.post('/upload/image', formData, {
-                              headers: { 'Content-Type': 'multipart/form-data' }
-                            });
-                            if (response.data.success) {
-                              setNewEntryExamQuestion(prev => ({ ...prev, image: response.data.url }));
-                              toast.success('تم رفع الصورة بنجاح');
-                            }
-                          } catch (error) {
-                            toast.error('فشل في رفع الصورة');
-                          }
-                        }}
-                        className="flex-1 p-2 border rounded text-right"
-                      />
-                      {newEntryExamQuestion.image && (
-                        <div className="relative">
-                          <img
-                            src={generateImageUrl(newEntryExamQuestion.image)}
-                            alt="Question"
-                            className="w-16 h-16 object-cover rounded"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => setNewEntryExamQuestion(prev => ({ ...prev, image: '' }))}
-                            className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center"
-                          >
-                            ×
-                          </button>
-                        </div>
-                      )}
+                      <p className="text-xs text-gray-500 mt-1 text-right">يمكنك إضافة صورة للسؤال</p>
                     </div>
-                    <p className="text-xs text-gray-500 mt-1 text-right">يمكنك إضافة صورة للسؤال</p>
-                  </div>
-                  <div className="flex justify-end gap-2">
-                    {editEntryExamQuestionIndex !== null && (
+                    <div className="flex justify-end gap-2">
+                      {editEntryExamQuestionIndex !== null && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setEditEntryExamQuestionIndex(null);
+                            setNewEntryExamQuestion({
+                              question: '',
+                              options: ['', '', '', ''],
+                              correctAnswer: 0,
+                              image: '',
+                              numberOfOptions: 4
+                            });
+                          }}
+                          className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+                        >
+                          إلغاء التعديل
+                        </button>
+                      )}
                       <button
                         type="button"
                         onClick={() => {
-                          setEditEntryExamQuestionIndex(null);
+                          if (!newEntryExamQuestion.question.trim()) return;
+                          if (newEntryExamQuestion.options.slice(0, newEntryExamQuestion.numberOfOptions).some(opt => !opt.trim())) return;
+
+                          if (editEntryExamQuestionIndex !== null) {
+                            // Update existing question
+                            setEntryExam(prev => ({
+                              ...prev,
+                              questions: prev.questions.map((q, i) =>
+                                i === editEntryExamQuestionIndex ? { ...newEntryExamQuestion } : q
+                              )
+                            }));
+                            setEditEntryExamQuestionIndex(null);
+                          } else {
+                            // Add new question
+                            setEntryExam(prev => ({
+                              ...prev,
+                              questions: [...prev.questions, { ...newEntryExamQuestion }]
+                            }));
+                          }
+
                           setNewEntryExamQuestion({
                             question: '',
                             options: ['', '', '', ''],
@@ -2414,52 +2478,17 @@ const LessonContentModal = ({ courseId, unitId, lessonId, onClose }) => {
                             numberOfOptions: 4
                           });
                         }}
-                        className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+                        disabled={!newEntryExamQuestion.question.trim() || newEntryExamQuestion.options.slice(0, newEntryExamQuestion.numberOfOptions).some(opt => !opt.trim())}
+                        className={`${editEntryExamQuestionIndex !== null ? 'bg-blue-600 hover:bg-blue-700' : 'bg-green-600 hover:bg-green-700'} text-white px-4 py-2 rounded disabled:opacity-50`}
                       >
-                        إلغاء التعديل
+                        {editEntryExamQuestionIndex !== null ? '💾 تحديث السؤال' : '➕ إضافة السؤال'}
                       </button>
-                    )}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (!newEntryExamQuestion.question.trim()) return;
-                        if (newEntryExamQuestion.options.slice(0, newEntryExamQuestion.numberOfOptions).some(opt => !opt.trim())) return;
-
-                        if (editEntryExamQuestionIndex !== null) {
-                          // Update existing question
-                          setEntryExam(prev => ({
-                            ...prev,
-                            questions: prev.questions.map((q, i) =>
-                              i === editEntryExamQuestionIndex ? { ...newEntryExamQuestion } : q
-                            )
-                          }));
-                          setEditEntryExamQuestionIndex(null);
-                        } else {
-                          // Add new question
-                          setEntryExam(prev => ({
-                            ...prev,
-                            questions: [...prev.questions, { ...newEntryExamQuestion }]
-                          }));
-                        }
-
-                        setNewEntryExamQuestion({
-                          question: '',
-                          options: ['', '', '', ''],
-                          correctAnswer: 0,
-                          image: '',
-                          numberOfOptions: 4
-                        });
-                      }}
-                      disabled={!newEntryExamQuestion.question.trim() || newEntryExamQuestion.options.slice(0, newEntryExamQuestion.numberOfOptions).some(opt => !opt.trim())}
-                      className={`${editEntryExamQuestionIndex !== null ? 'bg-blue-600 hover:bg-blue-700' : 'bg-green-600 hover:bg-green-700'} text-white px-4 py-2 rounded disabled:opacity-50`}
-                    >
-                      {editEntryExamQuestionIndex !== null ? '💾 تحديث السؤال' : '➕ إضافة السؤال'}
-                    </button>
+                    </div>
                   </div>
-                </div>
+                )}
 
                 {/* Questions List */}
-                {entryExam.questions.length > 0 && (
+                {entryExam.type === 'mcq' && entryExam.questions.length > 0 && (
                   <div className="bg-white dark:bg-gray-700 p-4 rounded-lg border border-gray-200 dark:border-gray-600">
                     <h4 className="font-medium text-gray-900 dark:text-white text-right mb-3">
                       أسئلة امتحان المدخل ({entryExam.questions.length})
@@ -2518,10 +2547,18 @@ const LessonContentModal = ({ courseId, unitId, lessonId, onClose }) => {
                 )}
 
                 {/* Warning if no questions */}
-                {entryExam.enabled && entryExam.questions.length === 0 && (
+                {entryExam.enabled && entryExam.type === 'mcq' && entryExam.questions.length === 0 && (
                   <div className="bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded-lg border border-yellow-300 dark:border-yellow-700">
                     <p className="text-yellow-800 dark:text-yellow-200 text-right">
                       ⚠️ يجب إضافة سؤال واحد على الأقل لتفعيل امتحان المدخل
+                    </p>
+                  </div>
+                )}
+
+                {entryExam.enabled && entryExam.type === 'task' && !entryExam.taskDescription.trim() && (
+                  <div className="bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded-lg border border-yellow-300 dark:border-yellow-700">
+                    <p className="text-yellow-800 dark:text-yellow-200 text-right">
+                      ⚠️ يرجى كتابة وصف للمهمة المطلوبة من الطالب
                     </p>
                   </div>
                 )}
@@ -2550,8 +2587,12 @@ const LessonContentModal = ({ courseId, unitId, lessonId, onClose }) => {
                 type="button"
                 className="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 disabled:opacity-50"
                 onClick={async () => {
-                  if (entryExam.enabled && entryExam.questions.length === 0) {
+                  if (entryExam.enabled && entryExam.type === 'mcq' && entryExam.questions.length === 0) {
                     toast.error('يجب إضافة سؤال واحد على الأقل');
+                    return;
+                  }
+                  if (entryExam.enabled && entryExam.type === 'task' && !entryExam.taskDescription.trim()) {
+                    toast.error('يجب كتابة وصف للمهمة المقررة');
                     return;
                   }
 

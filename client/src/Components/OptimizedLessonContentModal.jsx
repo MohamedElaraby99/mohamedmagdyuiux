@@ -208,8 +208,11 @@ const OptimizedLessonContentModal = ({ isOpen, onClose, courseId, lessonId, unit
     setConvertedUrl(convertedUrl);
   };
 
-  // Entry Exam state
+  // Entry Exam / Task state
   const [entryExamAnswers, setEntryExamAnswers] = useState({});
+  const [taskLink, setTaskLink] = useState('');
+  const [taskImage, setTaskImage] = useState('');
+  const [taskUploading, setTaskUploading] = useState(false);
   const [entryExamSubmitting, setEntryExamSubmitting] = useState(false);
   const [entryExamResult, setEntryExamResult] = useState(null);
   const [entryExamStartTime, setEntryExamStartTime] = useState(null);
@@ -222,48 +225,166 @@ const OptimizedLessonContentModal = ({ isOpen, onClose, courseId, lessonId, unit
     }));
   };
 
-  const handleSubmitEntryExam = async () => {
-    if (!lesson.entryExam?.questions?.length) return;
+  const handleTaskImageChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
 
-    const answersArray = Object.keys(entryExamAnswers).map(key => ({
-      questionIndex: parseInt(key),
-      selectedAnswer: entryExamAnswers[key]
-    }));
+    setTaskUploading(true);
+    const formData = new FormData();
+    formData.append('image', file);
 
-    if (answersArray.length < lesson.entryExam.questions.length) {
-      alert('يرجى الإجابة على جميع الأسئلة قبل إرسال الامتحان');
-      return;
-    }
-
-    setEntryExamSubmitting(true);
     try {
-      const response = await axiosInstance.post('/exams/entry', {
-        courseId,
-        lessonId,
-        unitId,
-        answers: answersArray,
-        startTime: entryExamStartTime?.toISOString() || new Date().toISOString()
+      const res = await axiosInstance.post('/upload/image', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
       });
-
-      if (response.data.success) {
-        setEntryExamResult(response.data.data);
-        // Refetch lesson data to update content unlock status
-        refetch();
+      if (res.data.success) {
+        setTaskImage(res.data.url);
       } else {
-        alert(response.data.message || 'حدث خطأ أثناء إرسال الامتحان');
+        alert(res.data.message || 'فشل في رفع الصورة');
       }
-    } catch (error) {
-      alert(error.response?.data?.message || 'حدث خطأ أثناء إرسال الامتحان');
+    } catch (err) {
+      alert('فشل في رفع الصورة');
     } finally {
-      setEntryExamSubmitting(false);
+      setTaskUploading(false);
+    }
+  };
+
+  const handleSubmitEntryExam = async () => {
+    const isTask = lesson.entryExam?.type === 'task';
+
+    if (!isTask) {
+      if (!lesson.entryExam?.questions?.length) return;
+
+      const answersArray = Object.keys(entryExamAnswers).map(key => ({
+        questionIndex: parseInt(key),
+        selectedAnswer: entryExamAnswers[key]
+      }));
+
+      if (answersArray.length < lesson.entryExam.questions.length) {
+        alert('يرجى الإجابة على جميع الأسئلة قبل إرسال الامتحان');
+        return;
+      }
+
+      setEntryExamSubmitting(true);
+      try {
+        const response = await axiosInstance.post('/exams/entry', {
+          courseId,
+          lessonId,
+          unitId,
+          answers: answersArray,
+          startTime: entryExamStartTime?.toISOString() || new Date().toISOString()
+        });
+
+        if (response.data.success) {
+          setEntryExamResult(response.data.data);
+          // Refetch lesson data to update content unlock status
+          refetch();
+        } else {
+          alert(response.data.message || 'حدث خطأ أثناء إرسال الامتحان');
+        }
+      } catch (error) {
+        alert(error.response?.data?.message || 'حدث خطأ أثناء إرسال الامتحان');
+      } finally {
+        setEntryExamSubmitting(false);
+      }
+    } else {
+      // Handling Task Submission
+      if (!taskLink && !taskImage) {
+        alert('يرجى إضافة رابط أو صورة للمهمة');
+        return;
+      }
+
+      setEntryExamSubmitting(true);
+      try {
+        const response = await axiosInstance.post('/exams/entry', {
+          courseId,
+          lessonId,
+          unitId,
+          taskLink,
+          taskImage
+        });
+
+        if (response.data.success) {
+          setEntryExamResult(response.data.data);
+          refetch();
+        } else {
+          alert(response.data.message || 'حدث خطأ أثناء إرسال المهمة');
+        }
+      } catch (error) {
+        alert(error.response?.data?.message || 'حدث خطأ أثناء إرسال المهمة');
+      } finally {
+        setEntryExamSubmitting(false);
+      }
     }
   };
 
   const renderEntryExamContent = () => {
     if (!lesson.entryExam) return null;
 
-    // If user has already completed the entry exam
-    if (lesson.contentUnlocked && lesson.entryExam.userResult?.hasTaken) {
+    const isTask = lesson.entryExam.type === 'task';
+    const userResult = lesson.entryExam.userResult;
+
+    // Check if the user has a pending or successful task submission
+    if (isTask && userResult?.hasTaken) {
+      if (userResult.status === 'success') {
+        return (
+          <div className="bg-gradient-to-br from-green-50 to-emerald-100 dark:from-gray-800 dark:to-gray-900 p-6 sm:p-8 rounded-xl border-2 border-green-300 dark:border-green-700 text-center">
+            <div className="text-6xl mb-4">✅</div>
+            <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-3">
+              تم قبول المهمة بنجاح!
+            </h3>
+            {userResult.adminFeedback && (
+              <div className="bg-white dark:bg-gray-700 p-4 rounded-lg mt-4 mb-4 text-right border-r-4 border-green-500">
+                <p className="font-semibold text-gray-800 dark:text-gray-200">ملاحظات المدرب:</p>
+                <p className="text-gray-600 dark:text-gray-400 mt-1">{userResult.adminFeedback}</p>
+              </div>
+            )}
+            <p className="text-green-600 dark:text-green-400 font-medium mt-4">
+              المحتوى الآن مفتوح لك - تصفح الفيديوهات والملفات
+            </p>
+          </div>
+        );
+      } else if (userResult.status === 'pending') {
+        return (
+          <div className="bg-gradient-to-br from-yellow-50 to-amber-100 dark:from-gray-800 dark:to-gray-900 p-6 sm:p-8 rounded-xl border-2 border-yellow-300 dark:border-yellow-700 text-center">
+            <div className="text-6xl mb-4 animate-pulse">⏳</div>
+            <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-3">
+              تم إرسال المهمة بنجاح
+            </h3>
+            <p className="text-gray-600 dark:text-gray-400 mb-4">
+              المهمة قيد المراجعة حالياً. سيتم فتح محتوى الدرس بمجرد اعتمادها واجتيازك لها.
+            </p>
+          </div>
+        );
+      } else if (userResult.status === 'failed') {
+        return (
+          <div className="bg-gradient-to-br from-red-50 to-rose-100 dark:from-gray-800 dark:to-gray-900 p-6 sm:p-8 rounded-xl border-2 border-red-300 dark:border-red-700 text-center">
+            <div className="text-6xl mb-4">❌</div>
+            <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-3">
+              لم يتم اجتياز المهمة
+            </h3>
+            {userResult.adminFeedback && (
+              <div className="bg-white dark:bg-gray-700 p-4 rounded-lg mt-4 mb-4 text-right border-r-4 border-red-500">
+                <p className="font-semibold text-gray-800 dark:text-gray-200">سبب الرفض والملاحظات:</p>
+                <p className="text-gray-600 dark:text-gray-400 mt-1">{userResult.adminFeedback}</p>
+              </div>
+            )}
+            <p className="text-red-600 dark:text-red-400 font-medium mb-6">
+              يرجى إعادة المحاولة ورفع المهمة بشكل صحيح لفتح محتوى الدرس.
+            </p>
+            <button
+              onClick={() => handleClearExamAttempt(lesson.entryExam.title ? 'entry' : 'entry')} // Assuming we need an endpoint to allow retry
+              className="bg-red-600 hover:bg-red-700 text-white px-8 py-3 rounded-lg font-bold transition-all duration-200"
+            >
+              🔄 إعادة إرسال المهمة
+            </button>
+          </div>
+        );
+      }
+    }
+
+    // MCQ success logic
+    if (!isTask && lesson.contentUnlocked && userResult?.hasTaken) {
       return (
         <div className="bg-gradient-to-br from-green-50 to-emerald-100 dark:from-gray-800 dark:to-gray-900 p-6 sm:p-8 rounded-xl border-2 border-green-300 dark:border-green-700 text-center">
           <div className="text-6xl mb-4">✅</div>
@@ -271,7 +392,7 @@ const OptimizedLessonContentModal = ({ isOpen, onClose, courseId, lessonId, unit
             تم اجتياز امتحان المدخل بنجاح!
           </h3>
           <p className="text-gray-600 dark:text-gray-400 mb-4">
-            النتيجة: {lesson.entryExam.userResult.score} / {lesson.entryExam.userResult.totalQuestions}
+            النتيجة: {userResult.score} / {userResult.totalQuestions}
           </p>
           <p className="text-green-600 dark:text-green-400 font-medium">
             المحتوى الآن مفتوح لك - تصفح الفيديوهات والملفات
@@ -280,8 +401,21 @@ const OptimizedLessonContentModal = ({ isOpen, onClose, courseId, lessonId, unit
       );
     }
 
-    // If entry exam result just submitted
+    // Handle fresh successful submission (local state before refetch catches up)
     if (entryExamResult) {
+      if (entryExamResult.status === 'pending') {
+        return (
+          <div className="bg-gradient-to-br from-yellow-50 to-amber-100 dark:from-gray-800 dark:to-gray-900 p-6 sm:p-8 rounded-xl border-2 border-yellow-300 dark:border-yellow-700 text-center">
+            <div className="text-6xl mb-4 animate-pulse">⏳</div>
+            <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-3">
+              تم إرسال المهمة بنجاح
+            </h3>
+            <p className="text-gray-600 dark:text-gray-400 mb-4">
+              المهمة قيد المراجعة حالياً. يرجى الانتظار حتى يتم الاعتماد لفتح المحتوى.
+            </p>
+          </div>
+        );
+      }
       return (
         <div className="bg-gradient-to-br from-green-50 to-emerald-100 dark:from-gray-800 dark:to-gray-900 p-6 sm:p-8 rounded-xl border-2 border-green-300 dark:border-green-700 text-center">
           <div className="text-6xl mb-4">🎉</div>
@@ -309,8 +443,8 @@ const OptimizedLessonContentModal = ({ isOpen, onClose, courseId, lessonId, unit
 
     const entryExam = lesson.entryExam;
 
-    // Show start screen if exam hasn't started
-    if (!entryExamStarted) {
+    // Show start screen if exam hasn't started and it's MCQ
+    if (!isTask && !entryExamStarted) {
       return (
         <div className="bg-gradient-to-br from-green-50 to-amber-100 dark:from-gray-800 dark:to-gray-900 p-6 sm:p-8 rounded-xl border-2 border-green-300 dark:border-green-700 text-center">
           <div className="text-6xl mb-4">🔓</div>
@@ -360,7 +494,92 @@ const OptimizedLessonContentModal = ({ isOpen, onClose, courseId, lessonId, unit
       );
     }
 
-    // Show entry exam questions after start
+    if (isTask) {
+      return (
+        <div className="space-y-6">
+          <div className="bg-gradient-to-r from-blue-50 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30 p-6 rounded-xl border border-blue-200 dark:border-blue-700 text-right">
+            <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-3">
+              🎯 {entryExam.title || 'مهمة المدخل'}
+            </h3>
+            {entryExam.description && (
+              <p className="text-gray-600 dark:text-gray-400 mb-4 text-sm">{entryExam.description}</p>
+            )}
+            <div className="bg-white dark:bg-gray-800 p-5 rounded-lg border-r-4 border-blue-500 shadow-sm mt-4">
+              <h4 className="font-semibold text-blue-800 dark:text-blue-300 mb-2">التعليمات المطلوبة:</h4>
+              <p className="text-gray-700 dark:text-gray-300 whitespace-pre-line">{entryExam.taskDescription}</p>
+            </div>
+          </div>
+
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
+            <h4 className="font-semibold text-gray-800 dark:text-gray-200 mb-4 text-right">تسليم المهمة</h4>
+
+            <div className="space-y-5">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 text-right">
+                  رابط المشروع (إن وجد)
+                </label>
+                <input
+                  type="url"
+                  placeholder="https://..."
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 focus:ring-2 focus:ring-blue-500 text-left outline-none"
+                  value={taskLink}
+                  onChange={(e) => setTaskLink(e.target.value)}
+                  dir="ltr"
+                />
+              </div>
+
+              <div className="text-center w-full my-4 text-gray-400 font-medium">أو / و</div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 text-right">
+                  صورة من التصميم أو العمل
+                </label>
+                {!taskImage ? (
+                  <label className={`flex flex-col items-center justify-center p-8 border-2 border-dashed rounded-xl cursor-pointer transition-colors ${taskUploading ? 'bg-gray-100 dark:bg-gray-700 border-gray-400' : 'border-blue-300 dark:border-blue-600 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/40'}`}>
+                    <div className="flex flex-col items-center justify-center space-y-3">
+                      {taskUploading ? (
+                        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
+                      ) : (
+                        <>
+                          <FaImage className="w-10 h-10 text-blue-500" />
+                          <p className="text-sm font-semibold text-blue-600 dark:text-blue-400">انقر هنا لرفع الصور (JPG, PNG)</p>
+                        </>
+                      )}
+                    </div>
+                    <input type="file" className="hidden" accept="image/*" onChange={handleTaskImageChange} disabled={taskUploading} />
+                  </label>
+                ) : (
+                  <div className="relative rounded-xl overflow-hidden border border-gray-200 shadow-sm max-w-sm mx-auto">
+                    <img src={generateFileUrl(taskImage)} alt="Task Upload" className="w-full h-auto" />
+                    <button
+                      onClick={() => setTaskImage('')}
+                      className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-2 hover:bg-red-600 shadow"
+                    >
+                      <FaTimes />
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="mt-8 text-center pt-6 border-t border-gray-200 dark:border-gray-700">
+              <button
+                onClick={handleSubmitEntryExam}
+                disabled={entryExamSubmitting || (!taskLink && !taskImage)}
+                className={`px-8 py-3 rounded-lg font-bold text-lg w-full sm:w-auto transition-all duration-200 ${(!taskLink && !taskImage)
+                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  : 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg hover:shadow-xl'
+                  }`}
+              >
+                {entryExamSubmitting ? '⏳ جاري الإرسال...' : '📤 تسليم المهمة'}
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // Show entry exam questions after start (MCQ only)
     return (
       <div className="space-y-6">
         {/* Exam Header */}

@@ -55,6 +55,7 @@ const LiveMeetings = lazy(() => import("./Pages/User/LiveMeetings"));
 const ExamHistory = lazy(() => import("./Pages/User/ExamHistory"));
 const AdminCourseAccessCodes = lazy(() => import("./Pages/Dashboard/AdminCourseAccessCodes"));
 const EssayExamDashboard = lazy(() => import("./Pages/Dashboard/EssayExamDashboard"));
+const AdminPendingTasks = lazy(() => import("./Pages/Dashboard/AdminPendingTasks"));
 const AttendanceDashboard = lazy(() => import("./Pages/Dashboard/AttendanceDashboard"));
 const CenterManagementDashboard = lazy(() => import("./Pages/Dashboard/CenterManagementDashboard"));
 const Overview = lazy(() => import("./Pages/Dashboard/CenterManagement/Overview"));
@@ -149,6 +150,7 @@ function AppContent() {
             <Route path="/admin/exam-search" element={<ExamResultsDashboard />} />
             <Route path="/admin/course-exams" element={<CourseExamsDashboard />} />
             <Route path="/admin/essay-exams" element={<EssayExamDashboard />} />
+            <Route path="/admin/pending-tasks" element={<AdminPendingTasks />} />
             <Route path="/admin/course-access-codes" element={<AdminCourseAccessCodes />} />
             <Route path="/admin/attendance" element={<AttendanceDashboard />} />
             <Route path="/admin/center-management" element={<CenterManagementDashboard />} />
