@@ -592,21 +592,6 @@ export default function AdminUserDashboard() {
                         </button>
                     </div>
 
-                    {/* Quick Code Search */}
-                    <div className="mb-6 p-3 sm:p-4 bg-gradient-to-r from-indigo-50 to-green-50 dark:from-indigo-900/20 dark:to-green-900/20 rounded-xl border border-indigo-100 dark:border-indigo-800">
-                        <h3 className="text-base sm:text-lg font-semibold text-indigo-900 dark:text-indigo-100 mb-2 sm:mb-3 flex items-center">
-                            <FaSearch className="mr-2 text-sm sm:text-base" />
-                            البحث السريع بالرمز التعريفي
-                        </h3>
-                        <p className="text-xs sm:text-sm text-indigo-700 dark:text-indigo-300 mb-3 sm:mb-4">
-                            ابحث عن مستخدم بسرعة باستخدام الرمز التعريفي الخاص به
-                        </p>
-                        <CodeSearch
-                            onUserSelect={handleCodeSearchUserSelect}
-                            className="w-full max-w-md"
-                        />
-                    </div>
-
                     {/* Tab Content */}
                     <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700">
                         {activeTab === "users" && (
@@ -631,15 +616,7 @@ export default function AdminUserDashboard() {
                                                 placeholder="البحث بالاسم أو البريد الإلكتروني"
                                             />
                                         </div>
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                                البحث بالرمز
-                                            </label>
-                                            <CodeSearch
-                                                onUserSelect={handleCodeSearchUserSelect}
-                                                className="w-full"
-                                            />
-                                        </div>
+                                       
                                         {activeTab === "all" && (
                                             <div>
                                                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
