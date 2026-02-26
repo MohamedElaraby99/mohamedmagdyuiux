@@ -54,7 +54,8 @@ const OptimizedLessonContentModal = ({ isOpen, onClose, courseId, lessonId, unit
   useEffect(() => {
     if (lesson) {
       // Auto-select first available content type
-      if (lesson.videos?.length > 0) setSelectedTab('video');
+      if (lesson.hasEntryExam && !lesson.contentUnlocked) setSelectedTab('entryExam');
+      else if (lesson.videos?.length > 0) setSelectedTab('video');
       else if (lesson.pdfs?.length > 0) setSelectedTab('pdf');
       else if (lesson.exams?.length > 0) setSelectedTab('exam');
       else if (lesson.essayExams?.length > 0) setSelectedTab('essayExam');

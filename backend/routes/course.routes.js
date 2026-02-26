@@ -151,8 +151,10 @@ router.put('/:courseId/lessons/:lessonId/entry-exam', isLoggedIn, authorisedRole
     // Update entry exam
     lesson.entryExam = {
       enabled: entryExam.enabled,
+      type: entryExam.type || 'mcq',
       title: entryExam.title || 'امتحان المدخل',
       description: entryExam.description || '',
+      taskDescription: entryExam.taskDescription || '',
       timeLimit: entryExam.timeLimit || 15,
       questions: entryExam.questions || [],
       userAttempts: lesson.entryExam?.userAttempts || [] // Preserve existing attempts
@@ -196,8 +198,10 @@ router.put('/:courseId/units/:unitId/lessons/:lessonId/entry-exam', isLoggedIn, 
     // Update entry exam
     lesson.entryExam = {
       enabled: entryExam.enabled,
+      type: entryExam.type || 'mcq',
       title: entryExam.title || 'امتحان المدخل',
       description: entryExam.description || '',
+      taskDescription: entryExam.taskDescription || '',
       timeLimit: entryExam.timeLimit || 15,
       questions: entryExam.questions || [],
       userAttempts: lesson.entryExam?.userAttempts || [] // Preserve existing attempts

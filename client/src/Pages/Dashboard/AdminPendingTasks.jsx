@@ -70,7 +70,7 @@ const AdminPendingTasks = () => {
     }
 
     return (
-        <Layout>
+        <Layout hideFooter>
             <div className="container py-8 mx-auto p-4 md:p-6 text-right z-0 relative" dir="rtl">
                 <div className="flex justify-between items-center mb-6">
                     <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-200">

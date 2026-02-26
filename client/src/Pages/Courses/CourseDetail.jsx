@@ -779,6 +779,15 @@ export default function CourseDetail() {
                                   مجاني
                                 </span>
                               )}
+                              {lesson.entryExam?.enabled && (
+                                <span className={`text-[10px] font-semibold flex items-center gap-1 px-1.5 py-0.5 rounded-full flex-shrink-0 ${lesson.entryExam.type === 'task'
+                                  ? 'text-blue-700 bg-blue-100 dark:text-blue-300 dark:bg-blue-900/40'
+                                  : 'text-amber-700 bg-amber-100 dark:text-amber-300 dark:bg-amber-900/40'
+                                  }`}>
+                                  <FaLock className="text-[8px]" />
+                                  {lesson.entryExam.type === 'task' ? 'مهمة رفع' : 'امتحان مدخل'}
+                                </span>
+                              )}
                             </div>
                             <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 line-clamp-2 sm:line-clamp-1">
                               {lesson.description}
@@ -858,6 +867,15 @@ export default function CourseDetail() {
                                         {(lesson.isFree || unit.isFree) && (
                                           <span className="text-[10px] font-semibold text-green-700 bg-green-100 dark:text-green-300 dark:bg-green-900/40 px-1.5 py-0.5 rounded-full flex-shrink-0">
                                             مجاني
+                                          </span>
+                                        )}
+                                        {lesson.entryExam?.enabled && (
+                                          <span className={`text-[10px] font-semibold flex items-center gap-1 px-1.5 py-0.5 rounded-full flex-shrink-0 ${lesson.entryExam.type === 'task'
+                                            ? 'text-blue-700 bg-blue-100 dark:text-blue-300 dark:bg-blue-900/40'
+                                            : 'text-amber-700 bg-amber-100 dark:text-amber-300 dark:bg-amber-900/40'
+                                            }`}>
+                                            <FaLock className="text-[8px]" />
+                                            {lesson.entryExam.type === 'task' ? 'مهمة رفع' : 'امتحان مدخل'}
                                           </span>
                                         )}
                                       </div>

@@ -417,7 +417,12 @@ export const getCourseById = async (req, res, next) => {
           videosCount: lesson.videos?.length || 0,
           pdfsCount: lesson.pdfs?.length || 0,
           examsCount: lesson.exams?.length || 0,
-          trainingsCount: lesson.trainings?.length || 0
+          trainingsCount: lesson.trainings?.length || 0,
+          entryExam: lesson.entryExam ? {
+            enabled: lesson.entryExam.enabled,
+            type: lesson.entryExam.type,
+            title: lesson.entryExam.title
+          } : null
         };
         console.log(`📚 Lesson "${lesson.title}":`, {
           videos: lesson.videos?.length || 0,
@@ -552,7 +557,10 @@ export const getLessonById = async (req, res, next) => {
     });
 
     // Check if entry exam is required to unlock content
-    const hasEntryExam = lesson.entryExam?.enabled && lesson.entryExam?.questions?.length > 0;
+    const hasEntryExam = lesson.entryExam?.enabled && (
+      (lesson.entryExam.type === 'task' && lesson.entryExam.taskDescription) ||
+      (lesson.entryExam.type !== 'task' && lesson.entryExam.questions?.length > 0)
+    );
 
     // Check if user has completed the entry exam (only if entry exam exists)
     let hasCompletedEntryExam = false;
