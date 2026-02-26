@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { axiosInstance } from '../../Helpers/axiosInstance';
 import Layout from '../../Layout/Layout';
-import { FaCheck, FaTimes, FaExternalLinkAlt, FaImage, FaSpinner } from 'react-icons/fa';
+import ImageViewer from '../../Components/ImageViewer';
+import { FaCheck, FaTimes, FaExternalLinkAlt, FaImage, FaSpinner, FaSearchPlus } from 'react-icons/fa';
 import { generateFileUrl } from '../../utils/fileUtils';
 import toast from 'react-hot-toast';
 
@@ -12,6 +13,8 @@ const AdminPendingTasks = () => {
     const [selectedTask, setSelectedTask] = useState(null);
     const [adminFeedback, setAdminFeedback] = useState('');
     const [submitting, setSubmitting] = useState(false);
+    const [imageViewerOpen, setImageViewerOpen] = useState(false);
+    const [currentImageUrl, setCurrentImageUrl] = useState('');
 
     useEffect(() => {
         fetchPendingTasks();
@@ -70,7 +73,7 @@ const AdminPendingTasks = () => {
     }
 
     return (
-        <Layout hideFooter>
+        <Layout hideFooter hideNav>
             <div className="container py-8 mx-auto p-4 md:p-6 text-right z-0 relative" dir="rtl">
                 <div className="flex justify-between items-center mb-6">
                     <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-200">
@@ -172,13 +175,24 @@ const AdminPendingTasks = () => {
 
                                     {selectedTask.taskImage && (
                                         <div>
-                                            <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">الصورة المرفقة:</p>
-                                            <img
-                                                src={generateFileUrl(selectedTask.taskImage)}
-                                                alt="Task Submission"
-                                                className="max-w-full rounded-lg border border-gray-200 shadow-sm"
-                                                style={{ maxHeight: '400px' }}
-                                            />
+                                            <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">الصورة المرفقة (انقر للتكبير):</p>
+                                            <div
+                                                className="relative group cursor-zoom-in rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 shadow-sm"
+                                                onClick={() => {
+                                                    setCurrentImageUrl(selectedTask.taskImage);
+                                                    setImageViewerOpen(true);
+                                                }}
+                                            >
+                                                <img
+                                                    src={generateFileUrl(selectedTask.taskImage)}
+                                                    alt="Task Submission"
+                                                    className="w-full h-auto transition-transform duration-300 group-hover:scale-105"
+                                                    style={{ maxHeight: '400px', objectFit: 'contain' }}
+                                                />
+                                                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+                                                    <FaSearchPlus className="text-white opacity-0 group-hover:opacity-100 text-3xl transition-opacity" />
+                                                </div>
+                                            </div>
                                         </div>
                                     )}
 
@@ -224,6 +238,13 @@ const AdminPendingTasks = () => {
                     </div>
                 )}
             </div>
+
+            <ImageViewer
+                isOpen={imageViewerOpen}
+                imageUrl={currentImageUrl}
+                title={`تسليم الطالب: ${selectedTask?.user?.fullName}`}
+                onClose={() => setImageViewerOpen(false)}
+            />
         </Layout>
     );
 };
