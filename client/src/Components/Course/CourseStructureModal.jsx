@@ -256,11 +256,12 @@ const CourseStructureModal = ({ courseId, onClose, isOpen }) => {
                   >
                     {course?.units?.map((unit, index) => (
                       <Draggable key={unit._id} draggableId={unit._id} index={index}>
-                        {(provided) => (
+                        {(provided, snapshot) => (
                           <div
                             ref={provided.innerRef}
                             {...provided.draggableProps}
-                            className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4"
+                            className={`bg-gray-50 dark:bg-gray-700 rounded-lg p-4 transition-shadow ${snapshot.isDragging ? 'shadow-xl ring-2 ring-green-500 z-50 select-none' : 'shadow-sm'
+                              }`}
                           >
                             <div className="flex items-center justify-between mb-3">
                               <div className="flex items-center gap-3">
@@ -317,11 +318,12 @@ const CourseStructureModal = ({ courseId, onClose, isOpen }) => {
                                 >
                                   {unit.lessons?.map((lesson, index) => (
                                     <Draggable key={lesson._id} draggableId={lesson._id} index={index}>
-                                      {(provided) => (
+                                      {(provided, snapshot) => (
                                         <div
                                           ref={provided.innerRef}
                                           {...provided.draggableProps}
-                                          className="flex items-center justify-between p-3 bg-white dark:bg-gray-600 rounded-md border border-gray-200 dark:border-gray-500"
+                                          className={`flex items-center justify-between p-3 bg-white dark:bg-gray-600 rounded-md border border-gray-200 dark:border-gray-500 transition-shadow ${snapshot.isDragging ? 'shadow-lg ring-1 ring-green-400 z-50 select-none' : ''
+                                            }`}
                                         >
                                           <div className="flex items-center gap-3 flex-1">
                                             <span {...provided.dragHandleProps}>
@@ -400,11 +402,12 @@ const CourseStructureModal = ({ courseId, onClose, isOpen }) => {
                   >
                     {course?.directLessons?.map((lesson, index) => (
                       <Draggable key={lesson._id} draggableId={lesson._id} index={index}>
-                        {(provided) => (
+                        {(provided, snapshot) => (
                           <div
                             ref={provided.innerRef}
                             {...provided.draggableProps}
-                            className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-md border border-gray-200 dark:border-gray-500"
+                            className={`flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-md border border-gray-200 dark:border-gray-500 transition-shadow ${snapshot.isDragging ? 'shadow-lg ring-1 ring-green-400 z-50 select-none' : ''
+                              }`}
                           >
                             <div className="flex items-center gap-3 flex-1">
                               <span {...provided.dragHandleProps}>
