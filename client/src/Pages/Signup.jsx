@@ -247,8 +247,7 @@ export default function Signup() {
     if (isAdminRegistration) {
       // For admin users: email is required
       requestData.email = signupData.email;
-
-
+    } else {
       // For regular users: phone number is required
       requestData.phoneNumber = signupData.phoneNumber;
 
