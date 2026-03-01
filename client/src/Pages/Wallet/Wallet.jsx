@@ -266,7 +266,7 @@ export default function Wallet() {
                                                 {index === 0 ? (
                                                     <span>
                                                         {step.replace('01555559887', '')}
-                                                        <strong>{PAYMENT.whatsappForCodes.phone}</strong>
+
                                                     </span>
                                                 ) : step}
                                             </li>
