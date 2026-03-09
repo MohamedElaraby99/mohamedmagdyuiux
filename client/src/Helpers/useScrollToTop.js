@@ -11,6 +11,11 @@ const useScrollToTop = () => {
       left: 0,
       behavior: 'smooth'
     });
+
+    // Track page view with TikTok Pixel if initialized
+    if (window.ttq) {
+      window.ttq.page();
+    }
   }, [pathname]);
 };
 
