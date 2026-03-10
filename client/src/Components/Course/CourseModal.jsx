@@ -204,6 +204,7 @@ const CourseModal = ({ course, onClose, isOpen }) => {
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
               اترك الحقل فارغ أو 0 إذا كان الكورس مجاني
             </p>
+            
           </div>
 
           <div>
