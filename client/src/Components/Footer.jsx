@@ -1,71 +1,35 @@
 import React from "react";
-import { SOCIAL_MEDIA, FOOTER } from "../Constants/LayoutConfig";
-import youtubeIcon from "../assets/youtube.png";
-import tiktokIcon from "../assets/tiktok.png";
-import whatsappIcon from "../assets/whatsapp.png";
-import facebookIcon from "../assets/facebook.png";
-import footerLogo from "../assets/logofooter.png";
+import { FOOTER, getCurrentYear } from "../Constants/LayoutConfig";
 
 export default function Footer() {
+  const year = getCurrentYear();
+
   return (
-    <footer className="bg-primary py-10 px-4 sm:px-8 relative overflow-hidden">
-      <div className="max-w-7xl mx-auto flex flex-col items-center">
-        {/* Title */}
-        <h2 className="text-3xl md:text-4xl font-bold text-white mb-8 md:mb-12 font-['Almarai']">
-          تواصل معنا
-        </h2>
-
-        {/* Social Media Icons */}
-        <div className="flex justify-center items-center gap-6 md:gap-8 mb-16 md:mb-20">
-          <a
-            href={SOCIAL_MEDIA.whatsapp.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:scale-110 transition-transform duration-300"
+    <footer
+      className="font-['Almarai']"
+      style={{ backgroundColor: "#080E1E" }}
+    >
+      <div
+        className="flex flex-col gap-8 sm:flex-row sm:items-start sm:justify-between sm:gap-6"
+        style={{ padding: "80px 10%" }}
+      >
+        <div className="min-w-0 flex-1">
+          <p className="text-lg font-bold text-white md:text-xl">
+            {FOOTER.companyName}
+          </p>
+          <p
+            className="mt-3 max-w-xl text-sm leading-relaxed md:text-[15px]"
+            style={{ color: "#94a3b8" }}
           >
-            <img src={whatsappIcon} alt="WhatsApp" className="w-8 h-8 md:w-10 md:h-10 object-contain" />
-          </a>
-          <a
-            href={SOCIAL_MEDIA.facebook.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:scale-110 transition-transform duration-300"
-          >
-            <img src={facebookIcon} alt="Facebook" className="w-8 h-8 md:w-10 md:h-10 object-contain" />
-          </a>
-          <a
-            href={SOCIAL_MEDIA.tiktok.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:scale-110 transition-transform duration-300"
-          >
-            <img src={tiktokIcon} alt="TikTok" className="w-8 h-8 md:w-10 md:h-10 object-contain" />
-          </a>
-          <a
-            href={SOCIAL_MEDIA.youtube.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:scale-110 transition-transform duration-300"
-          >
-            <img src={youtubeIcon} alt="YouTube" className="w-8 h-8 md:w-10 md:h-10 object-contain" />
-          </a>
+            {FOOTER.tagline}
+          </p>
         </div>
-
-        {/* Bottom Section: Logo and Developer */}
-        <div className="w-full flex flex-col md:flex-row justify-between items-center px-4 md:px-0 gap-4 mt-8">
-          <div className="flex justify-start">
-            <img src={footerLogo} alt="Magdy Academy" className="h-12 md:h-16 object-contain" />
-          </div>
-
-          <a
-            href={FOOTER.developer?.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-white/70 hover:text-white text-sm font-['Almarai'] transition-colors duration-300"
-          >
-            Developed By {FOOTER.developer?.name}
-          </a>
-        </div>
+        <p
+          className="shrink-0 text-sm sm:text-right md:text-[15px]"
+          style={{ color: "#94a3b8" }}
+        >
+          © {year} {FOOTER.companyName}. {FOOTER.copyrightText}.
+        </p>
       </div>
     </footer>
   );

@@ -181,7 +181,7 @@ export default function Navbar() {
       >
         <div className="flex justify-between items-center gap-3 h-16 md:h-[4.5rem] min-w-0">
 
-          {/* شعار — على الرئيسية: MAGDYACADEMY نص فقط */}
+          {/* شعار — على الرئيسية: MAGDY ACADEMY نص فقط */}
           <Link
             to="/"
             onClick={handleLogoClick}
@@ -206,7 +206,7 @@ export default function Navbar() {
             )}
             {isHome && (
               <span className="font-bold text-white uppercase tracking-[0.08em] sm:tracking-[0.12em] text-sm sm:text-lg md:text-2xl font-sans select-none truncate block max-w-[min(100%,11rem)] sm:max-w-[20rem] md:max-w-none">
-                {BRAND.navbarWordmark || 'MAGDYACADEMY'}
+                {BRAND.navbarWordmark || 'MAGDY ACADEMY'}
               </span>
             )}
           </Link>
