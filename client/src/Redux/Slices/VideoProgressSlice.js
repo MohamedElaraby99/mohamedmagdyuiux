@@ -5,6 +5,8 @@ import toast from "react-hot-toast";
 const initialState = {
   currentVideoProgress: null,
   courseProgress: [],
+  /** Last courseId for which getCourseProgress finished (success or fail) — used to restore lesson */
+  courseProgressForCourseId: null,
   allUsersProgress: [],
   loading: false,
   error: null
@@ -86,6 +88,7 @@ const videoProgressSlice = createSlice({
     },
     clearCourseProgress: (state) => {
       state.courseProgress = [];
+      state.courseProgressForCourseId = null;
     },
     clearAllUsersProgress: (state) => {
       state.allUsersProgress = [];
@@ -146,10 +149,12 @@ const videoProgressSlice = createSlice({
       .addCase(getCourseProgress.fulfilled, (state, action) => {
         state.loading = false;
         state.courseProgress = action.payload.data;
+        state.courseProgressForCourseId = action.meta.arg;
       })
       .addCase(getCourseProgress.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
+        state.courseProgressForCourseId = action.meta.arg;
       });
 
     // Get all users progress

@@ -8,7 +8,7 @@ import {
   checkCoursePurchaseStatus,
   getWalletBalance
 } from '../../Redux/Slices/PaymentSlice';
-import { updateVideoProgress, getCourseProgress } from '../../Redux/Slices/VideoProgressSlice';
+import { updateVideoProgress, getCourseProgress, clearCourseProgress } from '../../Redux/Slices/VideoProgressSlice';
 
 import { PaymentSuccessAlert, PaymentErrorAlert, WalletAlert } from '../../Components/ModernAlert';
 import OptimizedLessonContentModal from '../../Components/OptimizedLessonContentModal';
@@ -59,6 +59,54 @@ const countVideosInCourse = (course) => {
   return n;
 };
 
+const getAllLessonsFlat = (course) => {
+  if (!course) return [];
+  const list = [];
+  (course.directLessons || []).forEach((l) =>
+    list.push({ ...l, unitId: null, unitTitle: null, unitIndex: null })
+  );
+  (course.units || []).forEach((unit, ui) =>
+    (unit.lessons || []).forEach((l) =>
+      list.push({ ...l, unitId: unit._id, unitTitle: unit.title, unitIndex: ui })
+    )
+  );
+  return list;
+};
+
+const findLessonMetaForVideoId = (course, videoId) => {
+  if (!course || videoId == null) return null;
+  const vid = String(videoId);
+  for (const l of course.directLessons || []) {
+    if (l.videos?.some((v) => String(v._id) === vid)) {
+      return { lessonId: l._id, unitId: null, title: l.title, unitTitle: null, unitIndex: null };
+    }
+  }
+  for (let ui = 0; ui < (course.units || []).length; ui += 1) {
+    const unit = course.units[ui];
+    for (const l of unit.lessons || []) {
+      if (l.videos?.some((v) => String(v._id) === vid)) {
+        return { lessonId: l._id, unitId: unit._id, title: l.title, unitTitle: unit.title, unitIndex: ui };
+      }
+    }
+  }
+  return null;
+};
+
+const pickLessonFromVideoProgress = (course, progressList) => {
+  if (!course || !progressList?.length) return null;
+  const sorted = [...progressList]
+    .filter((p) => findLessonMetaForVideoId(course, p.videoId))
+    .sort((a, b) => {
+      const ta = a.lastWatched ? new Date(a.lastWatched).getTime() : 0;
+      const tb = b.lastWatched ? new Date(b.lastWatched).getTime() : 0;
+      return tb - ta;
+    });
+  if (!sorted.length) return null;
+  return findLessonMetaForVideoId(course, sorted[0].videoId);
+};
+
+const lastActiveLessonKey = (courseId, userId) => `lastActiveLesson_${courseId}_${userId || 'guest'}`;
+
 // ── component ─────────────────────────────────────────────────────────────────
 export default function CourseDetail() {
   const { id } = useParams();
@@ -68,7 +116,7 @@ export default function CourseDetail() {
   const { walletBalance, coursePurchaseStatus, loading: paymentLoading } = useSelector((s) => s.payment);
   const { data: user, isLoggedIn } = useSelector((s) => s.auth);
   const courseAccessState = useSelector((s) => s.courseAccess.byCourseId[id]);
-  const { courseProgress } = useSelector((s) => s.videoProgress);
+  const { courseProgress, courseProgressForCourseId, loading: videoProgressLoading } = useSelector((s) => s.videoProgress);
 
   // ── core state ────────────────────────────────────────────────────────────
   const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
@@ -190,6 +238,11 @@ export default function CourseDetail() {
   useEffect(() => { if (id) dispatch(getCourseById(id)); }, [dispatch, id]);
 
   useEffect(() => {
+    dispatch(clearCourseProgress());
+    setActiveLesson(null);
+  }, [id, dispatch]);
+
+  useEffect(() => {
     if (!id || !isLoggedIn || user?.role !== 'USER') return;
     if (!hasContentAccess()) return;
     dispatch(getCourseProgress(id));
@@ -248,17 +301,86 @@ export default function CourseDetail() {
     }
   }, [currentCourse, user, isLoggedIn, dispatch]);
 
-  // Auto-select first lesson when course loads
+  // Restore last lesson (localStorage → server progress → first lesson)
   useEffect(() => {
     if (!currentCourse || activeLesson) return;
-    const first = currentCourse.directLessons?.[0];
-    if (first) {
-      setActiveLesson({ lessonId: first._id, unitId: null, title: first.title, unitTitle: null, unitIndex: null });
-    } else if (currentCourse.units?.[0]?.lessons?.[0]) {
-      const unit = currentCourse.units[0];
-      setActiveLesson({ lessonId: unit.lessons[0]._id, unitId: unit._id, title: unit.lessons[0].title, unitTitle: unit.title, unitIndex: 0 });
+    const allLessons = getAllLessonsFlat(currentCourse);
+    if (!allLessons.length) return;
+
+    const uid = user?._id || user?.id;
+    const storageKey = lastActiveLessonKey(id, uid);
+
+    let chosen = null;
+    try {
+      const raw = localStorage.getItem(storageKey);
+      if (raw) {
+        const s = JSON.parse(raw);
+        const found = allLessons.find((l) => l._id === s.lessonId);
+        if (found) {
+          chosen = {
+            lessonId: found._id,
+            unitId: found.unitId,
+            title: found.title,
+            unitTitle: found.unitTitle,
+            unitIndex: found.unitIndex,
+          };
+        }
+      }
+    } catch { /* ignore */ }
+
+    const waitForProgress =
+      isLoggedIn && user?.role === 'USER' && hasContentAccess();
+
+    if (!chosen && waitForProgress) {
+      if (courseProgressForCourseId !== id) {
+        if (videoProgressLoading) return;
+        return;
+      }
+      chosen = pickLessonFromVideoProgress(currentCourse, courseProgress);
     }
-  }, [currentCourse]);
+
+    if (!chosen) {
+      const first = allLessons[0];
+      chosen = {
+        lessonId: first._id,
+        unitId: first.unitId,
+        title: first.title,
+        unitTitle: first.unitTitle,
+        unitIndex: first.unitIndex,
+      };
+    }
+
+    setActiveLesson(chosen);
+  }, [
+    currentCourse,
+    activeLesson,
+    id,
+    courseProgress,
+    courseProgressForCourseId,
+    isLoggedIn,
+    user?.role,
+    user?._id,
+    videoProgressLoading,
+    courseAccessState?.hasAccess,
+    currentCourse?.price,
+    coursePurchaseStatus,
+  ]);
+
+  useEffect(() => {
+    if (!activeLesson || !id) return;
+    try {
+      localStorage.setItem(
+        lastActiveLessonKey(id, user?._id || user?.id),
+        JSON.stringify({
+          lessonId: activeLesson.lessonId,
+          unitId: activeLesson.unitId,
+          title: activeLesson.title,
+          unitTitle: activeLesson.unitTitle,
+          unitIndex: activeLesson.unitIndex,
+        })
+      );
+    } catch { /* ignore */ }
+  }, [activeLesson, id, user?._id, user?.id]);
 
   // Reset entry exam state when lesson changes
   useEffect(() => {
