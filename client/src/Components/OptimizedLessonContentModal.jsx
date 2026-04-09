@@ -390,7 +390,7 @@ const OptimizedLessonContentModal = ({ isOpen, onClose, courseId, lessonId, unit
         <div className="bg-gradient-to-br from-green-50 to-emerald-100 dark:from-gray-800 dark:to-gray-900 p-6 sm:p-8 rounded-xl border-2 border-green-300 dark:border-green-700 text-center">
           <div className="text-6xl mb-4">✅</div>
           <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-3">
-            تم اجتياز امتحان المدخل بنجاح!
+            تم اجتيازكويز فتح المحتوى بنجاح!
           </h3>
           <p className="text-gray-600 dark:text-gray-400 mb-4">
             النتيجة: {userResult.score} / {userResult.totalQuestions}
@@ -421,7 +421,7 @@ const OptimizedLessonContentModal = ({ isOpen, onClose, courseId, lessonId, unit
         <div className="bg-gradient-to-br from-green-50 to-emerald-100 dark:from-gray-800 dark:to-gray-900 p-6 sm:p-8 rounded-xl border-2 border-green-300 dark:border-green-700 text-center">
           <div className="text-6xl mb-4">🎉</div>
           <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-3">
-            تم إتمام امتحان المدخل!
+            تم إتمامكويز فتح المحتوى!
           </h3>
           <div className="bg-white dark:bg-gray-700 rounded-lg p-4 mb-4 inline-block">
             <p className="text-2xl font-bold text-green-600 dark:text-green-400">
@@ -658,11 +658,11 @@ const OptimizedLessonContentModal = ({ isOpen, onClose, courseId, lessonId, unit
             المحتوى مقفول
           </h3>
           <p className="text-gray-600 dark:text-gray-400 mb-4">
-            يجب عليك حل امتحان المدخل أولاً لفتح الفيديوهات
+            يجب عليك حلكويز فتح المحتوى أولاً لفتح الفيديوهات
           </p>
           {lesson.lockedVideosCount > 0 && (
             <p className="text-sm text-green-600 dark:text-green-400">
-              يوجد {lesson.lockedVideosCount} فيديو في انتظارك بعد حل امتحان المدخل
+              يوجد {lesson.lockedVideosCount} فيديو في انتظارك بعد حلكويز فتح المحتوى
             </p>
           )}
           <button
@@ -751,11 +751,11 @@ const OptimizedLessonContentModal = ({ isOpen, onClose, courseId, lessonId, unit
             الملفات مقفولة
           </h3>
           <p className="text-gray-600 dark:text-gray-400 mb-4">
-            يجب عليك حل امتحان المدخل أولاً لفتح الملفات
+            يجب عليك حلكويز فتح المحتوى أولاً لفتح الملفات
           </p>
           {lesson.lockedPdfsCount > 0 && (
             <p className="text-sm text-red-600 dark:text-red-400">
-              يوجد {lesson.lockedPdfsCount} ملف في انتظارك بعد حل امتحان المدخل
+              يوجد {lesson.lockedPdfsCount} ملف في انتظارك بعد حلكويز فتح المحتوى
             </p>
           )}
           <button
@@ -872,11 +872,11 @@ const OptimizedLessonContentModal = ({ isOpen, onClose, courseId, lessonId, unit
             الامتحانات مقفولة
           </h3>
           <p className="text-gray-600 dark:text-gray-400 mb-4">
-            يجب عليك حل امتحان المدخل أولاً لفتح الامتحانات
+            يجب عليك حلكويز فتح المحتوى أولاً لفتح الامتحانات
           </p>
           {lesson.lockedExamsCount > 0 && (
             <p className="text-sm text-green-600 dark:text-green-400">
-              يوجد {lesson.lockedExamsCount} امتحان في انتظارك بعد حل امتحان المدخل
+              يوجد {lesson.lockedExamsCount} امتحان في انتظارك بعد حلكويز فتح المحتوى
             </p>
           )}
           <button
@@ -1017,11 +1017,11 @@ const OptimizedLessonContentModal = ({ isOpen, onClose, courseId, lessonId, unit
             التدريبات مقفولة
           </h3>
           <p className="text-gray-600 dark:text-gray-400 mb-4">
-            يجب عليك حل امتحان المدخل أولاً لفتح التدريبات
+            يجب عليك حلكويز فتح المحتوى أولاً لفتح التدريبات
           </p>
           {lesson.lockedTrainingsCount > 0 && (
             <p className="text-sm text-green-600 dark:text-green-400">
-              يوجد {lesson.lockedTrainingsCount} تدريب في انتظارك بعد حل امتحان المدخل
+              يوجد {lesson.lockedTrainingsCount} تدريب في انتظارك بعد حلكويز فتح المحتوى
             </p>
           )}
           <button
@@ -1139,7 +1139,7 @@ const OptimizedLessonContentModal = ({ isOpen, onClose, courseId, lessonId, unit
             الامتحانات المقالية مقفولة
           </h3>
           <p className="text-gray-600 dark:text-gray-400 mb-4">
-            يجب عليك حل امتحان المدخل أولاً لفتح الامتحانات المقالية
+            يجب عليك حلكويز فتح المحتوى أولاً لفتح الامتحانات المقالية
           </p>
           <button
             onClick={() => setSelectedTab('entryExam')}
@@ -1440,7 +1440,7 @@ const OptimizedLessonContentModal = ({ isOpen, onClose, courseId, lessonId, unit
                 <div>
                   <p className="font-bold text-lg">امتحان المدخل مطلوب</p>
                   <p className="text-sm text-green-700 dark:text-green-300">
-                    يجب عليك حل امتحان المدخل أولاً لفتح الفيديوهات والملفات
+                    يجب عليك حلكويز فتح المحتوى أولاً لفتح الفيديوهات والملفات
                     {lesson.lockedVideosCount > 0 && ` (${lesson.lockedVideosCount} فيديو`}
                     {lesson.lockedPdfsCount > 0 && ` و ${lesson.lockedPdfsCount} ملف`}
                     {(lesson.lockedVideosCount > 0 || lesson.lockedPdfsCount > 0) && ')'}
@@ -1462,7 +1462,7 @@ const OptimizedLessonContentModal = ({ isOpen, onClose, courseId, lessonId, unit
           <div className="flex items-center justify-center mb-6 bg-gray-50 dark:bg-gray-800 rounded-xl p-2 overflow-x-auto">
             {[
               // Entry exam tab (only show if entry exam exists)
-              ...(lesson.hasEntryExam ? [{ key: 'entryExam', label: lesson.contentUnlocked ? '✅ امتحان المدخل' : '🔓 امتحان المدخل', icon: <FaClipboardList className="text-green-600" />, count: 1, locked: false, highlight: !lesson.contentUnlocked }] : []),
+              ...(lesson.hasEntryExam ? [{ key: 'entryExam', label: lesson.contentUnlocked ? '✅كويز فتح المحتوى' : '🔓كويز فتح المحتوى', icon: <FaClipboardList className="text-green-600" />, count: 1, locked: false, highlight: !lesson.contentUnlocked }] : []),
               { key: 'video', label: 'الفيديوهات', icon: <FaVideo className="text-green-500" />, count: (lesson.videos?.length || 0) + (lesson.lockedVideosCount || 0), locked: lesson.hasEntryExam && !lesson.contentUnlocked },
               { key: 'pdf', label: 'الملفات', icon: <FaFilePdf className="text-red-500" />, count: (lesson.pdfs?.length || 0) + (lesson.lockedPdfsCount || 0), locked: lesson.hasEntryExam && !lesson.contentUnlocked },
               { key: 'exam', label: 'الامتحانات', icon: <FaClipboardList className="text-green-500" />, count: (lesson.exams?.length || 0) + (lesson.lockedExamsCount || 0), locked: lesson.hasEntryExam && !lesson.contentUnlocked },

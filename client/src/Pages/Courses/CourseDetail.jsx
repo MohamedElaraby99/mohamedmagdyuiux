@@ -14,6 +14,7 @@ import ExamModal from '../../Components/Exam/ExamModal';
 import EssayExamModal from '../../Components/EssayExamModal';
 import CustomVideoPlayer from '../../Components/CustomVideoPlayer';
 import PDFViewer from '../../Components/PDFViewer';
+import ImageViewer from '../../Components/ImageViewer';
 import {
   FaUser, FaPlay, FaArrowRight, FaArrowLeft,
   FaChevronDown,
@@ -91,11 +92,15 @@ export default function CourseDetail() {
   // PDF viewer
   const [pdfViewerOpen, setPdfViewerOpen] = useState(false);
   const [currentPdf, setCurrentPdf] = useState(null);
+  // Image viewer
+  const [imageViewerOpen, setImageViewerOpen] = useState(false);
+  const [currentImageUrl, setCurrentImageUrl] = useState('');
 
   // ── lesson data for inline view ───────────────────────────────────────────
   const {
     lesson: activeLessonData,
     loading: lessonLoading,
+    error: lessonError,
     refetch: refetchLesson,
   } = useLessonData(
     activeLesson ? id : null,
@@ -350,8 +355,30 @@ export default function CourseDetail() {
   // تاب "واجب" ← التدريبات
   const renderWajibTab = () => {
     if (!activeLessonData) return <div className="text-gray-400 text-center py-8">جاري التحميل...</div>;
+
+    const isLocked = activeLessonData.hasEntryExam && !activeLessonData.contentUnlocked;
     const trainings = activeLessonData.trainings || [];
-    if (!trainings.length) return (
+    const lockedCount = activeLessonData.lockedTrainingsCount || 0;
+    const totalCount = trainings.length + lockedCount;
+
+    // محتوى مقفول
+    if (isLocked && totalCount > 0) return (
+      <div className="rounded-xl p-6 text-center" style={{ background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.2)' }}>
+        <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: 'rgba(245,158,11,0.15)' }}>
+          <FaLock className="text-yellow-400 text-xl" />
+        </div>
+        <h3 className="text-white font-bold mb-1">التدريبات مقفولة</h3>
+        <p className="text-gray-400 text-sm mb-1">يوجد <span className="text-yellow-300 font-bold">{totalCount}</span> تدريب بعد فتح المحتوى</p>
+        <p className="text-gray-500 text-xs mb-4">أكمل كويز فتح المحتوى أولاً</p>
+        <button onClick={() => setActiveTab('كويز فتح المحتوى')}
+          className="flex items-center gap-2 mx-auto px-5 py-2 rounded-lg text-sm text-white"
+          style={{ background: 'rgba(99,102,241,0.8)' }}>
+          <FaLockOpen className="text-xs" /> اذهب لكويز فتح المحتوى
+        </button>
+      </div>
+    );
+
+    if (!totalCount) return (
       <div className="text-center py-10">
         <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: 'rgba(255,255,255,0.06)' }}>
           <FaDumbbell className="text-gray-500 text-xl" />
@@ -359,6 +386,7 @@ export default function CourseDetail() {
         <p className="text-gray-400">لا توجد تدريبات لهذا الدرس</p>
       </div>
     );
+
     return (
       <div className="space-y-3">
         {trainings.map((tr) => (
@@ -380,7 +408,7 @@ export default function CourseDetail() {
     );
   };
 
-  // تاب "كويز فتح المحتوى" ← امتحان المدخل
+  // تاب "كويز فتح المحتوى" ←كويز فتح المحتوى
   const renderKweizFatahTab = () => {
     if (!activeLessonData) return <div className="text-gray-400 text-center py-8">جاري التحميل...</div>;
     if (!activeLessonData.hasEntryExam) {
@@ -434,7 +462,7 @@ export default function CourseDetail() {
         <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: 'rgba(16,185,129,0.2)' }}>
           <FaCheckCircle className="text-green-400 text-2xl" />
         </div>
-        <h3 className="text-xl font-bold text-green-300">تم اجتياز امتحان المدخل</h3>
+        <h3 className="text-xl font-bold text-green-300">تم اجتيازكويز فتح المحتوى</h3>
         <p className="text-gray-300 mt-2">النتيجة: {userResult.score} / {userResult.totalQuestions}</p>
       </div>
     );
@@ -453,7 +481,7 @@ export default function CourseDetail() {
           <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: 'rgba(16,185,129,0.2)' }}>
             <FaCheckCircle className="text-green-400 text-2xl" />
           </div>
-          <h3 className="text-xl font-bold text-green-300">تم إتمام امتحان المدخل</h3>
+          <h3 className="text-xl font-bold text-green-300">تم إتمامكويز فتح المحتوى</h3>
           <p className="text-gray-300 mt-2">{entryExamResult.score} / {entryExamResult.totalQuestions} ({entryExamResult.percentage}%)</p>
         </div>
       );
@@ -561,6 +589,16 @@ export default function CourseDetail() {
         {entryExam.questions?.map((q, qi) => (
           <div key={qi} className="rounded-xl p-4" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)' }}>
             <p className="text-white font-medium mb-3 text-sm">{qi + 1}. {q.question}</p>
+            {q.image && (
+              <img
+                src={generateFileUrl(q.image)}
+                alt={`سؤال ${qi + 1}`}
+                className="max-w-md rounded-xl mb-3 object-cover cursor-zoom-in hover:opacity-90 transition-opacity"
+                style={{ border: '1px solid rgba(255,255,255,0.1)' }}
+                onClick={() => { setCurrentImageUrl(generateFileUrl(q.image)); setImageViewerOpen(true); }}
+                onError={(e) => { e.target.style.display = 'none'; }}
+              />
+            )}
             <div className="space-y-2">
               {q.options?.slice(0, q.numberOfOptions || 4).map((opt, oi) => (
                 <button key={oi} onClick={() => setEntryExamAnswers((p) => ({ ...p, [qi]: oi }))}
@@ -590,9 +628,31 @@ export default function CourseDetail() {
 
   // تاب "كويز" ← الامتحانات العادية + المقالية فقط
   const renderKweizTab = () => {
-    if (!activeLessonData) return null;
+    if (!activeLessonData) return <div className="text-gray-400 text-center py-8">جاري التحميل...</div>;
+
+    const isLocked = activeLessonData.hasEntryExam && !activeLessonData.contentUnlocked;
     const exams = activeLessonData.exams || [];
     const essayExams = activeLessonData.essayExams || [];
+    const lockedExamsCount = activeLessonData.lockedExamsCount || 0;
+    const totalExams = exams.length + essayExams.length + lockedExamsCount;
+
+    // محتوى مقفول
+    if (isLocked && totalExams > 0) return (
+      <div className="rounded-xl p-6 text-center" style={{ background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.2)' }}>
+        <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: 'rgba(245,158,11,0.15)' }}>
+          <FaLock className="text-yellow-400 text-xl" />
+        </div>
+        <h3 className="text-white font-bold mb-1">الاختبارات مقفولة</h3>
+        <p className="text-gray-400 text-sm mb-1">يوجد <span className="text-yellow-300 font-bold">{totalExams}</span> اختبار بعد فتح المحتوى</p>
+        <p className="text-gray-500 text-xs mb-4">أكمل كويز فتح المحتوى أولاً</p>
+        <button onClick={() => setActiveTab('كويز فتح المحتوى')}
+          className="flex items-center gap-2 mx-auto px-5 py-2 rounded-lg text-sm text-white"
+          style={{ background: 'rgba(99,102,241,0.8)' }}>
+          <FaLockOpen className="text-xs" /> اذهب لكويز فتح المحتوى
+        </button>
+      </div>
+    );
+
     const hasContent = exams.length || essayExams.length;
     if (!hasContent) return (
       <div className="text-center py-10">
@@ -634,60 +694,176 @@ export default function CourseDetail() {
   };
 
   const renderNazraTab = () => {
-    if (!activeLessonData) return null;
-    const videos = activeLessonData.videos || [];
+    if (!activeLessonData) return <div className="text-gray-400 text-center py-8">جاري التحميل...</div>;
 
-    if (activeLessonData.hasEntryExam && !activeLessonData.contentUnlocked) {
-      return (
-        <div className="rounded-xl p-8 text-center" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)' }}>
-          <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: 'rgba(245,158,11,0.15)', border: '1px solid rgba(245,158,11,0.25)' }}>
-            <FaLock className="text-yellow-400 text-xl" />
-          </div>
-          <h3 className="text-xl font-bold text-white mb-2">المحتوى مقفول</h3>
-          <p className="text-gray-400 text-sm mb-4">يجب حل امتحان المدخل أولاً لفتح الفيديوهات</p>
-          <button onClick={() => setActiveTab('كويز فتح المحتوى')}
-            className="flex items-center gap-2 mx-auto px-6 py-2 rounded-lg text-sm text-white" style={{ background: 'rgba(99,102,241,0.8)' }}>
-            <FaLockOpen className="text-xs" /> اذهب لكويز فتح المحتوى
-          </button>
-        </div>
-      );
-    }
+    const d = activeLessonData;
+    const description = d.description || '';
+    const content = d.content || '';
+    const videosCount   = (d.videos?.length || 0) + (d.lockedVideosCount || 0);
+    const pdfsCount     = (d.pdfs?.length || 0) + (d.lockedPdfsCount || 0);
+    const examsCount    = (d.exams?.length || 0) + (d.lockedExamsCount || 0) + (d.essayExams?.length || 0);
+    const trainingsCount= (d.trainings?.length || 0) + (d.lockedTrainingsCount || 0);
 
-    if (!videos.length) return (
+    const hasAnything = description || content || videosCount || pdfsCount || examsCount || trainingsCount;
+
+    if (!hasAnything) return (
       <div className="text-center py-10">
         <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: 'rgba(255,255,255,0.06)' }}>
-          <FaVideo className="text-gray-500 text-xl" />
+          <FaBookOpen className="text-gray-500 text-xl" />
         </div>
-        <p className="text-gray-400">لا توجد فيديوهات لهذا الدرس</p>
+        <p className="text-gray-400">لا يوجد وصف لهذا الدرس</p>
       </div>
     );
 
     return (
-      <div className="space-y-3">
-        {videos.map((v, i) => {
-          const vid = extractYouTubeId(v.url);
-          return (
-            <div key={v._id || i} className="rounded-xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
-              {/* Thumbnail row */}
-              <div className="relative aspect-video cursor-pointer group bg-black"
-                onClick={() => { setCurrentVideo(v); setVideoPlayerOpen(true); }}>
-                {vid
-                  ? <img src={ytThumb(vid)} alt={v.title} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
-                      onError={(e) => { e.target.style.display = 'none'; }} />
-                  : <div className="w-full h-full" style={{ background: '#111827' }} />}
-                <div className="absolute inset-0 flex flex-col items-center justify-center" style={{ background: 'rgba(0,0,0,0.4)' }}>
-                  <div className="w-14 h-14 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform"
-                    style={{ background: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(4px)' }}>
-                    <FaPlay className="text-white text-xl ml-1" />
+      <div className="space-y-5" dir="rtl">
+
+        {/* Description */}
+        {description && (
+          <div>
+            <h4 className="text-white font-semibold text-sm mb-2">وصف الدرس</h4>
+            <p className="text-gray-300 text-sm leading-relaxed whitespace-pre-wrap">{description}</p>
+          </div>
+        )}
+
+        {/* Rich content */}
+        {content && (
+          <div>
+            <h4 className="text-white font-semibold text-sm mb-2">تفاصيل إضافية</h4>
+            <p className="text-gray-300 text-sm leading-relaxed whitespace-pre-wrap">{content}</p>
+          </div>
+        )}
+
+        {/* Divider */}
+        {(description || content) && (videosCount || pdfsCount || examsCount || trainingsCount) > 0 && (
+          <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }} />
+        )}
+
+        {/* مشتملات الدرس */}
+        {(videosCount || pdfsCount || examsCount || trainingsCount) > 0 && (
+          <div>
+            <h4 className="text-white font-semibold text-sm mb-3">مشتملات الدرس</h4>
+            <div className="grid grid-cols-2 gap-2">
+              {videosCount > 0 && (
+                <div className="flex items-center gap-3 rounded-xl p-3"
+                  style={{ background: 'rgba(99,102,241,0.08)', border: '1px solid rgba(99,102,241,0.2)' }}>
+                  <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
+                    style={{ background: 'rgba(99,102,241,0.15)' }}>
+                    <FaVideo className="text-indigo-400 text-sm" />
                   </div>
-                  <p className="text-white text-sm mt-3 font-medium px-4 text-center">{v.title}</p>
-                  <p className="text-gray-300 text-xs mt-1">انقر للمشاهدة</p>
+                  <div>
+                    <div className="text-white font-bold text-base leading-none">{videosCount}</div>
+                    <div className="text-gray-400 text-xs mt-0.5">فيديو</div>
+                  </div>
                 </div>
+              )}
+              {pdfsCount > 0 && (
+                <div className="flex items-center gap-3 rounded-xl p-3"
+                  style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)' }}>
+                  <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
+                    style={{ background: 'rgba(239,68,68,0.12)' }}>
+                    <FaFilePdf className="text-red-400 text-sm" />
+                  </div>
+                  <div>
+                    <div className="text-white font-bold text-base leading-none">{pdfsCount}</div>
+                    <div className="text-gray-400 text-xs mt-0.5">ملف PDF</div>
+                  </div>
+                </div>
+              )}
+              {examsCount > 0 && (
+                <div className="flex items-center gap-3 rounded-xl p-3"
+                  style={{ background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.2)' }}>
+                  <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
+                    style={{ background: 'rgba(16,185,129,0.12)' }}>
+                    <FaClipboardList className="text-emerald-400 text-sm" />
+                  </div>
+                  <div>
+                    <div className="text-white font-bold text-base leading-none">{examsCount}</div>
+                    <div className="text-gray-400 text-xs mt-0.5">اختبار</div>
+                  </div>
+                </div>
+              )}
+              {trainingsCount > 0 && (
+                <div className="flex items-center gap-3 rounded-xl p-3"
+                  style={{ background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.2)' }}>
+                  <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
+                    style={{ background: 'rgba(245,158,11,0.12)' }}>
+                    <FaDumbbell className="text-yellow-400 text-sm" />
+                  </div>
+                  <div>
+                    <div className="text-white font-bold text-base leading-none">{trainingsCount}</div>
+                    <div className="text-gray-400 text-xs mt-0.5">تدريب</div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  // تاب "الملحقات" ← ملفات PDF
+  const renderMulahaqatTab = () => {
+    if (!activeLessonData) return <div className="text-gray-400 text-center py-8">جاري التحميل...</div>;
+    const pdfs = activeLessonData.pdfs || [];
+    const lockedPdfsCount = activeLessonData.lockedPdfsCount || 0;
+    const isLocked = activeLessonData.hasEntryExam && !activeLessonData.contentUnlocked;
+
+    if (isLocked && (pdfs.length + lockedPdfsCount) > 0) return (
+      <div className="rounded-xl p-6 text-center" style={{ background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.2)' }}>
+        <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: 'rgba(245,158,11,0.15)' }}>
+          <FaLock className="text-yellow-400 text-xl" />
+        </div>
+        <h3 className="text-white font-bold mb-1">الملفات مقفولة</h3>
+        <p className="text-gray-400 text-sm mb-1">يوجد <span className="text-yellow-300 font-bold">{pdfs.length + lockedPdfsCount}</span> ملف بعد فتح المحتوى</p>
+        <p className="text-gray-500 text-xs mb-4">أكمل كويز فتح المحتوى أولاً</p>
+        <button onClick={() => setActiveTab('كويز فتح المحتوى')}
+          className="flex items-center gap-2 mx-auto px-5 py-2 rounded-lg text-sm text-white"
+          style={{ background: 'rgba(99,102,241,0.8)' }}>
+          <FaLockOpen className="text-xs" /> اذهب لكويز فتح المحتوى
+        </button>
+      </div>
+    );
+
+    if (!pdfs.length) return (
+      <div className="text-center py-10">
+        <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: 'rgba(255,255,255,0.06)' }}>
+          <FaFilePdf className="text-gray-500 text-xl" />
+        </div>
+        <p className="text-gray-400">لا توجد ملحقات لهذا الدرس</p>
+      </div>
+    );
+
+    return (
+      <div className="space-y-2">
+        {pdfs.map((pdf, i) => {
+          const isFigma = pdf.url?.endsWith('.fig') || pdf.title?.toLowerCase().includes('figma');
+          return (
+            <div key={pdf._id || i} className="flex items-center justify-between rounded-xl px-4 py-3"
+              style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
+              <a href={generateFileUrl(pdf.url)} download target="_blank" rel="noopener noreferrer"
+                className="text-gray-500 hover:text-white transition-colors p-1 flex-shrink-0">
+                <FaDownload className="text-sm" />
+              </a>
+              <div className="flex items-center gap-2 flex-1 px-3 min-w-0">
+                {isFigma
+                  ? <svg viewBox="0 0 38 57" className="w-4 h-4 flex-shrink-0" fill="none">
+                      <path d="M19 28.5A9.5 9.5 0 1 1 28.5 19H19v9.5z" fill="#1ABCFE"/>
+                      <path d="M9.5 47.5A9.5 9.5 0 0 1 19 38v9.5H9.5z" fill="#0ACF83"/>
+                      <path d="M19 0H9.5A9.5 9.5 0 0 0 9.5 19H19V0z" fill="#FF7262"/>
+                      <path d="M28.5 0H19v19h9.5A9.5 9.5 0 1 0 28.5 0z" fill="#F24E1E"/>
+                      <path d="M38 19a9.5 9.5 0 1 1-9.5-9.5H38V19z" fill="#A259FF"/>
+                    </svg>
+                  : <FaFilePdf className="text-red-400 flex-shrink-0 text-sm" />}
+                <span className="text-sm text-gray-200 truncate">{pdf.title || `ملف ${i + 1}`}</span>
               </div>
-              {v.description && (
-                <div className="px-4 py-3">
-                  <p className="text-gray-400 text-xs leading-relaxed">{v.description}</p>
-                </div>
+              {!isFigma && (
+                <button onClick={() => { setCurrentPdf(pdf); setPdfViewerOpen(true); }}
+                  className="text-indigo-400 hover:text-indigo-300 text-xs px-2 py-1 rounded flex-shrink-0"
+                  style={{ border: '1px solid rgba(99,102,241,0.3)' }}>
+                  عرض
+                </button>
               )}
             </div>
           );
@@ -716,6 +892,7 @@ export default function CourseDetail() {
       case 'كويز': return renderKweizTab();
       case 'نظرة سريعة': return renderNazraTab();
       case 'مناقشات': return renderMunaqashatTab();
+      case 'الملحقات': return renderMulahaqatTab();
       default: return null;
     }
   };
@@ -753,7 +930,7 @@ export default function CourseDetail() {
 
   // ── main render ───────────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: '#0d1829', color: 'white' }} dir="rtl">
+    <div className="h-screen flex flex-col" style={{ background: '#0d1829', color: 'white' }} dir="rtl">
       {/* ── Alerts ── */}
       {showSuccessAlert && <PaymentSuccessAlert message={alertMessage} onClose={() => setShowSuccessAlert(false)} />}
       {showErrorAlert && <PaymentErrorAlert message={alertMessage} onClose={() => setShowErrorAlert(false)} />}
@@ -908,71 +1085,51 @@ export default function CourseDetail() {
             </div>
 
             {/* Tabs */}
-            <div className="flex gap-0 mb-5 border-b" style={{ borderColor: 'rgba(255,255,255,0.1)' }}>
-              {['كويز فتح المحتوى', 'واجب', 'كويز', 'نظرة سريعة', 'مناقشات'].map((tab) => (
-                <button key={tab} onClick={() => setActiveTab(tab)}
-                  className="px-4 py-2.5 text-sm font-medium transition-all border-b-2 -mb-px"
-                  style={{
-                    borderColor: activeTab === tab ? 'white' : 'transparent',
-                    color: activeTab === tab ? 'white' : '#6b7280',
-                  }}>
-                  {tab}
-                </button>
-              ))}
-            </div>
+            {(() => {
+              const d = activeLessonData;
+              const tabBadges = {
+                'كويز فتح المحتوى': d?.hasEntryExam ? 1 : 0,
+                'واجب': d ? ((d.trainings?.length || 0) + (d.lockedTrainingsCount || 0)) : null,
+                'كويز': d ? ((d.exams?.length || 0) + (d.essayExams?.length || 0) + (d.lockedExamsCount || 0)) : null,
+                'نظرة سريعة': null,
+                'الملحقات': d ? ((d.pdfs?.length || 0) + (d.lockedPdfsCount || 0)) : null,
+                'مناقشات': null,
+              };
+              return (
+                <div className="flex gap-0 mb-5 border-b overflow-x-auto" style={{ borderColor: 'rgba(255,255,255,0.1)' }}>
+                  {['كويز فتح المحتوى', 'واجب', 'كويز', 'نظرة سريعة', 'الملحقات', 'مناقشات'].map((tab) => {
+                    const badge = tabBadges[tab];
+                    const isActive = activeTab === tab;
+                    return (
+                      <button key={tab} onClick={() => setActiveTab(tab)}
+                        className="flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium transition-all border-b-2 -mb-px whitespace-nowrap flex-shrink-0"
+                        style={{ borderColor: isActive ? 'white' : 'transparent', color: isActive ? 'white' : '#6b7280' }}>
+                        {tab}
+                        {badge != null && badge > 0 && (
+                          <span className="inline-flex items-center justify-center min-w-[18px] h-[18px] rounded-full text-xs px-1"
+                            style={{ background: isActive ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.08)', color: isActive ? 'white' : '#9ca3af' }}>
+                            {badge}
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              );
+            })()}
 
             {/* Tab Content */}
             <div className="min-h-[120px]">
               {lessonLoading
                 ? <div className="flex items-center justify-center py-10"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-400" /></div>
-                : renderTabContent()}
+                : lessonError
+                  ? <div className="rounded-xl p-5 text-center" style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)' }}>
+                      <FaExclamationTriangle className="text-red-400 text-2xl mx-auto mb-2" />
+                      <p className="text-red-300 text-sm mb-3">تعذّر تحميل بيانات الدرس</p>
+                      <button onClick={refetchLesson} className="px-4 py-1.5 rounded-lg text-xs text-white" style={{ background: 'rgba(99,102,241,0.7)' }}>إعادة المحاولة</button>
+                    </div>
+                  : renderTabContent()}
             </div>
-
-            {/* Attachments */}
-            {activeLessonData?.pdfs?.length > 0 && (
-              <div className="mt-6">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-xs text-gray-500">Download All</span>
-                  <h3 className="text-sm font-semibold text-white">ملحقات المحاضرة</h3>
-                </div>
-                <div className="space-y-2">
-                  {activeLessonData.pdfs.map((pdf, i) => {
-                    const isFigma = pdf.url?.endsWith('.fig') || pdf.title?.toLowerCase().includes('figma');
-                    return (
-                      <div key={pdf._id || i} className="flex items-center justify-between rounded-xl px-4 py-3"
-                        style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
-                        {/* Download button */}
-                        <a href={generateFileUrl(pdf.url)} download target="_blank" rel="noopener noreferrer"
-                          className="text-gray-500 hover:text-white transition-colors p-1 flex-shrink-0">
-                          <FaDownload className="text-sm" />
-                        </a>
-                        {/* File name + icon */}
-                        <div className="flex items-center gap-2 flex-1 px-3 min-w-0">
-                          {isFigma
-                            ? <svg viewBox="0 0 38 57" className="w-4 h-4 flex-shrink-0" fill="none">
-                                <path d="M19 28.5A9.5 9.5 0 1 1 28.5 19H19v9.5z" fill="#1ABCFE"/>
-                                <path d="M9.5 47.5A9.5 9.5 0 0 1 19 38v9.5H9.5z" fill="#0ACF83"/>
-                                <path d="M19 0H9.5A9.5 9.5 0 0 0 9.5 19H19V0z" fill="#FF7262"/>
-                                <path d="M28.5 0H19v19h9.5A9.5 9.5 0 1 0 28.5 0z" fill="#F24E1E"/>
-                                <path d="M38 19a9.5 9.5 0 1 1-9.5-9.5H38V19z" fill="#A259FF"/>
-                              </svg>
-                            : <FaFilePdf className="text-red-400 flex-shrink-0 text-sm" />}
-                          <span className="text-sm text-gray-200 truncate">{pdf.title || `ملف ${i + 1}`}</span>
-                        </div>
-                        {/* View button (PDF only) */}
-                        {!isFigma && (
-                          <button onClick={() => { setCurrentPdf(pdf); setPdfViewerOpen(true); }}
-                            className="text-indigo-400 hover:text-indigo-300 text-xs px-2 py-1 rounded flex-shrink-0"
-                            style={{ border: '1px solid rgba(99,102,241,0.3)' }}>
-                            عرض
-                          </button>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
 
             {/* Access / Purchase Section (if no access) */}
             {!hasContentAccess() && currentCourse.price > 0 && (
@@ -1164,6 +1321,16 @@ export default function CourseDetail() {
           courseId={id}
           lessonId={activeLesson?.lessonId}
           unitId={activeLesson?.unitId}
+        />
+      )}
+
+      {/* Image Viewer */}
+      {imageViewerOpen && currentImageUrl && (
+        <ImageViewer
+          isOpen={imageViewerOpen}
+          onClose={() => { setImageViewerOpen(false); setCurrentImageUrl(''); }}
+          imageUrl={currentImageUrl}
+          title="صورة السؤال"
         />
       )}
 

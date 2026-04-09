@@ -212,105 +212,93 @@ const ExamModal = ({ isOpen, onClose, exam, courseId, lessonId, unitId, examType
     if (!question) return null;
 
     return (
-      <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg">
+      <div className="rounded-xl p-6" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)' }}>
         <div className="mb-6">
           <div className="flex items-center justify-between mb-4">
-            <span className="text-sm font-medium text-gray-500 dark:text-gray-400">
+            <span className="text-sm font-medium text-gray-400">
               السؤال {currentQuestionIndex + 1} من {totalQuestions}
             </span>
-            <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
-              <FaClock className="text-red-500" />
-              <span className={timeLeft < 300 ? 'text-red-600 font-bold' : ''}>
+            <div className="flex items-center gap-2 px-3 py-1 rounded-lg" style={{ background: timeLeft < 300 ? 'rgba(239,68,68,0.15)' : 'rgba(255,255,255,0.06)' }}>
+              <FaClock className={timeLeft < 300 ? 'text-red-400' : 'text-gray-400'} />
+              <span className={`text-sm font-mono font-bold ${timeLeft < 300 ? 'text-red-400' : 'text-gray-200'}`}>
                 {formatTime(timeLeft)}
               </span>
             </div>
           </div>
 
-          {/* Question Image - Positioned above the question */}
           {question.image && (
             <div className="mb-4 flex justify-center">
               <div
-                className="w-32 h-32 md:w-40 md:h-40 rounded-lg shadow-md overflow-hidden cursor-pointer hover:scale-105 transition-transform duration-200"
-                onClick={() => {
-                  setCurrentImage(generateImageUrl(question.image));
-                  setImageModalOpen(true);
-                }}
+                className="rounded-xl overflow-hidden cursor-pointer hover:scale-105 transition-transform duration-200"
+                style={{ maxWidth: '280px', border: '1px solid rgba(255,255,255,0.15)' }}
+                onClick={() => { setCurrentImage(generateImageUrl(question.image)); setImageModalOpen(true); }}
               >
                 <img
                   src={generateImageUrl(question.image)}
                   alt="صورة السؤال"
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-
-                    e.target.style.display = 'none';
-                  }}
+                  className="w-full object-cover"
+                  onError={(e) => { e.target.style.display = 'none'; }}
                 />
               </div>
             </div>
           )}
 
-          <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4 leading-relaxed">
+          <h3 className="text-base font-semibold text-white mb-4 leading-relaxed" dir="rtl">
             {question.question}
           </h3>
         </div>
 
-        <div className="space-y-3">
-          {question.options.slice(0, question.numberOfOptions || 4).map((option, optionIndex) => (
-            <label
-              key={optionIndex}
-              className={`flex items-center p-4 rounded-lg border-2 cursor-pointer transition-all duration-200 ${answers[currentQuestionIndex] === optionIndex
-                ? 'border-green-500 bg-green-50 dark:bg-green-900/20'
-                : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500'
-                }`}
-            >
-              <input
-                type="radio"
-                name={`question-${currentQuestionIndex}`}
-                value={optionIndex}
-                checked={answers[currentQuestionIndex] === optionIndex}
-                onChange={() => handleAnswerSelect(currentQuestionIndex, optionIndex)}
-                className="sr-only"
-              />
-              <div className={`w-5 h-5 rounded-full border-2 mr-3 flex items-center justify-center ${answers[currentQuestionIndex] === optionIndex
-                ? 'border-green-500 bg-green-500'
-                : 'border-gray-300 dark:border-gray-500'
-                }`}>
-                {answers[currentQuestionIndex] === optionIndex && (
-                  <div className="w-2 h-2 bg-white rounded-full"></div>
-                )}
-              </div>
-              <span className="text-gray-700 dark:text-gray-300">{option}</span>
-            </label>
-          ))}
+        <div className="space-y-2" dir="rtl">
+          {question.options.slice(0, question.numberOfOptions || 4).map((option, optionIndex) => {
+            const selected = answers[currentQuestionIndex] === optionIndex;
+            return (
+              <label
+                key={optionIndex}
+                className="flex items-center p-3.5 rounded-xl cursor-pointer transition-all duration-200"
+                style={{
+                  background: selected ? 'rgba(99,102,241,0.15)' : 'rgba(255,255,255,0.03)',
+                  border: selected ? '1.5px solid rgba(99,102,241,0.6)' : '1.5px solid rgba(255,255,255,0.08)',
+                }}
+              >
+                <input type="radio" name={`question-${currentQuestionIndex}`} value={optionIndex}
+                  checked={selected} onChange={() => handleAnswerSelect(currentQuestionIndex, optionIndex)} className="sr-only" />
+                <div className="w-5 h-5 rounded-full border-2 ml-3 flex items-center justify-center flex-shrink-0"
+                  style={{ borderColor: selected ? '#6366f1' : 'rgba(255,255,255,0.3)', background: selected ? '#6366f1' : 'transparent' }}>
+                  {selected && <div className="w-2 h-2 bg-white rounded-full" />}
+                </div>
+                <span className="text-gray-200 text-sm">{option}</span>
+              </label>
+            );
+          })}
         </div>
       </div>
     );
   };
 
   const renderQuestionNavigation = () => (
-    <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-lg">
-      <div className="flex items-center justify-between mb-4">
-        <h4 className="font-semibold text-gray-800 dark:text-gray-200">أسئلة الامتحان</h4>
-        <div className="text-sm text-gray-500">
-          {Object.keys(answers).length} من {totalQuestions} تمت الإجابة
+    <div className="rounded-xl p-4" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)' }}>
+      <div className="flex items-center justify-between mb-3" dir="rtl">
+        <h4 className="font-semibold text-white text-sm">الأسئلة</h4>
+        <div className="text-xs text-gray-400">
+          {Object.keys(answers).length}/{totalQuestions} تمت
         </div>
       </div>
-
-      <div className="grid grid-cols-5 gap-2">
-        {questions.map((_, index) => (
-          <button
-            key={index}
-            onClick={() => setCurrentQuestionIndex(index)}
-            className={`w-10 h-10 rounded-lg text-sm font-medium transition-all duration-200 ${index === currentQuestionIndex
-              ? 'bg-green-600 text-white'
-              : getQuestionStatus(index) === 'answered'
-                ? 'bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 border-2 border-green-300'
-                : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-              }`}
-          >
-            {index + 1}
-          </button>
-        ))}
+      <div className="grid grid-cols-5 gap-1.5">
+        {questions.map((_, index) => {
+          const isCurrent = index === currentQuestionIndex;
+          const isAnswered = getQuestionStatus(index) === 'answered';
+          return (
+            <button key={index} onClick={() => setCurrentQuestionIndex(index)}
+              className="w-9 h-9 rounded-lg text-xs font-bold transition-all"
+              style={{
+                background: isCurrent ? '#6366f1' : isAnswered ? 'rgba(16,185,129,0.2)' : 'rgba(255,255,255,0.06)',
+                color: isCurrent ? 'white' : isAnswered ? '#34d399' : '#9ca3af',
+                border: isCurrent ? '2px solid #6366f1' : isAnswered ? '1px solid rgba(16,185,129,0.4)' : '1px solid rgba(255,255,255,0.1)',
+              }}>
+              {index + 1}
+            </button>
+          );
+        })}
       </div>
     </div>
   );
@@ -320,86 +308,61 @@ const ExamModal = ({ isOpen, onClose, exam, courseId, lessonId, unitId, examType
 
     const { score, totalQuestions, correctAnswers, wrongAnswers } = lastExamResult;
     const percentage = Math.round((score / totalQuestions) * 100);
-
-    // Calculate if passed based on percentage (you can adjust the passing threshold)
-    const passingThreshold = 50; // 50% to pass
-    const passed = percentage >= passingThreshold;
+    const passed = percentage >= 50;
 
     return (
-      <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg">
+      <div className="rounded-xl p-6" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)' }} dir="rtl">
         <div className="text-center mb-6">
-          <div className={`w-20 h-20 rounded-full mx-auto mb-4 flex items-center justify-center ${passed ? 'bg-green-100 dark:bg-green-900' : 'bg-red-100 dark:bg-red-900'
-            }`}>
-            {passed ? (
-              <FaTrophy className="text-3xl text-green-600 dark:text-green-400" />
-            ) : (
-              <FaExclamationTriangle className="text-3xl text-red-600 dark:text-red-400" />
-            )}
+          <div className="w-20 h-20 rounded-full mx-auto mb-4 flex items-center justify-center"
+            style={{ background: passed ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.15)', border: `2px solid ${passed ? 'rgba(16,185,129,0.4)' : 'rgba(239,68,68,0.4)'}` }}>
+            {passed
+              ? <FaTrophy className="text-3xl text-emerald-400" />
+              : <FaExclamationTriangle className="text-3xl text-red-400" />}
           </div>
-
-          <h3 className={`text-2xl font-bold mb-2 ${passed ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
-            }`}>
-            {passed ?
-              (percentage === 100 ? 'ممتاز! درجة كاملة!' :
-                percentage >= 90 ? 'مبروك! أداء ممتاز' :
-                  percentage >= 80 ? 'مبروك! أداء جيد جداً' :
-                    percentage >= 70 ? 'مبروك! أداء جيد' :
-                      'مبروك! لقد نجحت في الامتحان')
+          <h3 className={`text-2xl font-bold mb-1 ${passed ? 'text-emerald-400' : 'text-red-400'}`}>
+            {passed
+              ? (percentage === 100 ? 'ممتاز! درجة كاملة!' : percentage >= 80 ? 'مبروك! أداء جيد جداً' : 'مبروك! لقد نجحت')
               : 'حاول مرة أخرى'}
           </h3>
-
-          <p className="text-gray-600 dark:text-gray-300">
-            {passed ?
-              (percentage === 100 ? 'أداء مثالي! تهانينا على الدرجة الكاملة' :
-                percentage >= 90 ? 'أداء ممتاز! استمر في التفوق' :
-                  percentage >= 80 ? 'أداء رائع! واصل التقدم' :
-                    percentage >= 70 ? 'أداء جيد! يمكنك تحسينه أكثر' :
-                      'لقد نجحت! استمر في التعلم')
-              : 'لا تستسلم، راجع التصنيف وحاول مرة أخرى'}
+          <p className="text-gray-400 text-sm">
+            {passed ? 'استمر في التعلم والتقدم' : 'لا تستسلم، راجع المحتوى وحاول مجدداً'}
           </p>
         </div>
 
-        <div className="grid grid-cols-2 gap-4 mb-6">
-          <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg text-center">
-            <div className="text-2xl font-bold text-green-600 dark:text-green-400">{percentage}%</div>
-            <div className="text-sm text-gray-600 dark:text-gray-300">النسبة المئوية</div>
+        <div className="grid grid-cols-2 gap-3 mb-5">
+          <div className="rounded-xl p-4 text-center" style={{ background: 'rgba(99,102,241,0.1)', border: '1px solid rgba(99,102,241,0.25)' }}>
+            <div className="text-3xl font-bold text-indigo-300">{percentage}%</div>
+            <div className="text-gray-400 text-xs mt-1">النسبة المئوية</div>
           </div>
-
-          <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg text-center">
-            <div className="text-2xl font-bold text-green-600 dark:text-green-400">{score}</div>
-            <div className="text-sm text-gray-600 dark:text-gray-300">الدرجة</div>
-          </div>
-        </div>
-
-        <div className="space-y-3">
-          <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-            <span className="text-gray-700 dark:text-gray-300">الإجابات الصحيحة</span>
-            <span className="font-semibold text-green-600 dark:text-green-400">{correctAnswers}</span>
-          </div>
-
-          <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-            <span className="text-gray-700 dark:text-gray-300">الإجابات الخاطئة</span>
-            <span className="font-semibold text-red-600 dark:text-red-400">{wrongAnswers}</span>
-          </div>
-
-          <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-            <span className="text-gray-700 dark:text-gray-300">الوقت المستغرق</span>
-            <span className="font-semibold text-green-600 dark:text-green-400">{timeTaken} دقيقة</span>
+          <div className="rounded-xl p-4 text-center" style={{ background: 'rgba(99,102,241,0.1)', border: '1px solid rgba(99,102,241,0.25)' }}>
+            <div className="text-3xl font-bold text-indigo-300">{score}</div>
+            <div className="text-gray-400 text-xs mt-1">الدرجة</div>
           </div>
         </div>
 
-        <div className="mt-6 space-y-3">
-          <button
-            onClick={() => setHistoryModalOpen(true)}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
-          >
-            <FaHistory />
-            مراجعة الأسئلة والإجابات
+        <div className="space-y-2 mb-5">
+          {[
+            { label: 'الإجابات الصحيحة', val: correctAnswers, color: '#34d399' },
+            { label: 'الإجابات الخاطئة', val: wrongAnswers, color: '#f87171' },
+            { label: 'الوقت المستغرق', val: `${timeTaken} دقيقة`, color: '#a78bfa' },
+          ].map(({ label, val, color }) => (
+            <div key={label} className="flex items-center justify-between p-3 rounded-xl"
+              style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
+              <span style={{ color }} className="font-semibold text-sm">{val}</span>
+              <span className="text-gray-300 text-sm">{label}</span>
+            </div>
+          ))}
+        </div>
+
+        <div className="space-y-2">
+          <button onClick={() => setHistoryModalOpen(true)}
+            className="w-full py-2.5 px-4 rounded-xl font-medium text-sm text-white transition-all flex items-center justify-center gap-2"
+            style={{ background: 'rgba(99,102,241,0.5)', border: '1px solid rgba(99,102,241,0.4)' }}>
+            <FaHistory /> مراجعة الأسئلة والإجابات
           </button>
-          <button
-            onClick={onClose}
-            className="w-full bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg font-medium transition-colors"
-          >
+          <button onClick={onClose}
+            className="w-full py-2.5 px-4 rounded-xl font-medium text-sm text-white transition-all"
+            style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)' }}>
             إغلاق
           </button>
         </div>
@@ -409,116 +372,96 @@ const ExamModal = ({ isOpen, onClose, exam, courseId, lessonId, unitId, examType
 
   if (!isOpen || !exam) return null;
 
+  const NAV_BG = { background: '#0a1120', borderBottom: '1px solid rgba(255,255,255,0.08)' };
+  const MODAL_BG = { background: '#0d1829' };
+  const CARD_STYLE = { background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)' };
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm">
-      <div className="bg-gray-100 dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-6xl max-h-[95vh] overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(6px)' }}>
+      <div className="rounded-2xl shadow-2xl w-full max-w-5xl max-h-[95vh] overflow-hidden flex flex-col" style={MODAL_BG}>
+
         {/* Header */}
-        <div className="bg-gradient-to-r from-green-600 to-green-600 text-white p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-2xl font-bold">{exam.title}</h2>
-              <p className="text-green-100 mt-1">{exam.description}</p>
-            </div>
-            <button
-              onClick={handleClose}
-              className="text-white hover:text-red-200 text-2xl transition-colors"
-            >
-              <FaTimes />
-            </button>
+        <div className="flex items-center justify-between px-6 py-4 flex-shrink-0" style={NAV_BG} dir="rtl">
+          <div className="min-w-0">
+            <h2 className="text-lg font-bold text-white truncate">{exam.title}</h2>
+            {exam.description && <p className="text-gray-400 text-xs mt-0.5 truncate">{exam.description}</p>}
           </div>
+          <button onClick={handleClose} className="text-gray-400 hover:text-white transition-colors flex-shrink-0 mr-4 p-1">
+            <FaTimes className="text-lg" />
+          </button>
         </div>
 
-        <div className="p-6 overflow-y-auto max-h-[calc(95vh-120px)]">
+        <div className="p-6 overflow-y-auto flex-1">
           {error && (
-            <div className="mb-4 bg-red-100 dark:bg-red-900/20 border border-red-300 dark:border-red-700 text-red-700 dark:text-red-300 px-4 py-3 rounded-lg">
+            <div className="mb-4 rounded-xl px-4 py-3 text-sm text-red-300" style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)' }} dir="rtl">
               {error}
             </div>
           )}
 
           {!examStarted ? (
-            // Exam Start Screen
-            <div className="text-center py-12">
-              <div className="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-lg max-w-md mx-auto">
-                <div className="text-6xl mb-6">📝</div>
-                <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-4">
-                  {exam.title}
-                </h3>
-                <p className="text-gray-600 dark:text-gray-300 mb-6">
-                  {exam.description}
-                </p>
+            // ── Start Screen ──────────────────────────────────────────────────
+            <div className="flex items-center justify-center py-6">
+              <div className="rounded-2xl p-8 w-full max-w-sm text-center" style={CARD_STYLE}>
+                <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-5"
+                  style={{ background: 'rgba(99,102,241,0.15)', border: '1px solid rgba(99,102,241,0.3)' }}>
+                  <FaCheck className="text-indigo-400 text-2xl" />
+                </div>
+                <h3 className="text-xl font-bold text-white mb-2">{exam.title}</h3>
+                {exam.description && <p className="text-gray-400 text-sm mb-5">{exam.description}</p>}
 
-                <div className="space-y-4 mb-8">
-                  <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                    <span className="text-gray-700 dark:text-gray-300">عدد الأسئلة</span>
-                    <span className="font-semibold">{totalQuestions}</span>
+                <div className="space-y-2 mb-6 text-right" dir="rtl">
+                  <div className="flex items-center justify-between px-4 py-3 rounded-xl"
+                    style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                    <span className="font-bold text-white">{totalQuestions}</span>
+                    <span className="text-gray-400 text-sm">عدد الأسئلة</span>
                   </div>
-
-                  <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                    <span className="text-gray-700 dark:text-gray-300">الوقت المحدد</span>
-                    <span className="font-semibold">
+                  <div className="flex items-center justify-between px-4 py-3 rounded-xl"
+                    style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                    <span className="font-bold text-white flex items-center gap-1.5">
+                      <FaClock className="text-indigo-400 text-xs" />
                       {exam.timeLimit && !isNaN(exam.timeLimit) ? exam.timeLimit : 30} دقيقة
                     </span>
+                    <span className="text-gray-400 text-sm">الوقت المحدد</span>
                   </div>
                 </div>
 
-                <button
-                  onClick={handleStartExam}
-                  disabled={loading}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white py-3 px-6 rounded-lg font-medium text-lg transition-colors disabled:opacity-50"
-                >
+                <button onClick={handleStartExam} disabled={loading}
+                  className="w-full py-3 px-6 rounded-xl font-semibold text-white transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                  style={{ background: 'rgba(99,102,241,0.85)' }}>
+                  <FaPlay className="text-sm" />
                   {loading ? 'جاري التحميل...' : 'ابدأ الامتحان'}
                 </button>
               </div>
             </div>
+
           ) : showResults ? (
-            // Results Screen
             renderResults()
           ) : (
-            // Exam Interface
-            <div className="space-y-6">
-              {/* Question Navigation - Shown at top on mobile, right side on desktop */}
-              <div className="block lg:hidden">
-                {renderQuestionNavigation()}
-              </div>
-
-              <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            // ── Exam Interface ────────────────────────────────────────────────
+            <div className="space-y-4">
+              <div className="block lg:hidden">{renderQuestionNavigation()}</div>
+              <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
                 <div className="lg:col-span-3">
                   {renderQuestion()}
-
-                  <div className="flex items-center justify-between mt-6">
-                    <button
-                      onClick={handlePreviousQuestion}
-                      disabled={currentQuestionIndex === 0}
-                      className="flex items-center gap-2 px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors disabled:opacity-50"
-                    >
-                      <FaChevronRight />
-
-                      السابق
+                  <div className="flex items-center justify-between mt-4" dir="rtl">
+                    <button onClick={handlePreviousQuestion} disabled={currentQuestionIndex === 0}
+                      className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm text-white transition-all disabled:opacity-40"
+                      style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)' }}>
+                      <FaChevronRight className="text-xs" /> السابق
                     </button>
-
-                    <button
-                      onClick={handleSubmitExam}
-                      disabled={loading}
-                      className="flex items-center gap-2 px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50"
-                    >
-                      {loading ? 'جاري الإرسال...' : 'إنهاء الامتحان'}
-                      <FaCheck />
+                    <button onClick={handleSubmitExam} disabled={loading}
+                      className="flex items-center gap-2 px-6 py-2 rounded-xl text-sm font-semibold text-white transition-all disabled:opacity-50"
+                      style={{ background: 'rgba(99,102,241,0.8)' }}>
+                      {loading ? 'جاري الإرسال...' : 'إنهاء الامتحان'} <FaCheck className="text-xs" />
                     </button>
-
-                    <button
-                      onClick={handleNextQuestion}
-                      disabled={currentQuestionIndex === totalQuestions - 1}
-                      className="flex items-center gap-2 px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors disabled:opacity-50"
-                    >
-                      التالي
-                      <FaChevronLeft />
+                    <button onClick={handleNextQuestion} disabled={currentQuestionIndex === totalQuestions - 1}
+                      className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm text-white transition-all disabled:opacity-40"
+                      style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)' }}>
+                      التالي <FaChevronLeft className="text-xs" />
                     </button>
                   </div>
                 </div>
-
-                <div className="hidden lg:block lg:col-span-1">
-                  {renderQuestionNavigation()}
-                </div>
+                <div className="hidden lg:block lg:col-span-1">{renderQuestionNavigation()}</div>
               </div>
             </div>
           )}
@@ -527,74 +470,48 @@ const ExamModal = ({ isOpen, onClose, exam, courseId, lessonId, unitId, examType
 
       {/* Image Modal */}
       {imageModalOpen && currentImage && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black bg-opacity-80 backdrop-blur-sm">
-          <div className="relative max-w-4xl max-h-[90vh] p-4">
-            <button
-              onClick={() => {
-                setImageModalOpen(false);
-                setCurrentImage(null);
-              }}
-              className="absolute top-2 right-2 z-10 bg-white dark:bg-gray-800 rounded-full p-2 shadow-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-            >
-              <FaTimes className="text-gray-600 dark:text-gray-300 text-xl" />
+        <div className="fixed inset-0 z-[60] flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(8px)' }}>
+          <div className="relative max-w-3xl max-h-[90vh] p-4">
+            <button onClick={() => { setImageModalOpen(false); setCurrentImage(null); }}
+              className="absolute top-2 left-2 z-10 rounded-full p-2 transition-colors"
+              style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)' }}>
+              <FaTimes className="text-white text-base" />
             </button>
-            <img
-              src={currentImage}
-              alt="صورة السؤال"
-              className="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
-            />
+            <img src={currentImage} alt="صورة السؤال" className="max-w-full max-h-full object-contain rounded-xl shadow-2xl" />
           </div>
         </div>
       )}
 
-      {/* Exam History Modal */}
-      <ExamHistoryModal
-        isOpen={historyModalOpen}
-        onClose={() => setHistoryModalOpen(false)}
-        exam={exam}
-        courseId={courseId}
-        lessonId={lessonId}
-        examType={examType}
-        examResult={lastExamResult}
-      />
+      <ExamHistoryModal isOpen={historyModalOpen} onClose={() => setHistoryModalOpen(false)}
+        exam={exam} courseId={courseId} lessonId={lessonId} examType={examType} examResult={lastExamResult} />
 
       {/* Confirmation Modal */}
       {showConfirmModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black bg-opacity-70 backdrop-blur-sm">
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 max-w-md w-full mx-4 animate-pulse-once">
-            <div className="text-center mb-6">
-              <div className="text-6xl mb-4">⚠️</div>
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-                هل أنت متأكد من إنهاء الامتحان؟
-              </h3>
-              <p className="text-gray-600 dark:text-gray-300 text-sm">
-                {Object.keys(answers).length < questions.length ? (
-                  <span className="text-green-600 dark:text-green-400 font-medium">
-                    ⚠️ لديك {questions.length - Object.keys(answers).length} أسئلة لم يتم الإجابة عليها
-                  </span>
-                ) : (
-                  <span className="text-green-600 dark:text-green-400">
-                    ✓ تم الإجابة على جميع الأسئلة
-                  </span>
-                )}
+        <div className="fixed inset-0 z-[100] flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(6px)' }}>
+          <div className="rounded-2xl p-6 max-w-sm w-full mx-4" style={{ background: '#0d1829', border: '1px solid rgba(255,255,255,0.12)' }} dir="rtl">
+            <div className="text-center mb-5">
+              <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-3"
+                style={{ background: 'rgba(245,158,11,0.15)', border: '1px solid rgba(245,158,11,0.3)' }}>
+                <FaExclamationTriangle className="text-yellow-400 text-xl" />
+              </div>
+              <h3 className="text-lg font-bold text-white mb-2">هل أنت متأكد من إنهاء الامتحان؟</h3>
+              <p className="text-sm">
+                {Object.keys(answers).length < questions.length
+                  ? <span className="text-yellow-400">لديك {questions.length - Object.keys(answers).length} سؤال لم تجب عليه</span>
+                  : <span className="text-emerald-400">تم الإجابة على جميع الأسئلة ✓</span>}
               </p>
-              <p className="text-gray-500 dark:text-gray-400 text-xs mt-2">
-                بعد إنهاء الامتحان لن تتمكن من العودة لتعديل الإجابات
-              </p>
+              <p className="text-gray-500 text-xs mt-1">لن تتمكن من التعديل بعد الإرسال</p>
             </div>
-
-            <div className="flex gap-3">
-              <button
-                onClick={() => setShowConfirmModal(false)}
-                className="flex-1 py-3 px-4 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl font-medium hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
-              >
+            <div className="flex gap-2">
+              <button onClick={() => setShowConfirmModal(false)}
+                className="flex-1 py-2.5 px-4 rounded-xl text-sm font-medium text-gray-300 transition-all"
+                style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)' }}>
                 إلغاء
               </button>
-              <button
-                onClick={confirmSubmitExam}
-                className="flex-1 py-3 px-4 bg-green-600 text-white rounded-xl font-medium hover:bg-green-700 transition-colors"
-              >
-                ✓ تأكيد الإرسال
+              <button onClick={confirmSubmitExam}
+                className="flex-1 py-2.5 px-4 rounded-xl text-sm font-semibold text-white transition-all"
+                style={{ background: 'rgba(99,102,241,0.85)' }}>
+                تأكيد الإرسال
               </button>
             </div>
           </div>

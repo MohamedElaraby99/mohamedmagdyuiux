@@ -76,7 +76,7 @@ export default function Navbar() {
 
   return (
     <nav
-      className={`sticky top-0 z-50 overflow-x-hidden transition-colors duration-300 ${
+      className={`sticky top-0 z-50 overflow-x-hidden transition-all duration-300 ${
         isHomeNavStyle
           ? 'w-full border-b border-white/[0.06] shadow-none'
           : scrolled

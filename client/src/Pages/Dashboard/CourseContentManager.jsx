@@ -2247,7 +2247,7 @@ const LessonContentModal = ({ courseId, unitId, lessonId, onClose }) => {
         )}
         {tab === 'settings' && (
           <div className="space-y-6">
-            <h3 className="font-semibold text-gray-900 dark:text-white text-right text-lg">🔒 امتحان المدخل</h3>
+            <h3 className="font-semibold text-gray-900 dark:text-white text-right text-lg">🔒كويز فتح المحتوى</h3>
 
             {/* Enable Entry Exam Toggle */}
             <div className="bg-gradient-to-r from-green-50 to-amber-50 dark:from-green-900/20 dark:to-amber-900/20 p-4 rounded-lg border border-green-200 dark:border-green-700">
@@ -2256,11 +2256,11 @@ const LessonContentModal = ({ courseId, unitId, lessonId, onClose }) => {
                   <span className="text-3xl">{entryExam.enabled ? '🔒' : '🔓'}</span>
                   <div className="text-right">
                     <h4 className="font-bold text-gray-900 dark:text-white text-lg">
-                      تفعيل امتحان المدخل
+                      تفعيلكويز فتح المحتوى
                     </h4>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
                       {entryExam.enabled
-                        ? 'الطالب لازم يحل امتحان المدخل عشان يفتح الفيديوهات والملفات'
+                        ? 'الطالب لازم يحلكويز فتح المحتوى عشان يفتح الفيديوهات والملفات'
                         : 'كل المحتوى متاح للطالب مباشرة بدون شروط'
                       }
                     </p>
@@ -2510,7 +2510,7 @@ const LessonContentModal = ({ courseId, unitId, lessonId, onClose }) => {
                 {entryExam.type === 'mcq' && entryExam.questions.length > 0 && (
                   <div className="bg-white dark:bg-gray-700 p-4 rounded-lg border border-gray-200 dark:border-gray-600">
                     <h4 className="font-medium text-gray-900 dark:text-white text-right mb-3">
-                      أسئلة امتحان المدخل ({entryExam.questions.length})
+                      أسئلةكويز فتح المحتوى ({entryExam.questions.length})
                     </h4>
                     <div className="space-y-3">
                       {entryExam.questions.map((q, idx) => (
@@ -2569,7 +2569,7 @@ const LessonContentModal = ({ courseId, unitId, lessonId, onClose }) => {
                 {entryExam.enabled && entryExam.type === 'mcq' && entryExam.questions.length === 0 && (
                   <div className="bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded-lg border border-yellow-300 dark:border-yellow-700">
                     <p className="text-yellow-800 dark:text-yellow-200 text-right">
-                      ⚠️ يجب إضافة سؤال واحد على الأقل لتفعيل امتحان المدخل
+                      ⚠️ يجب إضافة سؤال واحد على الأقل لتفعيلكويز فتح المحتوى
                     </p>
                   </div>
                 )}
@@ -2589,7 +2589,7 @@ const LessonContentModal = ({ courseId, unitId, lessonId, onClose }) => {
               <div className="flex items-start gap-3">
                 <span className="text-xl">ℹ️</span>
                 <div className="text-right text-sm text-blue-800 dark:text-blue-200">
-                  <p className="font-medium mb-1">كيف يعمل امتحان المدخل؟</p>
+                  <p className="font-medium mb-1">كيف يعملكويز فتح المحتوى؟</p>
                   <ul className="list-disc list-inside space-y-1 text-blue-700 dark:text-blue-300">
                     <li>امتحان منفصل خاص لفتح المحتوى</li>
                     <li>الطالب لازم يحله عشان يفتح الفيديوهات والملفات</li>
@@ -2625,18 +2625,18 @@ const LessonContentModal = ({ courseId, unitId, lessonId, onClose }) => {
                       entryExam: entryExam
                     });
                     if (response.data.success) {
-                      toast.success('تم حفظ امتحان المدخل بنجاح');
+                      toast.success('تم حفظكويز فتح المحتوى بنجاح');
                       dispatch(getAdminCourses());
                     }
                   } catch (error) {
-                    toast.error('فشل في حفظ امتحان المدخل');
+                    toast.error('فشل في حفظكويز فتح المحتوى');
                   } finally {
                     setSaving(false);
                   }
                 }}
                 disabled={saving}
               >
-                {saving ? 'جاري الحفظ...' : 'حفظ امتحان المدخل'}
+                {saving ? 'جاري الحفظ...' : 'حفظكويز فتح المحتوى'}
               </button>
             </div>
           </div>
