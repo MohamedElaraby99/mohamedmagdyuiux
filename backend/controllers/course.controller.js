@@ -669,6 +669,7 @@ export const getLessonById = async (req, res, next) => {
         url: video.url,
         title: video.title,
         description: video.description,
+        duration: video.duration || 0,
         publishDate: video.publishDate
       })) : [],
       pdfs: contentUnlocked ? filteredPdfs.map(pdf => ({

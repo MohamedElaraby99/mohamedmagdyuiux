@@ -83,4 +83,25 @@ router.post('/upload/file', upload.single('file'), (req, res) => {
   }
 });
 
+// YouTube video duration endpoint - scrapes duration from YouTube page
+router.get('/youtube-duration', isLoggedIn, async (req, res) => {
+  const { videoId } = req.query;
+  if (!videoId) return res.json({ success: false, duration: 0 });
+  try {
+    const response = await fetch(`https://www.youtube.com/watch?v=${videoId}`, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Accept-Language': 'en-US,en;q=0.9',
+      },
+    });
+    const html = await response.text();
+    // YouTube embeds duration in its initial data JSON
+    const match = html.match(/"lengthSeconds":"(\d+)"/);
+    const seconds = match ? parseInt(match[1], 10) : 0;
+    res.json({ success: true, duration: seconds });
+  } catch (err) {
+    res.json({ success: false, duration: 0 });
+  }
+});
+
 export default router;

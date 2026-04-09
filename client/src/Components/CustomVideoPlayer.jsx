@@ -69,6 +69,8 @@ const CustomVideoPlayer = ({
   const [manualDurationInput, setManualDurationInput] = useState('');
   const [showThumbnail, setShowThumbnail] = useState(true);
   const [thumbnailUrl, setThumbnailUrl] = useState('');
+  const [showResumeNotification, setShowResumeNotification] = useState(false);
+  const [resumeTimeDisplay, setResumeTimeDisplay] = useState('');
 
   const iframeRef = useRef(null);
   const progressBarRef = useRef(null);
@@ -76,6 +78,7 @@ const CustomVideoPlayer = ({
   const controlsTimerRef = useRef(null);
   const timeUpdateIntervalRef = useRef(null);
   const watermarkTimerRef = useRef(null);
+  const savedPositionRef = useRef(0);
 
   // Simulated video state for custom controls
   const [videoState, setVideoState] = useState({
@@ -261,15 +264,21 @@ const CustomVideoPlayer = ({
       event.target.mute();
     }
     
-    // Restore saved progress position if available
-    if (savedProgress && savedProgress.currentTime > 0) {
-
-      // Seek to saved position
+    // Resume from saved position (localStorage first, then savedProgress prop)
+    const resumeTime = savedPositionRef.current;
+    if (resumeTime > 5) {
+      const dur = event.target.getDuration() || 0;
+      const t = dur > 10 ? Math.min(resumeTime, dur - 2) : resumeTime;
+      event.target.seekTo(t, true);
+      setCurrentTime(t);
+      const m = Math.floor(t / 60);
+      const s = Math.floor(t % 60);
+      setResumeTimeDisplay(`${m}:${s.toString().padStart(2, '0')}`);
+      setShowResumeNotification(true);
+      setTimeout(() => setShowResumeNotification(false), 4000);
+    } else if (savedProgress && savedProgress.currentTime > 0) {
       event.target.seekTo(savedProgress.currentTime, true);
       setCurrentTime(savedProgress.currentTime);
-      
-      // Show a notification to user
-
     }
   };
 
@@ -335,6 +344,28 @@ const CustomVideoPlayer = ({
     };
   }, []);
 
+  // Video position persistence via localStorage
+  const getProgressKey = () => courseId && video ? `vp_${courseId}_${video._id || ''}` : null;
+
+  const savePositionToStorage = (time) => {
+    try {
+      const key = getProgressKey();
+      if (key && time > 5) localStorage.setItem(key, JSON.stringify({ t: Math.floor(time), d: Date.now() }));
+    } catch (e) { /* silent */ }
+  };
+
+  const loadPositionFromStorage = () => {
+    try {
+      const key = getProgressKey();
+      if (!key) return 0;
+      const raw = localStorage.getItem(key);
+      if (!raw) return 0;
+      const data = JSON.parse(raw);
+      if (data.t > 5 && Date.now() - data.d < 30 * 86400000) return data.t;
+    } catch (e) { /* silent */ }
+    return 0;
+  };
+
   const initializeVideo = () => {
 
     setIsLoading(true);
@@ -345,6 +376,10 @@ const CustomVideoPlayer = ({
     setVideoState({ ready: false, canPlay: false, seeking: false, error: null });
     setPlayerReady(false);
     setShowThumbnail(true);
+
+    // Load saved position from localStorage for resume
+    const savedTime = loadPositionFromStorage();
+    savedPositionRef.current = savedTime;
     
     // Extract YouTube video ID
     const videoUrl = getVideoUrl(video);
@@ -526,6 +561,18 @@ const CustomVideoPlayer = ({
     return () => clearTimeUpdateInterval();
   }, [isPlaying, isDragging, playerReady, player]);
 
+  // Periodically save video position to localStorage
+  useEffect(() => {
+    if (!isPlaying || !playerReady || !player) return;
+    const interval = setInterval(() => {
+      try {
+        const time = player.getCurrentTime();
+        if (time > 5) savePositionToStorage(time);
+      } catch (e) { /* silent */ }
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [isPlaying, playerReady, player]);
+
   // Simulate buffering
   useEffect(() => {
     if (isPlaying && videoState.canPlay) {
@@ -596,13 +643,10 @@ const CustomVideoPlayer = ({
     if (!playerReady || !player) return;
     
     if (isPlaying) {
-      // Pause video
       player.pauseVideo();
-
+      savePositionToStorage(currentTime);
     } else {
-      // Play video
       player.playVideo();
-
     }
   };
 
@@ -743,8 +787,8 @@ const CustomVideoPlayer = ({
   };
 
   const handleClose = () => {
+    savePositionToStorage(currentTime);
     setIsPlaying(false);
-    // Exit fullscreen if in fullscreen mode
     if (document.fullscreenElement) {
       document.exitFullscreen();
     }
@@ -856,6 +900,16 @@ const CustomVideoPlayer = ({
   const handleStartVideo = () => {
     if (player && playerReady) {
       setShowThumbnail(false);
+      const resumeTime = savedPositionRef.current;
+      if (resumeTime > 5) {
+        player.seekTo(resumeTime, true);
+        setCurrentTime(resumeTime);
+        const m = Math.floor(resumeTime / 60);
+        const s = Math.floor(resumeTime % 60);
+        setResumeTimeDisplay(`${m}:${s.toString().padStart(2, '0')}`);
+        setShowResumeNotification(true);
+        setTimeout(() => setShowResumeNotification(false), 4000);
+      }
       player.playVideo();
       setIsPlaying(true);
     }
@@ -1000,6 +1054,18 @@ const CustomVideoPlayer = ({
             )}
           </div>
 
+          {/* Resume Notification */}
+          {showResumeNotification && (
+            <div className="absolute top-14 left-1/2 transform -translate-x-1/2 z-40 pointer-events-none"
+              style={{ animation: 'fadeIn 0.3s ease' }}>
+              <div className="bg-black/80 backdrop-blur-sm text-white px-5 py-2.5 rounded-xl flex items-center gap-2 text-sm shadow-lg"
+                style={{ border: '1px solid rgba(74,222,128,0.3)' }}>
+                <FaPlay className="text-green-400 text-xs" />
+                <span>استكمال من {resumeTimeDisplay}</span>
+              </div>
+            </div>
+          )}
+
           {/* Always Visible Close Button */}
           <div className="absolute top-4 left-4 z-40 pointer-events-auto">
             <button
@@ -1112,7 +1178,8 @@ const CustomVideoPlayer = ({
                 <div className="mb-4">
                   <div 
                     ref={progressBarRef}
-                    className="w-full bg-white/30 rounded-full h-1 cursor-pointer relative"
+                    className="w-full bg-white/30 rounded-full h-1.5 cursor-pointer relative"
+                    style={{ touchAction: 'none', padding: '8px 0', margin: '-8px 0', backgroundClip: 'content-box' }}
                     dir="ltr"
                     onClick={handleProgressClick}
                     onMouseDown={(e) => {
@@ -1124,17 +1191,34 @@ const CustomVideoPlayer = ({
                         handleProgressDrag(e);
                       }
                     }}
-                    onMouseUp={() => setIsDragging(false)}
-                    onMouseLeave={() => setIsDragging(false)}
+                    onMouseUp={() => { if (isDragging) { setIsDragging(false); seekTo(currentTime); } }}
+                    onMouseLeave={() => { if (isDragging) { setIsDragging(false); seekTo(currentTime); } }}
+                    onTouchStart={(e) => {
+                      e.preventDefault();
+                      setIsDragging(true);
+                      const touch = e.touches[0];
+                      const rect = progressBarRef.current.getBoundingClientRect();
+                      const x = Math.max(0, Math.min(rect.width, touch.clientX - rect.left));
+                      setCurrentTime((x / rect.width) * duration);
+                    }}
+                    onTouchMove={(e) => {
+                      e.preventDefault();
+                      if (!isDragging || !progressBarRef.current) return;
+                      const touch = e.touches[0];
+                      const rect = progressBarRef.current.getBoundingClientRect();
+                      const x = Math.max(0, Math.min(rect.width, touch.clientX - rect.left));
+                      setCurrentTime((x / rect.width) * duration);
+                    }}
+                    onTouchEnd={(e) => { e.preventDefault(); setIsDragging(false); seekTo(currentTime); }}
                   >
                     {/* Buffered progress */}
                     <div 
-                      className="bg-white/50 h-1 rounded-full absolute top-0 left-0"
+                      className="bg-white/50 h-1.5 rounded-full absolute top-0 left-0"
                       style={{ width: `${buffered}%` }}
                     ></div>
                     {/* Played progress */}
                     <div 
-                      className="bg-green-500 h-1 rounded-full transition-all duration-200 relative z-10"
+                      className="bg-green-500 h-1.5 rounded-full transition-all duration-200 relative z-10"
                       style={{ width: `${duration > 0 ? Math.max(0, Math.min(100, (currentTime / duration) * 100)) : 0}%` }}
                     ></div>
                     {/* Progress indicator */}

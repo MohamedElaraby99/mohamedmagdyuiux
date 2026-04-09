@@ -33,6 +33,7 @@ const lessonSchema = new mongoose.Schema({
       url: { type: String, required: true },
       title: { type: String, default: '' },
       description: { type: String, default: '' },
+      duration: { type: Number, default: 0 }, // duration in seconds
       publishDate: { type: Date }
     }
   ],

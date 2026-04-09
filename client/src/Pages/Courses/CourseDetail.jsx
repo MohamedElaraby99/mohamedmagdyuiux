@@ -101,6 +101,8 @@ export default function CourseDetail() {
   // Image viewer
   const [imageViewerOpen, setImageViewerOpen] = useState(false);
   const [currentImageUrl, setCurrentImageUrl] = useState('');
+  // YouTube durations cache: { [videoId]: seconds }
+  const [ytDurations, setYtDurations] = useState({});
 
   // ── lesson data for inline view ───────────────────────────────────────────
   const {
@@ -127,6 +129,27 @@ export default function CourseDetail() {
   }, [sidebarOpen]);
 
   useEffect(() => { if (id) dispatch(getCourseById(id)); }, [dispatch, id]);
+
+  // Auto-fetch YouTube durations for videos that don't have duration set
+  useEffect(() => {
+    if (!activeLessonData?.videos?.length) return;
+    const videosNeedingDuration = activeLessonData.videos.filter(v => {
+      const ytId = extractYouTubeId(v.url);
+      return ytId && !v.duration && !ytDurations[ytId];
+    });
+    if (!videosNeedingDuration.length) return;
+
+    videosNeedingDuration.forEach(async (v) => {
+      const ytId = extractYouTubeId(v.url);
+      if (!ytId) return;
+      try {
+        const res = await axiosInstance.get(`/youtube-duration?videoId=${ytId}`);
+        if (res.data.success && res.data.duration > 0) {
+          setYtDurations(prev => ({ ...prev, [ytId]: res.data.duration }));
+        }
+      } catch (_) {}
+    });
+  }, [activeLessonData?.videos]);
 
   useEffect(() => {
     if (id && user && isLoggedIn) dispatch(checkCourseAccess(id));
@@ -1282,10 +1305,25 @@ export default function CourseDetail() {
                     <svg viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3 text-gray-500"><path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" /></svg>
                     2K
                   </span>
-                  <span className="flex items-center gap-1">
-                    <svg viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3 text-gray-500"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" /></svg>
-                    {activeLessonData?.duration || '12'} دقيقة
-                  </span>
+                  {(() => {
+                    const totalSeconds = activeLessonData?.videos?.reduce((sum, v) => {
+                      const ytId = extractYouTubeId(v.url);
+                      const dur = v.duration || (ytId && ytDurations[ytId]) || 0;
+                      return sum + dur;
+                    }, 0) || 0;
+                    if (!totalSeconds) return null;
+                    const mins = Math.floor(totalSeconds / 60);
+                    const secs = totalSeconds % 60;
+                    const label = mins > 0
+                      ? (secs > 0 ? `${mins}د ${secs}ث` : `${mins} دقيقة`)
+                      : `${secs} ثانية`;
+                    return (
+                      <span className="flex items-center gap-1">
+                        <svg viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3 text-gray-500"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" /></svg>
+                        {label}
+                      </span>
+                    );
+                  })()}
                 </div>
               </div>
             </div>
