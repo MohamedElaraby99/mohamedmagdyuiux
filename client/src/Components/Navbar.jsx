@@ -17,7 +17,11 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const { data: user, role } = useSelector((state) => state.auth);
   const location = useLocation();
-  const isHome = location.pathname === "/";
+  /** نفس شكل هيدر الصفحة الرئيسية: خلفية داكنة، ووردمارك، أزرار الهوم */
+  const isHomeNavStyle =
+    location.pathname === "/" ||
+    location.pathname === "/login" ||
+    location.pathname === "/signup";
   const dispatch = useDispatch();
 
   // Use scroll to top utility
@@ -59,15 +63,15 @@ export default function Navbar() {
   useEffect(() => {
     const element = document.documentElement;
     element.classList.remove("light", "dark");
-    if (isHome || darkMode) {
+    if (isHomeNavStyle || darkMode) {
       element.classList.add("dark");
     } else {
       element.classList.add("light");
     }
-    if (!isHome) {
+    if (!isHomeNavStyle) {
       localStorage.setItem("theme", darkMode ? "dark" : "light");
     }
-  }, [darkMode, isHome]);
+  }, [darkMode, isHomeNavStyle]);
 
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
@@ -120,7 +124,7 @@ export default function Navbar() {
 
   const guestMobileNavLinkClass = (path) => {
     const active = location.pathname === path;
-    if (isHome) {
+    if (isHomeNavStyle) {
       return `flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all duration-300 ${
         active
           ? 'text-[#d8d9ff] bg-white/[0.08]'
@@ -136,7 +140,7 @@ export default function Navbar() {
 
   const guestMobileIconBoxClass = (path) => {
     const active = location.pathname === path;
-    if (isHome) {
+    if (isHomeNavStyle) {
       return `p-2 rounded-lg ${active ? 'bg-[#A5A6FF]/30 text-white' : 'bg-white/10 text-slate-200'}`;
     }
     return `p-2 rounded-lg ${active ? 'bg-purple-200 dark:bg-purple-800/50' : 'bg-gray-200 dark:bg-gray-700'}`;
@@ -145,14 +149,14 @@ export default function Navbar() {
   return (
     <nav
       className={`sticky top-0 z-50 overflow-x-hidden transition-colors duration-300 ${
-        isHome
+        isHomeNavStyle
           ? 'w-full border-b border-white/[0.06] shadow-none'
           : scrolled
             ? 'mx-3 sm:mx-5 mt-3 rounded-2xl shadow-lg shadow-purple-500/10'
             : 'mx-0 mt-0 rounded-none'
-      } ${isHome ? 'navbar-home navbar-home-magdy' : ''}`}
+      } ${isHomeNavStyle ? 'navbar-home navbar-home-magdy' : ''}`}
       style={
-        isHome
+        isHomeNavStyle
           ? {
               backgroundColor: '#080E1E',
               backdropFilter: 'none',
@@ -169,7 +173,7 @@ export default function Navbar() {
             }
       }
     >
-      {!isHome && (
+      {!isHomeNavStyle && (
         <div
           className={`absolute top-0 left-0 right-0 h-[2px] ${scrolled ? 'rounded-t-2xl' : ''}`}
           style={{ background: 'linear-gradient(90deg, #8B5CF6, #6C2BD9, #5B21B6)' }}
@@ -177,7 +181,7 @@ export default function Navbar() {
       )}
 
       <div
-        className={`max-w-7xl mx-auto mobile-menu-container ${isHome ? 'px-4 sm:px-8 lg:px-10' : 'px-3 sm:px-6 lg:px-8'}`}
+        className={`max-w-7xl mx-auto mobile-menu-container ${isHomeNavStyle ? 'px-4 sm:px-8 lg:px-10' : 'px-3 sm:px-6 lg:px-8'}`}
       >
         <div className="flex justify-between items-center gap-3 h-16 md:h-[4.5rem] min-w-0">
 
@@ -187,7 +191,7 @@ export default function Navbar() {
             onClick={handleLogoClick}
             className="flex items-center gap-3 group shrink min-w-0"
           >
-            {!isHome && (
+            {!isHomeNavStyle && (
               <>
                 <div className="relative">
                   <div className="relative rounded-xl group-hover:shadow-xl transition-all duration-300">
@@ -204,7 +208,7 @@ export default function Navbar() {
                 </div>
               </>
             )}
-            {isHome && (
+            {isHomeNavStyle && (
               <span className="font-bold text-white uppercase tracking-[0.08em] sm:tracking-[0.12em] text-sm sm:text-lg md:text-2xl font-sans select-none truncate block max-w-[min(100%,11rem)] sm:max-w-[20rem] md:max-w-none">
                 {BRAND.navbarWordmark || 'MAGDY ACADEMY'}
               </span>
@@ -247,8 +251,8 @@ export default function Navbar() {
 
             {/* Auth Buttons - Not Logged In */}
             {!user?.fullName && (
-              <div className={`flex items-center ${isHome ? 'gap-2 sm:gap-4 md:gap-5' : 'gap-2'}`}>
-                {isHome ? (
+              <div className={`flex items-center ${isHomeNavStyle ? 'gap-2 sm:gap-4 md:gap-5' : 'gap-2'}`}>
+                {isHomeNavStyle ? (
                   <div className="hidden md:flex items-center gap-4 md:gap-5">
                     <Link
                       to="/signup"
@@ -292,13 +296,13 @@ export default function Navbar() {
                   aria-label={isMenuOpen ? 'إغلاق القائمة' : 'فتح القائمة'}
                   onClick={toggleMenu}
                   className={`md:hidden relative p-2.5 rounded-xl transition-all duration-300 group shrink-0 ${
-                    isHome ? 'bg-white/10' : ''
+                    isHomeNavStyle ? 'bg-white/10' : ''
                   }`}
-                  style={isHome ? undefined : { backgroundColor: 'rgba(108, 43, 217, 0.1)' }}
+                  style={isHomeNavStyle ? undefined : { backgroundColor: 'rgba(108, 43, 217, 0.1)' }}
                 >
                   <FaBars
                     className="w-5 h-5 transition-transform duration-300 group-hover:rotate-90"
-                    style={{ color: isHome ? '#ffffff' : '#6C2BD9' }}
+                    style={{ color: isHomeNavStyle ? '#ffffff' : '#6C2BD9' }}
                   />
                 </button>
               </div>
@@ -350,7 +354,7 @@ export default function Navbar() {
         >
           <div
             className={`py-6 space-y-4 border-t backdrop-blur-xl ${
-              isHome
+              isHomeNavStyle
                 ? 'border-white/[0.08] bg-[#0a1224]/98 text-white'
                 : 'border-gray-200/50 dark:border-gray-700/50 bg-gradient-to-b from-white/95 to-gray-50/95 dark:from-gray-900/95 dark:to-gray-800/95'
             }`}
@@ -450,8 +454,8 @@ export default function Navbar() {
                 {/* Special Navigation for Guests */}
                 <div className="space-y-1 px-2 pb-3">
                   <p
-                    className={`px-4 pb-2 text-xs font-bold uppercase ${isHome ? 'text-[#A5A6FF]' : ''}`}
-                    style={!isHome ? { color: '#6C2BD9' } : undefined}
+                    className={`px-4 pb-2 text-xs font-bold uppercase ${isHomeNavStyle ? 'text-[#A5A6FF]' : ''}`}
+                    style={!isHomeNavStyle ? { color: '#6C2BD9' } : undefined}
                   >
                     تصفح المحتوى
                   </p>
@@ -484,10 +488,10 @@ export default function Navbar() {
                 {/* Login/Signup Buttons */}
                 <div
                   className={`space-y-3 px-4 pt-4 border-t ${
-                    isHome ? 'border-white/[0.08]' : 'border-gray-200/50 dark:border-gray-700/50'
+                    isHomeNavStyle ? 'border-white/[0.08]' : 'border-gray-200/50 dark:border-gray-700/50'
                   }`}
                 >
-                  {isHome ? (
+                  {isHomeNavStyle ? (
                     <>
                       <Link
                         to="/signup"
