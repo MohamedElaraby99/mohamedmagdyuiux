@@ -47,7 +47,7 @@ export default function Wallet() {
     const { services: whatsappServices } = useSelector((state) => state.whatsappService);
 
     const [rechargeForm, setRechargeForm] = useState({ code: "", amount: "" });
-    const [showAmount, setShowAmount] = useState(false);
+    const [showAmount, setShowAmount] = useState(true);
     const [activeTab, setActiveTab] = useState("balance");
 
     useEffect(() => {

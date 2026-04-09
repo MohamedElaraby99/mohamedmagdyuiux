@@ -202,7 +202,7 @@ export default function CourseDetail() {
       if (expired) {
         dispatch(checkCourseAccess(id));
         if (!accessAlertShown) {
-          setAlertMessage('انتهت صلاحية الوصول عبر الكود. يرجى إعادة تفعيل كود جديد أو شراء المحتوى.');
+          setAlertMessage('انتهت صلاحية الوصول. يرجى شراء الكورس للاستمرار.');
           setShowErrorAlert(true);
           setAccessAlertShown(true);
         }
@@ -320,12 +320,12 @@ export default function CourseDetail() {
     }
     if (courseAccessState?.source === 'code' && courseAccessState?.accessEndAt) {
       if (new Date(courseAccessState.accessEndAt) <= new Date()) {
-        setAlertMessage('انتهت صلاحية الوصول عبر الكود. يرجى إعادة تفعيل كود جديد أو شراء الكورس.');
+        setAlertMessage('انتهت صلاحية الوصول. يرجى شراء الكورس للاستمرار.');
         setShowErrorAlert(true);
         return;
       }
     }
-    setAlertMessage('يجب شراء الكورس أو تفعيل كود للوصول إلى هذا المحتوى.');
+    setAlertMessage('يجب شراء الكورس للوصول إلى هذا المحتوى.');
     setShowErrorAlert(true);
   };
 
@@ -337,13 +337,14 @@ export default function CourseDetail() {
       setAlertMessage('تم شراء الكورس بنجاح! يمكنك الآن الوصول لجميع المحتوى');
       setShowSuccessAlert(true);
       dispatch(getWalletBalance());
+      dispatch(checkCoursePurchaseStatus({ courseId: currentCourse._id }));
     } catch (error) {
       setAlertMessage(error.message || 'حدث خطأ أثناء شراء الكورس');
       setShowErrorAlert(true);
     }
   };
 
-  const handleCoursePurchaseClick = () => {
+  const handleCoursePurchaseClick = async () => {
     if (!user || !isLoggedIn) {
       setAlertMessage('يرجى تسجيل الدخول أولاً لشراء الكورس');
       setShowErrorAlert(true);
@@ -361,12 +362,12 @@ export default function CourseDetail() {
       return;
     }
     if (walletBalance < currentCourse.price) {
-      setAlertMessage('رصيد المحفظة غير كافي. سيتم تحويلك إلى صفحة المحفظة للشحن.');
-      setShowWalletAlert(true);
-      setTimeout(() => navigate('/wallet'), 2000);
+      setAlertMessage(`رصيدك الحالي ${walletBalance} جنيه وسعر الكورس ${currentCourse.price} جنيه. اشحن المحفظة الأول.`);
+      setShowErrorAlert(true);
+      setTimeout(() => navigate('/wallet'), 2500);
       return;
     }
-    setShowCoursePurchaseModal(true);
+    await handleCoursePurchase();
   };
 
   const handleRedeemCode = async (e) => {
