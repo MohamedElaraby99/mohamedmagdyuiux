@@ -17,7 +17,7 @@ const DesignerProfileSection = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row items-center gap-10 md:gap-14 lg:gap-16 xl:gap-20">
           {/* صورة أولاً في DOM: على الديسكتوب تظهر يمين، والنص يسار — على الموبايل الصورة فوق */}
-          <div className="w-full md:flex-1 max-w-lg md:max-w-none shrink-0 order-1">
+          <div className="w-full md:w-[38%] lg:w-[35%] max-w-sm md:max-w-none shrink-0 order-1">
             <div className="relative w-full aspect-[4/5] sm:aspect-[3/4] md:aspect-[4/5] rounded-[24px] overflow-hidden border border-white/[0.08] bg-[#0a0c10] shadow-[0_24px_48px_rgba(0,0,0,0.4)]">
               <img
                 src={profilePortrait}

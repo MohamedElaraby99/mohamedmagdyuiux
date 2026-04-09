@@ -14,7 +14,7 @@ import FeaturesSection from "../Components/FeaturesSection";
 import TestimonialsSection from "../Components/TestimonialsSection";
 import PromoBannerSection from "../Components/PromoBannerSection";
 import DesignerProfileSection from "../Components/DesignerProfileSection";
-import { FaBookOpen, FaArrowUp } from "react-icons/fa";
+import { FaBookOpen, FaArrowUp, FaWhatsapp } from "react-icons/fa";
 
 export default function HomePage() {
   const dispatch = useDispatch();
@@ -288,6 +288,17 @@ export default function HomePage() {
       <DesignerProfileSection />
 
       <PromoBannerSection />
+
+      {/* WhatsApp Floating Button */}
+      <a
+        href="https://wa.me/201XXXXXXXXX"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed bottom-8 left-8 z-50 p-4 rounded-full bg-[#25D366] text-white shadow-[0_0_16px_rgba(37,211,102,0.5)] hover:shadow-[0_0_28px_rgba(37,211,102,0.75)] hover:scale-110 transition-all duration-300 animate-pulse-slow"
+        aria-label="تواصل عبر واتساب"
+      >
+        <FaWhatsapp className="w-6 h-6" />
+      </a>
 
       {/* Scroll to Top Button */}
       {

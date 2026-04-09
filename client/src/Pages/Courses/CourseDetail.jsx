@@ -62,6 +62,13 @@ export default function CourseDetail() {
   // ── core state ────────────────────────────────────────────────────────────
   const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
   const [accessAlertShown, setAccessAlertShown] = useState(false);
+  const [completedLessons, setCompletedLessons] = useState(() => {
+    try {
+      const key = `completedLessons_${id}_${user?._id || 'guest'}`;
+      const stored = localStorage.getItem(key);
+      return stored ? new Set(JSON.parse(stored)) : new Set();
+    } catch { return new Set(); }
+  });
   const [expandedUnits, setExpandedUnits] = useState(new Set());
   const [sidebarOpen, setSidebarOpen] = useState(() => window.innerWidth >= 768);
   const [mainMenuOpen, setMainMenuOpen] = useState(false);
@@ -247,6 +254,14 @@ export default function CourseDetail() {
     setActiveTab('كويز فتح المحتوى');
   }, [activeLesson?.lessonId]);
 
+  // Persist completed lessons to localStorage
+  useEffect(() => {
+    try {
+      const key = `completedLessons_${id}_${user?._id || 'guest'}`;
+      localStorage.setItem(key, JSON.stringify([...completedLessons]));
+    } catch {}
+  }, [completedLessons, id, user?._id]);
+
   const toggleMainSidebar = () => setMainMenuOpen(prev => !prev);
 
   const getTotalLessons = (course) => {
@@ -285,6 +300,10 @@ export default function CourseDetail() {
   };
 
   const handleCompleteLesson = async () => {
+    // Mark current lesson as completed
+    if (activeLesson?.lessonId) {
+      setCompletedLessons(prev => new Set([...prev, activeLesson.lessonId]));
+    }
     // Mark first video as completed if exists
     if (activeLessonData?.videos?.[0] && id) {
       const videoId = activeLessonData.videos[0]._id;
@@ -1044,7 +1063,7 @@ export default function CourseDetail() {
   );
 
   const totalLessons = getTotalLessons(currentCourse);
-  const progressPct = totalLessons > 0 ? Math.round(((currentIdx + 1) / totalLessons) * 100) : 0;
+  const progressPct = totalLessons > 0 ? Math.round((completedLessons.size / totalLessons) * 100) : 0;
 
   // ── main render ───────────────────────────────────────────────────────────
   return (
@@ -1536,7 +1555,7 @@ export default function CourseDetail() {
               <div className="h-full rounded-full transition-all" style={{ width: `${progressPct}%`, background: 'linear-gradient(90deg,#14b8a6,#06b6d4)' }} />
             </div>
             <div className="text-xs text-gray-500">
-              {progressPct}% COMPLETED &bull; {currentIdx >= 0 ? currentIdx + 1 : 0}/{totalLessons} LESSONS
+              {progressPct}% COMPLETED &bull; {completedLessons.size}/{totalLessons} LESSONS
             </div>
           </div>
 
@@ -1550,17 +1569,21 @@ export default function CourseDetail() {
                 </div>
                 {currentCourse.directLessons.map((lesson) => {
                   const isActive = lesson._id === activeLesson?.lessonId;
+                  const isCompleted = completedLessons.has(lesson._id);
                   return (
                     <button key={lesson._id} onClick={() => handleLessonClick(lesson, null, null, null)}
                       className="w-full flex items-center gap-3 px-4 py-3 text-right transition-all"
                       style={{ background: isActive ? 'rgba(99,102,241,0.15)' : 'transparent' }}>
                       <div className="flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center"
-                        style={{ border: isActive ? '2px solid #818cf8' : '2px solid rgba(255,255,255,0.2)', background: isActive ? 'rgba(99,102,241,0.25)' : 'transparent' }}>
-                        {isActive && <div className="w-2 h-2 rounded-full bg-indigo-400" />}
+                        style={isCompleted ? { background: 'rgba(16,185,129,0.2)', border: '2px solid #10b981' } : { border: isActive ? '2px solid #818cf8' : '2px solid rgba(255,255,255,0.2)', background: isActive ? 'rgba(99,102,241,0.25)' : 'transparent' }}>
+                        {isCompleted
+                          ? <FaCheckCircle className="text-emerald-400" style={{ fontSize: '10px' }} />
+                          : isActive && <div className="w-2 h-2 rounded-full bg-indigo-400" />}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <div className="text-sm truncate" style={{ color: isActive ? 'white' : '#9ca3af' }}>{lesson.title}</div>
-                        {isActive && <div className="text-xs text-indigo-400">Active</div>}
+                        <div className="text-sm truncate" style={{ color: isCompleted ? '#6b7280' : isActive ? 'white' : '#9ca3af', textDecoration: isCompleted ? 'line-through' : 'none' }}>{lesson.title}</div>
+                        {isActive && !isCompleted && <div className="text-xs text-indigo-400">Active</div>}
+                        {isCompleted && <div className="text-xs text-emerald-500">مكتمل</div>}
                       </div>
                       {!hasContentAccess() && !lesson.isFree && <FaLock className="text-gray-600 text-xs flex-shrink-0" />}
                     </button>
@@ -1594,17 +1617,21 @@ export default function CourseDetail() {
                   {/* Lessons */}
                   {!expandedUnits.has(unit._id || ui) && unit.lessons?.map((lesson) => {
                     const isActive = lesson._id === activeLesson?.lessonId;
+                    const isCompleted = completedLessons.has(lesson._id);
                     return (
                       <button key={lesson._id} onClick={() => handleLessonClick(lesson, unit._id, unit.title, ui)}
                         className="w-full flex items-center gap-3 px-4 py-3 text-right transition-all"
                         style={{ background: isActive ? 'rgba(99,102,241,0.15)' : 'transparent' }}>
                         <div className="flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center"
-                          style={{ border: isActive ? '2px solid #818cf8' : '2px solid rgba(255,255,255,0.15)', background: isActive ? 'rgba(99,102,241,0.25)' : 'transparent' }}>
-                          {isActive && <div className="w-2 h-2 rounded-full bg-indigo-400" />}
+                          style={isCompleted ? { background: 'rgba(16,185,129,0.2)', border: '2px solid #10b981' } : { border: isActive ? '2px solid #818cf8' : '2px solid rgba(255,255,255,0.15)', background: isActive ? 'rgba(99,102,241,0.25)' : 'transparent' }}>
+                          {isCompleted
+                            ? <FaCheckCircle className="text-emerald-400" style={{ fontSize: '10px' }} />
+                            : isActive && <div className="w-2 h-2 rounded-full bg-indigo-400" />}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <div className="text-sm truncate" style={{ color: isActive ? 'white' : '#9ca3af' }}>{lesson.title}</div>
-                          {isActive && <div className="text-xs text-indigo-400">Active</div>}
+                          <div className="text-sm truncate" style={{ color: isCompleted ? '#6b7280' : isActive ? 'white' : '#9ca3af', textDecoration: isCompleted ? 'line-through' : 'none' }}>{lesson.title}</div>
+                          {isActive && !isCompleted && <div className="text-xs text-indigo-400">Active</div>}
+                          {isCompleted && <div className="text-xs text-emerald-500">مكتمل</div>}
                         </div>
                         {!hasContentAccess() && !lesson.isFree && !unit.isFree && <FaLock className="text-gray-600 text-xs flex-shrink-0" />}
                       </button>

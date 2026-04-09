@@ -98,8 +98,9 @@ const AnimatedHero = ({ onGetStarted }) => {
           </div>
         </div>
 
-        <HeroStatsBar />
       </section>
+
+      <HeroStatsBar />
 
       {/* Video Modal */}
       {showVideo && (

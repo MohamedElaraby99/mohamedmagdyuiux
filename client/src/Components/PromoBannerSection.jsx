@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 export default function PromoBannerSection() {
   return (
     <section className="py-10 md:py-14 bg-[#080E1E]" dir="rtl">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div
           className="relative overflow-hidden rounded-[28px] px-6 py-10 sm:px-10 sm:py-12 md:py-14 text-center shadow-[0_24px_48px_rgba(59,130,246,0.25)]"
           style={{

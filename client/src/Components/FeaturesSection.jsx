@@ -44,7 +44,7 @@ const FeaturesSection = () => {
 
   return (
     <section className="features-why-section py-16 md:py-24 bg-[#080E1E] transition-colors duration-300" dir="rtl">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <header className="text-center mb-12 md:mb-16 max-w-3xl mx-auto">
           <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-[2.5rem] font-bold leading-snug text-white mb-4 md:mb-5">
             <span className="text-white">ليه </span>
