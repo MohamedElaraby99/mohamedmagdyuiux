@@ -8,6 +8,7 @@ import {
   checkCoursePurchaseStatus,
   getWalletBalance
 } from '../../Redux/Slices/PaymentSlice';
+import { updateVideoProgress } from '../../Redux/Slices/VideoProgressSlice';
 
 import { PaymentSuccessAlert, PaymentErrorAlert, WalletAlert } from '../../Components/ModernAlert';
 import OptimizedLessonContentModal from '../../Components/OptimizedLessonContentModal';
@@ -78,6 +79,7 @@ export default function CourseDetail() {
   const [videoPlayerOpen, setVideoPlayerOpen] = useState(false);
   const [currentVideo, setCurrentVideo] = useState(null);
   // entry exam / task
+  const [entryExamModalOpen, setEntryExamModalOpen] = useState(false);
   const [entryExamAnswers, setEntryExamAnswers] = useState({});
   const [taskLink, setTaskLink] = useState('');
   const [taskImage, setTaskImage] = useState('');
@@ -890,9 +892,44 @@ export default function CourseDetail() {
     </div>
   );
 
+  const renderKweizFatahTrigger = () => {
+    if (!activeLessonData) return <div className="text-gray-400 text-center py-8">جاري التحميل...</div>;
+    if (!activeLessonData.hasEntryExam) return (
+      <div className="text-center py-10">
+        <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: 'rgba(16,185,129,0.15)', border: '1px solid rgba(16,185,129,0.25)' }}>
+          <FaCheckCircle className="text-green-400 text-2xl" />
+        </div>
+        <p className="text-gray-300 text-base">لا يوجد امتحان مدخل لهذا الدرس</p>
+      </div>
+    );
+    const entryExam = activeLessonData.entryExam;
+    const userResult = entryExam?.userResult;
+    const isTask = entryExam?.type === 'task';
+    const isDone = (activeLessonData.contentUnlocked && userResult?.hasTaken) || entryExamResult;
+
+    return (
+      <div className="rounded-xl p-6 text-center" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)' }}>
+        <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: isDone ? 'rgba(16,185,129,0.2)' : 'rgba(99,102,241,0.2)', border: `1px solid ${isDone ? 'rgba(16,185,129,0.4)' : 'rgba(99,102,241,0.4)'}` }}>
+          {isDone ? <FaCheckCircle className="text-green-400 text-2xl" /> : <FaLockOpen className="text-indigo-400 text-2xl" />}
+        </div>
+        <h3 className="text-xl font-bold text-white mb-2">{entryExam?.title || 'امتحان المدخل'}</h3>
+        {isDone
+          ? <p className="text-green-300 text-sm mb-5">تم اجتياز كويز فتح المحتوى بنجاح</p>
+          : <p className="text-gray-400 text-sm mb-5">{isTask ? 'سلّم المهمة لفتح محتوى الدرس' : 'أجب على الأسئلة لفتح محتوى الدرس'}</p>
+        }
+        <button onClick={() => setEntryExamModalOpen(true)}
+          className="flex items-center gap-2 mx-auto px-8 py-3 rounded-xl font-bold text-white transition-all hover:opacity-90"
+          style={{ background: isDone ? 'rgba(16,185,129,0.5)' : 'rgba(99,102,241,0.8)' }}>
+          {isDone ? <FaCheckCircle className="text-sm" /> : <FaPlay className="text-sm" />}
+          {isDone ? 'عرض النتيجة' : 'ابدأ الكويز'}
+        </button>
+      </div>
+    );
+  };
+
   const renderTabContent = () => {
     switch (activeTab) {
-      case 'كويز فتح المحتوى': return renderKweizFatahTab();
+      case 'كويز فتح المحتوى': return renderKweizFatahTrigger();
       case 'واجب': return renderWajibTab();
       case 'كويز': return renderKweizTab();
       case 'نظرة سريعة': return renderNazraTab();
@@ -1106,7 +1143,7 @@ export default function CourseDetail() {
                     <p className="text-gray-300 text-sm mb-4">أكمل الواجب لفتح الفيديوهات</p>
                     <button onClick={() => setActiveTab('كويز فتح المحتوى')}
                       className="flex items-center gap-2 px-5 py-2 rounded-lg text-sm text-white mx-auto" style={{ background: 'rgba(99,102,241,0.8)' }}>
-                      <FaLockOpen className="text-xs" /> افتح كويز المحتي
+                      <FaLockOpen className="text-xs" /> افتح كويز المحتوى
                     </button>
                   </div>
                 ) : firstVideo ? (
@@ -1407,6 +1444,28 @@ export default function CourseDetail() {
       </div>
 
       {/* ── Modals ── */}
+
+      {/* Entry Exam Modal Popup */}
+      {entryExamModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(4px)' }}>
+          <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl flex flex-col" dir="rtl"
+            style={{ background: '#0d1829', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 24px 80px rgba(0,0,0,0.6)' }}>
+            {/* Header */}
+            <div className="flex items-center justify-between px-5 py-4 flex-shrink-0" style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+              <h3 className="text-white font-bold text-base">
+                {activeLessonData?.entryExam?.title || 'كويز فتح المحتوى'}
+              </h3>
+              <button onClick={() => setEntryExamModalOpen(false)} className="w-8 h-8 rounded-full flex items-center justify-center text-gray-400 hover:text-white transition-colors" style={{ background: 'rgba(255,255,255,0.07)' }}>
+                <FaTimes />
+              </button>
+            </div>
+            {/* Content */}
+            <div className="p-5 flex-1">
+              {renderKweizFatahTab()}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Custom Video Player */}
       {videoPlayerOpen && currentVideo && (
