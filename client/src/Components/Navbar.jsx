@@ -1,19 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { FaSun, FaMoon, FaBars, FaHome, FaUser, FaGraduationCap, FaBlog, FaQuestionCircle, FaSignOutAlt, FaPlus, FaList, FaInfoCircle, FaPhone, FaHistory, FaArrowLeft } from "react-icons/fa";
+import { FaBars, FaArrowLeft } from "react-icons/fa";
 import { Link, useLocation } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-import { logout } from "../Redux/Slices/AuthSlice";
-import logo from "../assets/logo.png";
+import { useSelector } from "react-redux";
 import logo2 from "../assets/logo2.png";
 import useScrollToTop from "../Helpers/useScrollToTop";
 import CourseNotifications from "./CourseNotifications";
-import { BRAND, NAVBAR } from "../Constants/LayoutConfig";
+import { BRAND } from "../Constants/LayoutConfig";
 
 export default function Navbar() {
   const [darkMode, setDarkMode] = useState(
     localStorage.getItem("theme") === "dark" ? true : false
   );
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { data: user, role } = useSelector((state) => state.auth);
   const location = useLocation();
@@ -24,8 +21,6 @@ export default function Navbar() {
     location.pathname === "/signup" ||
     location.pathname === "/terms" ||
     location.pathname === "/privacy";
-  const dispatch = useDispatch();
-
   // Use scroll to top utility
   useScrollToTop();
 
@@ -38,24 +33,12 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const toggleDarkMode = () => {
-    setDarkMode((prev) => !prev);
-  };
-
   const toggleMenu = () => {
-    if (user?.fullName) {
-      const drawerToggle = document.getElementById('sidebar-drawer');
-      if (drawerToggle) {
-        drawerToggle.checked = !drawerToggle.checked;
-      }
-    } else {
-      setIsMenuOpen((open) => !open);
+    const drawerToggle = document.getElementById("sidebar-drawer");
+    if (drawerToggle) {
+      drawerToggle.checked = !drawerToggle.checked;
+      drawerToggle.dispatchEvent(new Event("change", { bubbles: true }));
     }
-  };
-
-  const handleLogout = () => {
-    dispatch(logout());
-    setIsMenuOpen(false);
   };
 
   const handleLogoClick = () => {
@@ -83,70 +66,9 @@ export default function Navbar() {
     }
   }, []);
 
-  useEffect(() => {
-    setIsMenuOpen(false);
-  }, [location]);
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (isMenuOpen && !event.target.closest('.mobile-menu-container')) {
-        setIsMenuOpen(false);
-      }
-    };
-
-    if (isMenuOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [isMenuOpen]);
-
-  useEffect(() => {
-    if (!isMenuOpen) return;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.body.style.overflow = prev;
-    };
-  }, [isMenuOpen]);
-
   const menuItems = [
 
   ];
-
-  const adminMenuItems = [
-    { name: "لوحة التحكم", path: "/admin", icon: FaUser },
-    { name: "إدارة المستخدمين", path: "/admin/users", icon: FaUser },
-    { name: "إدارة المدونة", path: "/admin/blogs", icon: FaBlog },
-    { name: "إدارة الأسئلة والأجوبة", path: "/admin/qa", icon: FaQuestionCircle },
-    { name: "إدارة التصنيف", path: "/admin/subjects", icon: FaGraduationCap },
-  ];
-
-  const guestMobileNavLinkClass = (path) => {
-    const active = location.pathname === path;
-    if (isHomeNavStyle) {
-      return `flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all duration-300 ${
-        active
-          ? 'text-[#d8d9ff] bg-white/[0.08]'
-          : 'text-slate-200 hover:bg-white/10 hover:text-white'
-      }`;
-    }
-    return `flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all duration-300 ${
-      active
-        ? 'text-purple-600 dark:text-purple-400 bg-gradient-to-r from-purple-100 to-violet-100 dark:from-purple-900/30 dark:to-violet-900/30'
-        : 'text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 hover:bg-gray-100 dark:hover:bg-gray-800'
-    }`;
-  };
-
-  const guestMobileIconBoxClass = (path) => {
-    const active = location.pathname === path;
-    if (isHomeNavStyle) {
-      return `p-2 rounded-lg ${active ? 'bg-[#A5A6FF]/30 text-white' : 'bg-white/10 text-slate-200'}`;
-    }
-    return `p-2 rounded-lg ${active ? 'bg-purple-200 dark:bg-purple-800/50' : 'bg-gray-200 dark:bg-gray-700'}`;
-  };
 
   return (
     <nav
@@ -294,8 +216,7 @@ export default function Navbar() {
 
                 <button
                   type="button"
-                  aria-expanded={isMenuOpen}
-                  aria-label={isMenuOpen ? 'إغلاق القائمة' : 'فتح القائمة'}
+                  aria-label="فتح القائمة الجانبية"
                   onClick={toggleMenu}
                   className={`md:hidden relative p-2.5 rounded-xl transition-all duration-300 group shrink-0 ${
                     isHomeNavStyle ? 'bg-white/10' : ''
@@ -344,202 +265,6 @@ export default function Navbar() {
                   <FaBars className="w-4 h-4 md:w-5 md:h-5 text-primary dark:text-primary-light relative z-10 transition-transform duration-300 group-hover:rotate-90" />
                 </button>
               </div>
-            )}
-          </div>
-        </div>
-
-        {/* Mobile Menu (ضيوف فقط — يُفتح بـ isMenuOpen) */}
-        <div
-          className={`md:hidden transition-all duration-500 ease-in-out overflow-hidden ${
-            isMenuOpen ? 'max-h-[min(100vh,860px)] opacity-100 visible' : 'max-h-0 opacity-0 invisible pointer-events-none'
-          }`}
-        >
-          <div
-            className={`py-6 space-y-4 border-t backdrop-blur-xl ${
-              isHomeNavStyle
-                ? 'border-white/[0.08] bg-[#0a1224]/98 text-white'
-                : 'border-gray-200/50 dark:border-gray-700/50 bg-gradient-to-b from-white/95 to-gray-50/95 dark:from-gray-900/95 dark:to-gray-800/95'
-            }`}
-          >
-            {/* Navigation Links - Only for logged-in users */}
-            {user && (
-              <div className="space-y-1 px-2">
-                {menuItems.map((item) => (
-                  <Link
-                    key={item.path}
-                    to={item.path}
-                    className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all duration-300 ${location.pathname === item.path
-                      ? "text-primary dark:text-primary-light bg-primary/10 dark:bg-primary/20"
-                      : "text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light hover:bg-gray-100 dark:hover:bg-gray-800"
-                      }`}
-                  >
-                    <div className={`p-2 rounded-lg ${location.pathname === item.path
-                      ? "bg-primary/20 dark:bg-primary/30"
-                      : "bg-gray-200 dark:bg-gray-700"
-                      }`}>
-                      <item.icon className="w-4 h-4" />
-                    </div>
-                    <span>{item.name}</span>
-                  </Link>
-                ))}
-              </div>
-            )}
-
-            {/* User Section */}
-            {user && (
-              <>
-                <div className="border-t border-gray-200/50 dark:border-gray-700/50 pt-4 px-4">
-                  <div className="flex items-center gap-3 p-3 bg-primary/5 dark:bg-primary/10 rounded-xl">
-                    <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center shadow-lg">
-                      <span className="text-white font-bold text-lg">
-                        {user.fullName?.charAt(0)?.toUpperCase() || "U"}
-                      </span>
-                    </div>
-                    <div>
-                      <p className="font-bold text-gray-900 dark:text-white">{user.fullName}</p>
-                      <p className="text-xs text-primary dark:text-primary-light font-medium">{user.role}</p>
-                    </div>
-                  </div>
-                </div>
-
-                {user.role === "ADMIN" && (
-                  <div className="space-y-1 px-2 pt-2">
-                    <p className="px-4 text-xs font-bold text-primary dark:text-primary-light uppercase">لوحة الإدارة</p>
-                    {adminMenuItems.map((item) => (
-                      <Link
-                        key={item.path}
-                        to={item.path}
-                        className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all duration-300 ${location.pathname === item.path
-                          ? "text-primary dark:text-primary-light bg-primary/10 dark:bg-primary/20"
-                          : "text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light hover:bg-gray-100 dark:hover:bg-gray-800"
-                          }`}
-                      >
-                        <div className={`p-2 rounded-lg ${location.pathname === item.path
-                          ? "bg-primary/20 dark:bg-primary/30"
-                          : "bg-gray-200 dark:bg-gray-700"
-                          }`}>
-                          <item.icon className="w-4 h-4" />
-                        </div>
-                        <span>{item.name}</span>
-                      </Link>
-                    ))}
-                  </div>
-                )}
-
-                <div className="space-y-1 px-2 pt-2 border-t border-gray-200/50 dark:border-gray-700/50">
-                  <Link
-                    to="/profile"
-                    className="flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light hover:bg-gray-100 dark:hover:bg-gray-800"
-                  >
-                    <div className="p-2 rounded-lg bg-gray-200 dark:bg-gray-700">
-                      <FaUser className="w-4 h-4" />
-                    </div>
-                    <span>الملف الشخصي</span>
-                  </Link>
-
-                  <button
-                    onClick={handleLogout}
-                    className="flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 w-full"
-                  >
-                    <div className="p-2 rounded-lg bg-red-100 dark:bg-red-900/30">
-                      <FaSignOutAlt className="w-4 h-4" />
-                    </div>
-                    <span>تسجيل الخروج</span>
-                  </button>
-                </div>
-              </>
-            )}
-
-            {/* Guest Actions */}
-            {!user?.fullName && (
-              <>
-                {/* Special Navigation for Guests */}
-                <div className="space-y-1 px-2 pb-3">
-                  <p
-                    className={`px-4 pb-2 text-xs font-bold uppercase ${isHomeNavStyle ? 'text-[#A5A6FF]' : ''}`}
-                    style={!isHomeNavStyle ? { color: '#6C2BD9' } : undefined}
-                  >
-                    تصفح المحتوى
-                  </p>
-
-                  {/* الكورسات */}
-                  <Link to="/courses" className={guestMobileNavLinkClass('/courses')} onClick={() => setIsMenuOpen(false)}>
-                    <div className={guestMobileIconBoxClass('/courses')}>
-                      <FaGraduationCap className="w-4 h-4" />
-                    </div>
-                    <span>الكورسات</span>
-                  </Link>
-
-                  {/* المدونة */}
-                  <Link to="/blogs" className={guestMobileNavLinkClass('/blogs')} onClick={() => setIsMenuOpen(false)}>
-                    <div className={guestMobileIconBoxClass('/blogs')}>
-                      <FaBlog className="w-4 h-4" />
-                    </div>
-                    <span>المدونة</span>
-                  </Link>
-
-                  {/* الأسئلة والأجوبة */}
-                  <Link to="/qa" className={guestMobileNavLinkClass('/qa')} onClick={() => setIsMenuOpen(false)}>
-                    <div className={guestMobileIconBoxClass('/qa')}>
-                      <FaQuestionCircle className="w-4 h-4" />
-                    </div>
-                    <span>الأسئلة والأجوبة</span>
-                  </Link>
-                </div>
-
-                {/* Login/Signup Buttons */}
-                <div
-                  className={`space-y-3 px-4 pt-4 border-t ${
-                    isHomeNavStyle ? 'border-white/[0.08]' : 'border-gray-200/50 dark:border-gray-700/50'
-                  }`}
-                >
-                  {isHomeNavStyle ? (
-                    <>
-                      <Link
-                        to="/signup"
-                        onClick={() => setIsMenuOpen(false)}
-                        className="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-full text-sm font-bold text-[#0a0f1a] transition-transform duration-200 active:scale-[0.98]"
-                        style={{
-                          backgroundColor: '#A5A6FF',
-                          boxShadow: '0 0 24px rgba(165, 166, 255, 0.45), 0 4px 12px rgba(0, 0, 0, 0.2)',
-                        }}
-                      >
-                        <FaPlus className="w-4 h-4" />
-                        سجل الآن
-                      </Link>
-                      <Link
-                        to="/login"
-                        onClick={() => setIsMenuOpen(false)}
-                        className="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-full border-2 text-sm font-semibold text-white border-[#A5A6FF] bg-transparent hover:bg-[#A5A6FF]/10 transition-colors duration-200"
-                      >
-                        <FaUser className="w-4 h-4" />
-                        تسجيل الدخول
-                      </Link>
-                    </>
-                  ) : (
-                    <>
-                      <Link
-                        to="/login"
-                        onClick={() => setIsMenuOpen(false)}
-                        className="flex items-center justify-center gap-2 w-full px-4 py-3 border-2 rounded-xl font-semibold transition-all duration-300"
-                        style={{ borderColor: '#6C2BD9', color: '#6C2BD9' }}
-                      >
-                        <FaUser className="w-4 h-4" />
-                        تسجيل الدخول
-                      </Link>
-                      <Link
-                        to="/signup"
-                        onClick={() => setIsMenuOpen(false)}
-                        className="flex items-center justify-center gap-2 w-full px-4 py-3 text-white rounded-xl font-semibold transition-all duration-300 shadow-lg"
-                        style={{ background: 'linear-gradient(135deg, #6C2BD9, #7C3AED)' }}
-                      >
-                        <FaPlus className="w-4 h-4" />
-                        اشترك الآن
-                      </Link>
-                    </>
-                  )}
-                </div>
-              </>
             )}
           </div>
         </div>
