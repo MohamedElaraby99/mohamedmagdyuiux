@@ -118,35 +118,65 @@ export default function Navbar() {
       >
         <div className="flex justify-between items-center gap-3 h-16 md:h-[4.5rem] min-w-0">
 
-          {/* شعار — على الرئيسية: MAGDY ACADEMY نص فقط */}
-          <Link
-            to="/"
-            onClick={handleLogoClick}
-            className="flex items-center gap-3 group shrink min-w-0"
-          >
-            {!isHomeNavStyle && (
-              <>
-                <div className="relative">
-                  <div className="relative rounded-xl group-hover:shadow-xl transition-all duration-300">
-                    <img
-                      src={logo2}
-                      alt="logo"
-                      className="w-10 h-10 md:w-12 md:h-12 object-contain group-hover:scale-110 transition-transform duration-300"
-                    />
+          {/* برجر + شعار — مجموعة يمين الهيدر (البرجر أقصى يمين) */}
+          <div className="flex items-center gap-2 sm:gap-3 shrink min-w-0">
+            {!user?.fullName && (
+              <button
+                type="button"
+                aria-label="فتح القائمة الجانبية"
+                onClick={toggleMenu}
+                className={`md:hidden relative p-2.5 rounded-xl transition-all duration-300 group shrink-0 ${
+                  isHomeNavStyle ? 'bg-white/10' : ''
+                }`}
+                style={isHomeNavStyle ? undefined : { backgroundColor: 'rgba(108, 43, 217, 0.1)' }}
+              >
+                <FaBars
+                  className="w-5 h-5 transition-transform duration-300 group-hover:rotate-90"
+                  style={{ color: isHomeNavStyle ? '#ffffff' : '#6C2BD9' }}
+                />
+              </button>
+            )}
+
+            {user?.fullName && (
+              <button
+                type="button"
+                onClick={toggleMenu}
+                className="relative p-2.5 rounded-xl bg-primary/10 dark:bg-primary/20 hover:bg-primary/20 dark:hover:bg-primary/30 transition-all duration-300 border border-primary/30 dark:border-primary/50 group shrink-0"
+              >
+                <span className="absolute inset-0 rounded-xl bg-primary/20 animate-ping opacity-0 group-hover:opacity-75" />
+                <FaBars className="w-4 h-4 md:w-5 md:h-5 text-primary dark:text-primary-light relative z-10 transition-transform duration-300 group-hover:rotate-90" />
+              </button>
+            )}
+
+            <Link
+              to="/"
+              onClick={handleLogoClick}
+              className="flex items-center gap-3 group shrink min-w-0"
+            >
+              {!isHomeNavStyle && (
+                <>
+                  <div className="relative">
+                    <div className="relative rounded-xl group-hover:shadow-xl transition-all duration-300">
+                      <img
+                        src={logo2}
+                        alt="logo"
+                        className="w-10 h-10 md:w-12 md:h-12 object-contain group-hover:scale-110 transition-transform duration-300"
+                      />
+                    </div>
                   </div>
-                </div>
-                <div className="hidden sm:block">
-                  <h1 className="text-xl md:text-2xl font-bold text-gradient-primary">{BRAND.teacherName}</h1>
-                  <p className="text-[10px] -mt-1 text-gray-500 dark:text-gray-400">{BRAND.platformName}</p>
-                </div>
-              </>
-            )}
-            {isHomeNavStyle && (
-              <span className="font-bold text-white uppercase tracking-[0.08em] sm:tracking-[0.12em] text-sm sm:text-lg md:text-2xl font-sans select-none truncate block max-w-[min(100%,11rem)] sm:max-w-[20rem] md:max-w-none">
-                {BRAND.navbarWordmark || 'MAGDY ACADEMY'}
-              </span>
-            )}
-          </Link>
+                  <div className="hidden sm:block">
+                    <h1 className="text-xl md:text-2xl font-bold text-gradient-primary">{BRAND.teacherName}</h1>
+                    <p className="text-[10px] -mt-1 text-gray-500 dark:text-gray-400">{BRAND.platformName}</p>
+                  </div>
+                </>
+              )}
+              {isHomeNavStyle && (
+                <span className="font-bold text-white uppercase tracking-[0.08em] sm:tracking-[0.12em] text-sm sm:text-lg md:text-2xl font-sans select-none truncate block max-w-[min(100%,11rem)] sm:max-w-[20rem] md:max-w-none">
+                  {BRAND.navbarWordmark || 'MAGDY ACADEMY'}
+                </span>
+              )}
+            </Link>
+          </div>
 
           {/* Center Navigation - Desktop Only */}
           <div className="hidden lg:flex items-center gap-1">
@@ -222,21 +252,6 @@ export default function Navbar() {
                     </Link>
                   </div>
                 )}
-
-                <button
-                  type="button"
-                  aria-label="فتح القائمة الجانبية"
-                  onClick={toggleMenu}
-                  className={`md:hidden relative p-2.5 rounded-xl transition-all duration-300 group shrink-0 ${
-                    isHomeNavStyle ? 'bg-white/10' : ''
-                  }`}
-                  style={isHomeNavStyle ? undefined : { backgroundColor: 'rgba(108, 43, 217, 0.1)' }}
-                >
-                  <FaBars
-                    className="w-5 h-5 transition-transform duration-300 group-hover:rotate-90"
-                    style={{ color: isHomeNavStyle ? '#ffffff' : '#6C2BD9' }}
-                  />
-                </button>
               </div>
             )}
 
@@ -262,17 +277,6 @@ export default function Navbar() {
                     </p>
                   </div>
                 </div>
-
-                {/* Menu Button */}
-                <button
-                  onClick={toggleMenu}
-                  className="relative p-2.5 rounded-xl bg-primary/10 dark:bg-primary/20 hover:bg-primary/20 dark:hover:bg-primary/30 transition-all duration-300 border border-primary/30 dark:border-primary/50 group"
-                >
-                  {/* Pulse Effect */}
-                  <span className="absolute inset-0 rounded-xl bg-primary/20 animate-ping opacity-0 group-hover:opacity-75"></span>
-
-                  <FaBars className="w-4 h-4 md:w-5 md:h-5 text-primary dark:text-primary-light relative z-10 transition-transform duration-300 group-hover:rotate-90" />
-                </button>
               </div>
             )}
           </div>
