@@ -23,7 +23,6 @@ export default function HomePage() {
 
   const { isLoggedIn, data: userData } = useSelector((state) => state.auth);
 
-  const [isVisible, setIsVisible] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
 
   // Hero entrance animation state
@@ -45,22 +44,9 @@ export default function HomePage() {
         dispatch(getAllBlogs({ page: 1, limit: 3 }));
       }, 500);
 
-      // Check course access for logged-in users
-      if (isLoggedIn && userData) {
-        const courses = await dispatch(getFeaturedCourses());
-        const fetchedCourses = courses?.payload?.courses || courses?.payload || [];
-        if (Array.isArray(fetchedCourses)) {
-          fetchedCourses.slice(0, 6).forEach((course) => {
-            if (course._id) dispatch(checkCourseAccess(course._id));
-          });
-        }
-      }
     };
 
     loadData();
-
-    // Trigger animations
-    setIsVisible(true);
 
     // Hero entrance animation
     const timer = setTimeout(() => {
@@ -82,6 +68,15 @@ export default function HomePage() {
       clearTimeout(timer);
     };
   }, [dispatch]);
+
+  // Check course access for each featured course when user is logged in
+  useEffect(() => {
+    if (isLoggedIn && userData && featuredCourses?.length > 0) {
+      featuredCourses.slice(0, 6).forEach((course) => {
+        if (course._id) dispatch(checkCourseAccess(course._id));
+      });
+    }
+  }, [isLoggedIn, userData, featuredCourses, dispatch]);
 
   const scrollToTop = () => {
     window.scrollTo({
