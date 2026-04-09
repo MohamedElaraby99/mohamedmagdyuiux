@@ -185,7 +185,7 @@ export default function HomePage() {
                 return (
                 <div
                   key={course._id}
-                  className={`group rounded-[28px] border border-[#1e293b] bg-[#0f172a] shadow-[0_24px_48px_rgba(0,0,0,0.35)] overflow-hidden transition-all duration-500 ease-out hover:border-slate-600/80 ${heroLoaded
+                  className={`group rounded-[28px] border border-[#1e293b] bg-[#0f172a] shadow-[0_24px_48px_rgba(0,0,0,0.35)] transition-all duration-500 ease-out hover:border-slate-600/80 ${heroLoaded
                     ? 'opacity-100 translate-y-0'
                     : 'opacity-0 translate-y-8'
                     }`}
@@ -226,12 +226,12 @@ export default function HomePage() {
                         </div>
                       </div>
 
-                      <div className="flex flex-col gap-6 sm:gap-8 pt-2 sm:pt-0">
-                        <div className="text-3xl sm:text-4xl font-bold text-white tracking-tight">
+                      <div className="flex flex-col gap-6 sm:gap-8 pt-2 sm:pt-0 items-start w-full">
+                        <div className="text-3xl sm:text-4xl font-bold text-white tracking-tight text-start">
                           {course.price > 0 ? `${course.price} L.E` : 'مجاني'}
                         </div>
 
-                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 w-full sm:w-auto sm:flex-wrap">
+                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 w-full sm:w-auto sm:flex-wrap sm:justify-start">
                           <Link
                             to={`/courses/${course._id}`}
                             className="inline-flex items-center justify-center px-8 py-3.5 rounded-full bg-cyan-400 text-gray-900 font-bold text-sm sm:text-base shadow-[0_0_24px_rgba(34,211,238,0.25)] hover:bg-cyan-300 transition-colors duration-200 flex-1 sm:flex-initial min-w-[140px] text-center"
@@ -249,8 +249,8 @@ export default function HomePage() {
                     </div>
 
                     {/* صورة الكورس — فوق على الموبايل */}
-                    <div className="w-full lg:w-[42%] xl:w-[40%] shrink-0 order-1 lg:order-1">
-                      <div className="relative w-full aspect-[4/3] lg:aspect-auto lg:min-h-[280px] lg:h-full rounded-2xl overflow-hidden border border-slate-700/60 bg-[#0a0c10]">
+                    <div className="w-full lg:w-[42%] xl:w-[40%] shrink-0 order-1 lg:order-1 flex items-center justify-center p-2 sm:p-3 lg:p-4">
+                      <div className="relative w-full aspect-[4/3] lg:aspect-auto lg:min-h-[280px] lg:h-full rounded-2xl overflow-hidden border border-slate-700/60 bg-[#0a0c10] rotate-[4deg] shadow-[0_18px_40px_rgba(0,0,0,0.45)] transition-transform duration-500 group-hover:rotate-[3deg]">
                         {course.image?.secure_url ? (
                           <img
                             src={generateImageUrl(course.image.secure_url)}
