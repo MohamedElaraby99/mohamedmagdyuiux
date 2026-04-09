@@ -14,13 +14,17 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const { data: user, role } = useSelector((state) => state.auth);
   const location = useLocation();
+  const path = location.pathname;
   /** نفس شكل هيدر الصفحة الرئيسية: خلفية داكنة، ووردمارك، أزرار الهوم */
   const isHomeNavStyle =
-    location.pathname === "/" ||
-    location.pathname === "/login" ||
-    location.pathname === "/signup" ||
-    location.pathname === "/terms" ||
-    location.pathname === "/privacy";
+    path === "/" ||
+    path === "/login" ||
+    path === "/signup" ||
+    path === "/terms" ||
+    path === "/privacy" ||
+    path.startsWith("/courses") ||
+    path.startsWith("/blogs") ||
+    path.startsWith("/qa");
   // Use scroll to top utility
   useScrollToTop();
 

@@ -36,15 +36,15 @@ export default function BlogList() {
   };
 
   return (
-    <Layout>
+    <Layout mainClassName="min-h-[100vh] bg-[#080E1E]">
       <section className="min-h-screen py-8 px-4 lg:px-20" dir="rtl">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold text-gray-800 dark:text-white mb-4">
+            <h1 className="text-4xl font-bold text-white mb-4">
               مدونتنا
             </h1>
-            <p className="text-lg text-gray-600 dark:text-gray-300">
+            <p className="text-lg text-slate-400">
               اكتشف الرؤى والنصائح والقصص من مجتمعنا التعليمي
             </p>
           </div>
@@ -76,7 +76,7 @@ export default function BlogList() {
           {loading ? (
             <div className="text-center py-12">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500 mx-auto"></div>
-              <p className="mt-4 text-gray-600 dark:text-gray-300">جاري تحميل المدونات...</p>
+              <p className="mt-4 text-slate-400">جاري تحميل المدونات...</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -162,7 +162,7 @@ export default function BlogList() {
           {/* Pagination */}
           {blogs?.length === 0 && !loading && (
             <div className="text-center py-12">
-              <p className="text-gray-600 dark:text-gray-300">لم يتم العثور على مدونات.</p>
+              <p className="text-slate-400">لم يتم العثور على مدونات.</p>
             </div>
           )}
         </div>

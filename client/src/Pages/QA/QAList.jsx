@@ -112,15 +112,15 @@ export default function QAList() {
   };
 
   return (
-    <Layout>
+    <Layout mainClassName="min-h-[100vh] bg-[#080E1E]">
       <section className="min-h-screen py-8 px-4 lg:px-20">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold text-gray-800 dark:text-white mb-4">
+            <h1 className="text-4xl font-bold text-white mb-4">
               {isAdmin ? "إدارة الأسئلة والأجوبة" : "مجتمع الأسئلة والأجوبة"}
             </h1>
-            <p className="text-lg text-gray-600 dark:text-gray-300 mb-6">
+            <p className="text-lg text-slate-400 mb-6">
               {isAdmin 
                 ? "إدارة الأسئلة وتقديم الإجابات وتنظيم المجتمع"
                 : "تصفح الأسئلة وتعلم من مجتمعنا"

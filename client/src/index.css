@@ -617,16 +617,19 @@ textarea::placeholder {
   z-index: 50 !important;
 }
 
-/* Ensure drawer overlay covers the right side but doesn't block sidebar */
+/* طبقة خلف السايدبار: خفيفة بدون بلور حتى يبقى المحتوى وراها واضح */
 .drawer-overlay {
   position: fixed;
   top: 0;
   right: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(8, 14, 30, 0.28);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
   z-index: 40;
-  pointer-events: none;
+  pointer-events: auto;
+  cursor: pointer;
 }
 
 /* When drawer is open, show overlay */
@@ -1910,6 +1913,10 @@ html.light .textarea {
     text-align: center;
   }
 
+  .hero-stats-composed {
+    margin-top: 44px;
+  }
+
   .hero-visual-float-wrap--momentum {
     width: min(42%, 180px);
     bottom: 4%;
@@ -1970,6 +1977,10 @@ html.light .textarea {
 
   .hero-glass {
     display: none;
+  }
+
+  .hero-stats-composed {
+    margin-top: 60px;
   }
 
 }

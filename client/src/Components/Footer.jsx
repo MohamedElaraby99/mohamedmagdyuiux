@@ -23,6 +23,18 @@ export default function Footer() {
           >
             {FOOTER.tagline}
           </p>
+          {FOOTER.developer?.showInFooter && FOOTER.developer?.url && (
+            <p className="mt-4 text-sm md:text-[15px]">
+              <a
+                href={FOOTER.developer.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-medium text-[#94a3b8] underline-offset-4 transition hover:text-white hover:underline"
+              >
+                {FOOTER.developer.footerLinkLabel || FOOTER.developer.name}
+              </a>
+            </p>
+          )}
         </div>
         <p
           className="shrink-0 text-sm sm:text-right md:text-[15px]"
