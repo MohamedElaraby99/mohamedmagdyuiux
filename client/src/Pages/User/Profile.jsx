@@ -1,357 +1,319 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getUserData, updateUserData } from "../../Redux/Slices/AuthSlice";
-import InputBox from "../../Components/InputBox/InputBox";
-import { FaUserCircle, FaPhone, FaMapMarkerAlt, FaGraduationCap, FaCalendarAlt, FaEnvelope, FaUser, FaIdCard, FaEdit, FaSave, FaTimes, FaBook } from "react-icons/fa";
+import {
+  FaUserCircle, FaPhone, FaMapMarkerAlt, FaUser,
+  FaEdit, FaSave, FaTimes, FaCamera, FaLock, FaShieldAlt
+} from "react-icons/fa";
 import { IoIosLock, IoIosRefresh } from "react-icons/io";
 import { FiMoreVertical } from "react-icons/fi";
 import Layout from "../../Layout/Layout";
 import { useNavigate } from "react-router-dom";
-
 import { egyptianCities, getArabicCity } from "../../utils/governorateMapping";
 import UserQRCode from "../../Components/UserQRCode";
 
+/* ─── colour tokens ─────────────────────────────────────────────────── */
+const PAGE_BG  = '#0C1325';
+const CARD_BG  = '#162040';
+const CARD_BDR = 'rgba(255,255,255,0.07)';
+const DIVIDER  = 'rgba(255,255,255,0.06)';
+
 export default function Profile() {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const userData = useSelector((state) => state.auth.data);
-  const [isUpdating, setIsUpdating] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
-  const [userInput, setUserInput] = useState({
-    name: userData?.fullName || "",
-    phoneNumber: userData?.phoneNumber || "",
-    fatherPhoneNumber: userData?.fatherPhoneNumber || "",
-    governorate: userData?.governorate || "",
-    age: userData?.age || "",
-    avatar: null,
-    previewImage: null,
-    userId: null,
-  });
-  const avatarInputRef = useRef(null);
-  const [isChanged, setIschanged] = useState(false);
+  const navigate  = useNavigate();
+  const dispatch  = useDispatch();
+  const userData  = useSelector((state) => state.auth.data);
+
+  const [isUpdating, setIsUpdating]   = useState(false);
+  const [isEditing,  setIsEditing]    = useState(false);
+  const [isChanged,  setIschanged]    = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [userInput,  setUserInput]    = useState({
+    name:              userData?.fullName        || "",
+    fatherPhoneNumber: userData?.fatherPhoneNumber || "",
+    governorate:       userData?.governorate     || "",
+    age:               userData?.age             || "",
+    avatar:        null,
+    previewImage:  null,
+    userId:        null,
+  });
+
+  const avatarInputRef = useRef(null);
+
+  /* ── sync userData → form ──────────────────────────────────────── */
+  useEffect(() => {
+    if (userData && Object.keys(userData).length > 0) {
+      setUserInput(prev => ({
+        ...prev,
+        name:              userData?.fullName          || "",
+        fatherPhoneNumber: userData?.fatherPhoneNumber || "",
+        governorate:       userData?.governorate       || "",
+        age:               userData?.age               || "",
+        userId:            userData?._id,
+      }));
+    }
+  }, [userData]);
+
+  useEffect(() => {
+    if (Object.keys(userData).length < 1) dispatch(getUserData());
+  }, []);
+
+  /* ── detect changes (name + avatar only) ──────────────────────── */
+  useEffect(() => {
+    if (!isEditing) { setIschanged(false); return; }
+    const changed = userInput.name !== userData?.fullName || !!userInput.avatar;
+    setIschanged(changed);
+  }, [userInput, userData, isEditing]);
 
   function handleImageUpload(e) {
     e.preventDefault();
-    const uploadImage = e.target.files[0];
-    if (uploadImage) {
-      const fileReader = new FileReader();
-      fileReader.readAsDataURL(uploadImage);
-      fileReader.addEventListener("load", function () {
-        setUserInput({
-          ...userInput,
-          previewImage: this.result,
-          avatar: uploadImage,
-        });
-      });
-    }
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.addEventListener("load", function () {
+      setUserInput(prev => ({ ...prev, previewImage: this.result, avatar: file }));
+    });
   }
 
   async function onFormSubmit(e) {
-    setIsUpdating(true);
     e.preventDefault();
-
+    setIsUpdating(true);
     const formData = new FormData();
     formData.append("fullName", userInput.name);
-    formData.append("phoneNumber", userInput.phoneNumber);
-
-    // Only append user-specific fields for regular users
-    if (userData?.role !== 'ADMIN' && userData?.role !== 'SUPER_ADMIN') {
-      formData.append("fatherPhoneNumber", userInput.fatherPhoneNumber);
-      formData.append("governorate", userInput.governorate);
-      formData.append("age", userInput.age);
-    }
-
-    if (userInput.avatar) {
-      formData.append("avatar", userInput.avatar);
-    }
-    const data = { formData, id: userInput.userId };
-    const response = await dispatch(updateUserData(data));
-    if (response?.payload?.success) {
+    // phone number is intentionally NOT sent — read-only
+    if (userInput.avatar) formData.append("avatar", userInput.avatar);
+    const res = await dispatch(updateUserData({ formData, id: userInput.userId }));
+    if (res?.payload?.success) {
       await dispatch(getUserData());
       setIschanged(false);
-      setIsEditing(false); // Exit edit mode after successful save
+      setIsEditing(false);
     }
     setIsUpdating(false);
   }
 
-  async function handleCancelSubscription() {
-    const res = await dispatch(cancelCourseBundle());
-    if (res?.payload?.success) {
-      await dispatch(getUserData());
-    }
-  }
-
   function handleEditClick() {
     setIsEditing(true);
-    // Reset form to current user data
-    setUserInput({
-      name: userData?.fullName || "",
-      phoneNumber: userData?.phoneNumber || "",
-      fatherPhoneNumber: userData?.fatherPhoneNumber || "",
-      governorate: userData?.governorate || "",
-      age: userData?.age || "",
+    setUserInput(prev => ({
+      ...prev,
+      name:   userData?.fullName || "",
       avatar: null,
       previewImage: null,
       userId: userData?._id,
-    });
-
+    }));
   }
 
   function handleCancelEdit() {
     setIsEditing(false);
     setIschanged(false);
-    // Reset to original values
-    setUserInput({
-      name: userData?.fullName || "",
-      phoneNumber: userData?.phoneNumber || "",
-      fatherPhoneNumber: userData?.fatherPhoneNumber || "",
-      governorate: userData?.governorate || "",
-      age: userData?.age || "",
-      avatar: null,
+    setUserInput(prev => ({
+      ...prev,
+      name:         userData?.fullName || "",
+      avatar:       null,
       previewImage: null,
-      userId: userData?._id,
-    });
+    }));
   }
 
-  useEffect(() => {
-    if (isEditing) {
-      let hasChanges =
-        userInput.name !== userData?.fullName ||
-        userInput.phoneNumber !== userData?.phoneNumber ||
-        userInput.avatar;
+  /* ── shared input style ────────────────────────────────────────── */
+  const readonlyStyle = {
+    backgroundColor: 'rgba(255,255,255,0.03)',
+    border: `1px solid ${DIVIDER}`,
+    color: 'rgba(255,255,255,0.4)',
+    cursor: 'not-allowed',
+  };
+  const editableStyle = {
+    backgroundColor: 'rgba(255,255,255,0.06)',
+    border: `1px solid rgba(255,255,255,0.15)`,
+    color: '#fff',
+  };
 
-      // Only check user-specific fields for regular users
-      if (userData?.role !== 'ADMIN' && userData?.role !== 'SUPER_ADMIN') {
-        hasChanges = hasChanges ||
-          userInput.fatherPhoneNumber !== userData?.fatherPhoneNumber ||
-          userInput.governorate !== userData?.governorate ||
-          userInput.age !== userData?.age;
-      }
-
-      setIschanged(hasChanges);
-    } else {
-      setIschanged(false);
-    }
-  }, [userInput, userData, isEditing]);
-
-  useEffect(() => {
-    async function fetchUser() {
-
-      const result = await dispatch(getUserData());
-
-    }
-    if (Object.keys(userData).length < 1) fetchUser();
-  }, []);
-
-  // Debug: Log user data to see what's being received
-  useEffect(() => {
-
-  }, [userData]);
-
-  useEffect(() => {
-    if (userData && Object.keys(userData).length > 0) {
-      setUserInput({
-        ...userInput,
-        name: userData?.fullName || "",
-        phoneNumber: userData?.phoneNumber || "",
-        fatherPhoneNumber: userData?.fatherPhoneNumber || "",
-        governorate: userData?.governorate || "",
-        age: userData?.age || "",
-        userId: userData?._id,
-      });
-    }
-  }, [userData]);
+  const avatarSrc = userInput.previewImage || userData?.avatar?.secure_url;
 
   return (
-    <Layout hideFooter={true}>
-      <section className="flex flex-col gap-6 items-center py-8 px-3 min-h-[100vh]" dir="rtl">
-        <form
-          autoComplete="off"
-          noValidate
-          onSubmit={onFormSubmit}
-          className="flex flex-col dark:bg-base-100 relative gap-7 rounded-lg md:py-10 py-7 md:px-7 px-3 md:w-[750px] w-full shadow-custom dark:shadow-xl"
-          dir="rtl"
-        >
-          <div className="flex justify-center items-center">
-            <h1 className="text-center absolute right-6 md:top-auto top-5 text-violet-500 dark:text-green-500 md:text-4xl text-3xl font-bold font-inter after:content-[' ']  after:absolute after:-bottom-3.5 after:right-0 after:h-1.5 after:w-[60%] after:rounded-full after:bg-green-400 dark:after:bg-green-600">
-              الملف الشخصي
-            </h1>
-            {/* avatar */}
-            <div
-              className="w-16 h-16 rounded-full overflow-hidden self-center cursor-pointer"
-              onClick={() => avatarInputRef.current.click()}
-            >
-              {userData?.avatar?.secure_url || userInput.previewImage ? (
-                <img
-                  src={
-                    userInput.previewImage
-                      ? userInput.previewImage
-                      : userData?.avatar?.secure_url
-                  }
-                  alt="avatar"
-                  className="h-full w-full"
-                />
-              ) : (
-                <FaUserCircle className="h-full w-full" />
-              )}
-              <input
-                type="file"
-                accept=".png, .jpeg, .jpg"
-                className="hidden"
-                ref={avatarInputRef}
-                onChange={handleImageUpload}
-              />
-            </div>
-            {/* more options */}
-            <div className="absolute left-3 top-3">
-              <button
-                type="button"
-                className="absolute left-0 text-gray-500 dark:text-slate-50 font-inter font-[600]"
-                onClick={() => setIsDialogOpen((prev) => !prev)}
-              >
-                <FiMoreVertical size={20} />
-              </button>
+    <Layout mainClassName="min-h-[100vh] bg-[#0C1325]" hideFooter>
+      <div className="min-h-screen bg-[#0C1325] py-8 px-4" dir="rtl">
+        <div className="max-w-2xl mx-auto">
 
-              <dialog
-                open={isDialogOpen}
-                className="bg-white dark:bg-base-300 transition-all duration-500 border-[1px] border-gray-200 dark:border-gray-500 rounded-e-xl rounded-ss-xl py-5 shadow-lg w-fit relative left-0 top-7"
-              >
-                <div className="w-full flex flex-col gap-2 items-start">
-                  <button
-                    className="text-gray-700 w-full flex items-center gap-2 dark:text-white px-3 pb-2 border-b-[1px] border-gray-300"
-                    onClick={() => navigate("change-password")}
+          {/* ── Page Header ──────────────────────────────────────── */}
+          <div className="mb-8">
+            <div className="flex items-center gap-3 mb-1">
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-lg"
+                style={{ background: 'linear-gradient(135deg, var(--color-primary-dark), var(--color-primary))' }}>
+                <FaUser className="text-sm" />
+              </div>
+              <h1 className="text-2xl sm:text-3xl font-bold text-gradient-primary">
+                الملف الشخصي
+              </h1>
+            </div>
+            <p className="text-sm mr-[52px]" style={{ color: 'rgba(255,255,255,0.4)' }}>
+              إدارة معلوماتك الشخصية
+            </p>
+          </div>
+
+          <form autoComplete="off" noValidate onSubmit={onFormSubmit}>
+
+            {/* ── Avatar + Name Card ───────────────────────────── */}
+            <div className="rounded-2xl p-6 mb-4"
+              style={{ backgroundColor: CARD_BG, border: `1px solid ${CARD_BDR}` }}>
+
+              <div className="flex items-center gap-5 mb-6">
+                {/* Avatar */}
+                <div className="relative flex-shrink-0">
+                  <div
+                    className="w-20 h-20 rounded-full overflow-hidden cursor-pointer ring-2 ring-offset-2 ring-offset-[#162040] transition-all"
+                    style={{ ringColor: 'var(--color-primary)' }}
+                    onClick={() => isEditing && avatarInputRef.current.click()}
                   >
-                    <IoIosLock /> تغيير كلمة المرور
+                    {avatarSrc
+                      ? <img src={avatarSrc} alt="avatar" className="w-full h-full object-cover" />
+                      : <div className="w-full h-full flex items-center justify-center"
+                          style={{ backgroundColor: 'rgba(255,255,255,0.06)' }}>
+                          <FaUserCircle className="w-full h-full" style={{ color: 'rgba(255,255,255,0.3)' }} />
+                        </div>
+                    }
+                  </div>
+                  {isEditing && (
+                    <button type="button" onClick={() => avatarInputRef.current.click()}
+                      className="absolute -bottom-1 -left-1 w-7 h-7 rounded-full flex items-center justify-center text-white shadow-lg transition-all hover:opacity-90"
+                      style={{ backgroundColor: 'var(--color-primary)' }}>
+                      <FaCamera className="text-xs" />
+                    </button>
+                  )}
+                  <input type="file" accept=".png,.jpeg,.jpg" className="hidden"
+                    ref={avatarInputRef} onChange={handleImageUpload} />
+                </div>
+
+                {/* User info */}
+                <div className="flex-1 min-w-0">
+                  <p className="font-bold text-white text-lg truncate">{userData?.fullName || "—"}</p>
+                  <p className="text-sm truncate" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                    {userData?.email || ""}
+                  </p>
+                  <span className="inline-block mt-1 px-2.5 py-0.5 rounded-full text-xs font-medium"
+                    style={{ backgroundColor: 'var(--color-bg-primary)', color: 'var(--color-primary-light)' }}>
+                    {userData?.role === 'ADMIN' || userData?.role === 'SUPER_ADMIN' ? 'مدير' : 'طالب'}
+                  </span>
+                </div>
+
+                {/* Options menu */}
+                <div className="relative flex-shrink-0">
+                  <button type="button"
+                    onClick={() => setIsDialogOpen(p => !p)}
+                    className="w-8 h-8 rounded-lg flex items-center justify-center transition-colors"
+                    style={{ backgroundColor: 'rgba(255,255,255,0.07)', color: 'rgba(255,255,255,0.5)' }}>
+                    <FiMoreVertical size={16} />
+                  </button>
+                  {isDialogOpen && (
+                    <div className="absolute left-0 top-10 z-10 rounded-xl overflow-hidden shadow-2xl min-w-[180px]"
+                      style={{ backgroundColor: '#1e2d50', border: `1px solid ${CARD_BDR}` }}>
+                      <button type="button"
+                        className="w-full flex items-center gap-2 px-4 py-3 text-sm text-white transition-colors text-right"
+                        style={{ borderBottom: `1px solid ${DIVIDER}` }}
+                        onMouseEnter={e => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.06)'}
+                        onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
+                        onClick={() => { navigate("change-password"); setIsDialogOpen(false); }}>
+                        <IoIosLock style={{ color: 'var(--color-primary-light)' }} />تغيير كلمة المرور
+                      </button>
+                      <button type="button"
+                        className="w-full flex items-center gap-2 px-4 py-3 text-sm text-red-400 transition-colors text-right"
+                        onMouseEnter={e => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.06)'}
+                        onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
+                        onClick={() => { navigate("reset-password"); setIsDialogOpen(false); }}>
+                        <IoIosRefresh />إعادة تعيين كلمة المرور
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Section header */}
+              <div className="flex items-center justify-between mb-5 pb-4"
+                style={{ borderBottom: `1px solid ${DIVIDER}` }}>
+                <h2 className="text-sm font-semibold text-white flex items-center gap-2">
+                  <span className="w-1 h-4 rounded-full" style={{ backgroundColor: 'var(--color-primary)' }} />
+                  المعلومات الشخصية
+                </h2>
+                {!isEditing && (
+                  <button type="button" onClick={handleEditClick}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-white transition-all hover:opacity-90 active:scale-95 btn-primary">
+                    <FaEdit className="text-[10px]" />تعديل
+                  </button>
+                )}
+              </div>
+
+              {/* Fields */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+                {/* Name — editable */}
+                <div className="space-y-1.5 sm:col-span-2">
+                  <label className="flex items-center gap-2 text-xs font-medium"
+                    style={{ color: 'rgba(255,255,255,0.5)' }}>
+                    <FaUser style={{ color: 'var(--color-primary-light)' }} />
+                    الاسم الكامل
+                  </label>
+                  <input
+                    type="text"
+                    value={isEditing ? userInput.name : (userData?.fullName || "")}
+                    onChange={e => setUserInput(p => ({ ...p, name: e.target.value }))}
+                    disabled={!isEditing}
+                    placeholder="أدخل اسمك الكامل"
+                    dir="rtl"
+                    className="w-full px-4 py-3 rounded-xl text-sm outline-none transition-all"
+                    style={isEditing ? editableStyle : readonlyStyle}
+                  />
+                </div>
+
+                {/* Phone — always locked */}
+                <div className="space-y-1.5 sm:col-span-2">
+                  <label className="flex items-center gap-2 text-xs font-medium"
+                    style={{ color: 'rgba(255,255,255,0.5)' }}>
+                    <FaPhone style={{ color: 'rgba(255,255,255,0.3)' }} />
+                    رقم الهاتف
+                    <span className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px]"
+                      style={{ backgroundColor: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.35)' }}>
+                      <FaLock className="text-[8px]" />غير قابل للتعديل
+                    </span>
+                  </label>
+                  <input
+                    type="tel"
+                    value={userData?.phoneNumber || ""}
+                    disabled
+                    dir="ltr"
+                    className="w-full px-4 py-3 rounded-xl text-sm outline-none"
+                    style={readonlyStyle}
+                  />
+                </div>
+
+              </div>
+
+              {/* Action buttons */}
+              {isEditing && (
+                <div className="flex gap-3 mt-6 pt-4" style={{ borderTop: `1px solid ${DIVIDER}` }}>
+                  <button
+                    type="submit"
+                    disabled={!isChanged || isUpdating}
+                    className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold text-white transition-all disabled:opacity-40 disabled:cursor-not-allowed btn-primary active:scale-[0.98]"
+                  >
+                    {isUpdating
+                      ? <><div className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />جاري الحفظ...</>
+                      : <><FaSave className="text-xs" />حفظ التغييرات</>
+                    }
                   </button>
                   <button
-                    className="text-[#ff1414] dark:text-red-300 px-3 w-full flex items-center gap-2"
-                    onClick={() => navigate("reset-password")}
+                    type="button"
+                    onClick={handleCancelEdit}
+                    disabled={isUpdating}
+                    className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-medium text-white transition-all hover:opacity-80 disabled:opacity-40"
+                    style={{ backgroundColor: 'rgba(255,255,255,0.07)', border: `1px solid ${CARD_BDR}` }}
                   >
-                    <IoIosRefresh /> إعادة تعيين كلمة المرور
+                    <FaTimes className="text-xs" />إلغاء
                   </button>
                 </div>
-              </dialog>
-            </div>
-          </div>
-
-          {/* Profile Information Section */}
-          <div className="w-full space-y-6">
-            <div className="flex justify-between items-center border-b border-gray-200 dark:border-gray-700 pb-2">
-              <h2 className="text-xl font-semibold text-gray-800 dark:text-white">
-                المعلومات الشخصية
-              </h2>
-              {!isEditing && (
-                <button
-                  type="button"
-                  onClick={handleEditClick}
-                  className="flex items-center gap-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors"
-                >
-                  <FaEdit size={14} />
-                  تعديل الملف الشخصي
-                </button>
               )}
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Name */}
-              <div className="space-y-2">
-                <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                  <FaUser className="text-green-500" />
-                  الاسم الكامل
-                </label>
-                <input
-                  type="text"
-                  value={isEditing ? userInput.name : (userData?.fullName || "")}
-                  onChange={(e) => setUserInput({ ...userInput, name: e.target.value })}
-                  disabled={!isEditing}
-                  className={`w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-right ${!isEditing
-                      ? 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-300 cursor-not-allowed'
-                      : 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white'
-                    }`}
-                  placeholder="أدخل اسمك الكامل"
-                  dir="rtl"
-                />
-              </div>
-
-              {/* Phone Number */}
-              <div className="space-y-2">
-                <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                  <FaPhone className="text-green-500" />
-                  رقم الهاتف
-                </label>
-                <input
-                  type="tel"
-                  value={isEditing ? userInput.phoneNumber : (userData?.phoneNumber || "")}
-                  onChange={(e) => setUserInput({ ...userInput, phoneNumber: e.target.value })}
-                  disabled={!isEditing}
-                  className={`w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-left ${!isEditing
-                      ? 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-300 cursor-not-allowed'
-                      : 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white'
-                    }`}
-                  placeholder="أدخل رقم هاتفك"
-                  dir="ltr"
-                />
-              </div>
-
-            </div>
-          </div>
-
-          {/* QR Code Section */}
-          <UserQRCode userData={userData} />
-          {/* submit button */}
-          <div className="w-full flex md:flex-row flex-col md:justify-between justify-center md:gap-0 gap-3" dir="rtl">
-            {isEditing ? (
-              <>
-                <button
-                  type="submit"
-                  className={`py-3.5 rounded-md mt-3 text-white font-inter md:w-[48%] w-full flex items-center justify-center gap-2 ${!isChanged || isUpdating
-                      ? 'bg-gray-400 cursor-not-allowed'
-                      : 'bg-green-500 hover:bg-green-600'
-                    }`}
-                  disabled={!isChanged || isUpdating}
-                  onClick={() => {
-
-                  }}
-                >
-                  {isUpdating ? (
-                    <>
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                      جاري حفظ التغييرات...
-                    </>
-                  ) : (
-                    <>
-                      <FaSave size={14} />
-                      حفظ التغييرات
-                    </>
-                  )}
-                </button>
-
-                <button
-                  type="button"
-                  onClick={handleCancelEdit}
-                  className="py-3.5 rounded-md bg-gray-500 hover:bg-gray-600 mt-3 text-white font-inter md:w-[48%] w-full flex items-center justify-center gap-2"
-                  disabled={isUpdating}
-                >
-                  <FaTimes size={14} />
-                  إلغاء
-                </button>
-              </>
-            ) : (
-              /* show cancel subscription btn if Active */
-              userData?.subscription?.status === "active" && (
-                <button
-                  type="button"
-                  onClick={handleCancelSubscription}
-                  className="py-3.5 rounded-md bg-[#f32e2e] mt-3 text-white font-inter md:w-[48%] w-full"
-                >
-                  إلغاء الاشتراك
-                </button>
-              )
-            )}
-          </div>
-        </form>
-      </section>
+          </form>
+        </div>
+      </div>
     </Layout>
   );
 }
