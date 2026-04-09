@@ -226,12 +226,12 @@ export default function HomePage() {
                         </div>
                       </div>
 
-                      <div className="flex flex-col gap-6 sm:gap-8 pt-2 sm:pt-0 items-start w-full">
-                        <div className="text-3xl sm:text-4xl font-bold text-white tracking-tight text-start">
+                      <div className="flex flex-col gap-6 sm:gap-8 pt-2 sm:pt-0 items-end w-full">
+                        <div className="text-3xl sm:text-4xl font-bold text-white tracking-tight text-end">
                           {course.price > 0 ? `${course.price} L.E` : 'مجاني'}
                         </div>
 
-                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 w-full sm:w-auto sm:flex-wrap sm:justify-start">
+                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 w-full sm:w-auto sm:flex-wrap sm:justify-end">
                           <Link
                             to={`/courses/${course._id}`}
                             className="inline-flex items-center justify-center px-8 py-3.5 rounded-full bg-cyan-400 text-gray-900 font-bold text-sm sm:text-base shadow-[0_0_24px_rgba(34,211,238,0.25)] hover:bg-cyan-300 transition-colors duration-200 flex-1 sm:flex-initial min-w-[140px] text-center"
