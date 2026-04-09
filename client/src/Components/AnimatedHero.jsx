@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { FaPlay, FaArrowLeft, FaTimes } from 'react-icons/fa';
+import { FaPlay, FaArrowLeft, FaTimes, FaExpand, FaCompress } from 'react-icons/fa';
 import { HERO } from '../Constants/LayoutConfig';
 import heroVisualLeft from '../assets/image copy 6.png';
 import heroFloatMomentum from '../assets/image copy 7.png';
@@ -13,11 +13,29 @@ const AnimatedHero = ({ onGetStarted }) => {
   const navigate = useNavigate();
   const { isLoggedIn } = useSelector((state) => state.auth);
   const [showVideo, setShowVideo] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const videoContainerRef = useRef(null);
 
   useEffect(() => {
     const timer = setTimeout(() => setIsVisible(true), 100);
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
+  }, []);
+
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      videoContainerRef.current?.requestFullscreen();
+    } else {
+      document.exitFullscreen();
+    }
+  };
 
   const handleButtonClick = () => {
     if (isLoggedIn) {
@@ -105,23 +123,34 @@ const AnimatedHero = ({ onGetStarted }) => {
       {/* Video Modal */}
       {showVideo && (
         <div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 transition-opacity duration-300"
+          className="fixed inset-0 z-[200] flex items-center justify-center bg-black/90 backdrop-blur-sm p-4"
           onClick={() => setShowVideo(false)}
         >
           <div
-            className="relative w-full max-w-4xl bg-black rounded-2xl overflow-hidden shadow-2xl transform transition-all duration-300 scale-100 border border-white/10"
+            ref={videoContainerRef}
+            className="relative w-full max-w-4xl bg-black rounded-2xl overflow-hidden shadow-2xl border border-white/10 flex flex-col"
+            style={isFullscreen ? { width: '100vw', height: '100vh', maxWidth: '100vw', borderRadius: 0 } : {}}
             onClick={(e) => e.stopPropagation()}
           >
-            <button
-              onClick={() => setShowVideo(false)}
-              className="absolute top-4 right-4 z-10 p-2 text-white/70 hover:text-white bg-black/40 hover:bg-black/60 rounded-full backdrop-blur-md transition-all duration-200"
-            >
-              <FaTimes size={20} />
-            </button>
-            <div className="aspect-video w-full">
+            <div className="absolute top-4 right-4 z-10 flex items-center gap-2">
+              <button
+                onClick={toggleFullscreen}
+                className="p-2 text-white/70 hover:text-white bg-black/40 hover:bg-black/60 rounded-full backdrop-blur-md transition-all duration-200"
+                title={isFullscreen ? 'خروج من الشاشة الكاملة' : 'شاشة كاملة'}
+              >
+                {isFullscreen ? <FaCompress size={18} /> : <FaExpand size={18} />}
+              </button>
+              <button
+                onClick={() => setShowVideo(false)}
+                className="p-2 text-white/70 hover:text-white bg-black/40 hover:bg-black/60 rounded-full backdrop-blur-md transition-all duration-200"
+              >
+                <FaTimes size={20} />
+              </button>
+            </div>
+            <div className={isFullscreen ? 'w-full h-full' : 'aspect-video w-full'}>
               <iframe
                 className="w-full h-full"
-                src="https://www.youtube.com/embed/ODpB9-MCa5s?autoplay=1"
+                src="https://www.youtube.com/embed/wL0dk_zCgYs?autoplay=1"
                 title="YouTube video player"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowFullScreen

@@ -1261,7 +1261,7 @@ export default function CourseDetail() {
                     </div>
                     <p className="text-white font-semibold mb-1">المحتوى مقفول</p>
                     <p className="text-gray-300 text-sm mb-4">أكمل الواجب لفتح الفيديوهات</p>
-                    <button onClick={() => setActiveTab('كويز فتح المحتوى')}
+                    <button onClick={() => setEntryExamModalOpen(true)}
                       className="flex items-center gap-2 px-5 py-2 rounded-lg text-sm text-white mx-auto" style={{ background: 'rgba(99,102,241,0.8)' }}>
                       <FaLockOpen className="text-xs" /> افتح كويز المحتوى
                     </button>
@@ -1318,7 +1318,7 @@ export default function CourseDetail() {
 
             {/* Navigation + Complete Button (hidden when locked) */}
             {!isLessonLocked && (
-            <div className="flex items-center justify-between mb-4 gap-2">
+            <div className="flex items-stretch justify-between mb-4 gap-2">
               <button onClick={() => prevLesson && navigateToLesson(prevLesson)}
                 disabled={!prevLesson}
                 className="flex items-center gap-1 px-2.5 md:px-3 py-2 rounded-lg text-xs md:text-sm transition-all disabled:opacity-30"
@@ -1327,8 +1327,10 @@ export default function CourseDetail() {
               </button>
 
               <button onClick={handleCompleteLesson}
-                className="flex items-center gap-1.5 px-3 md:px-5 py-2 rounded-lg text-xs md:text-sm font-semibold text-white transition-all hover:opacity-90"
-                style={{ background: 'rgba(99,102,241,0.85)' }}>
+                className="flex items-center gap-1.5 px-3 md:px-5 py-2 rounded-lg text-xs md:text-sm font-semibold transition-all
+                  bg-white/5 border border-white/10 text-white/40
+                  hover:bg-indigo-600 hover:border-indigo-500/50 hover:text-white
+                  active:bg-indigo-700 active:scale-[0.97]">
                 <FaCheckCircle className="text-xs" />
                 {nextLesson ? (isMobile ? 'أكمل وانتقل' : 'أكمل وانتقل للتالي') : 'أكمل الدرس'}
               </button>

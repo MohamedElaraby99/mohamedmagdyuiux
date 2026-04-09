@@ -17,18 +17,18 @@ const DesignerProfileSection = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row items-center gap-10 md:gap-14 lg:gap-16 xl:gap-20">
           {/* صورة أولاً في DOM: على الديسكتوب تظهر يمين، والنص يسار — على الموبايل الصورة فوق */}
-          <div className="w-full md:w-[38%] lg:w-[35%] max-w-sm md:max-w-none shrink-0 order-1">
+          <div className="w-full md:w-[32%] lg:w-[30%] max-w-xs md:max-w-none shrink-0 order-1">
             <div className="relative w-full aspect-[4/5] sm:aspect-[3/4] md:aspect-[4/5] rounded-[24px] overflow-hidden border border-white/[0.08] bg-[#0a0c10] shadow-[0_24px_48px_rgba(0,0,0,0.4)]">
               <img
                 src={profilePortrait}
-                alt="أحمد مجدي عبدالله"
+                alt="أحمد مجدي"
                 className="absolute inset-0 w-full h-full object-cover object-top"
                 loading="lazy"
                 decoding="async"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent pointer-events-none" />
               {/* بطاقة الاسم — صورة التصميم */}
-              <div className="absolute bottom-4 left-[-6%] right-4 sm:right-auto z-10 max-w-[min(100%,320px)]">
+              <div className="absolute bottom-4 left-[-12%] right-3 sm:right-auto z-10 max-w-[min(115%,370px)]">
                 <img
                   src={profileBadge}
                   alt=""
@@ -44,9 +44,9 @@ const DesignerProfileSection = () => {
 
           <div className="w-full md:flex-1 flex flex-col justify-center text-right order-2 min-w-0">
             <h2 className="text-3xl sm:text-4xl md:text-[2.5rem] lg:text-5xl font-bold text-white mb-5 md:mb-6 leading-tight tracking-tight">
-              أحمد مجدي عبدالله
+              أحمد مجدي
             </h2>
-            <p className="text-slate-200/95 text-base sm:text-lg leading-relaxed mb-10 md:mb-12 max-w-xl ms-auto">
+            <p className="text-slate-200/95 text-base sm:text-lg leading-loose mb-10 md:mb-12 max-w-xl ms-auto">
               مصمم UI/UX مبدع، قادر على تحويل الأفكار إلى تجارب مستخدم رائعة بفضل خبرته
               الدقيقة واهتمامه بالتفاصيل... يقدم حلول مبتكرة ويشرح المفاهيم المعقدة ببساطة،
               مما يجعل التعلم ممتعاً وسهلاً.

@@ -180,17 +180,19 @@ export default function HomePage() {
                           {desc}
                         </p>
 
-                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-y-8 gap-x-4 sm:gap-x-6 mb-8 md:mb-10 max-w-2xl">
-                          {stats.map((s) => (
-                            <div key={s.label} className="text-center sm:text-start">
-                              <div className="text-2xl sm:text-3xl font-bold text-white tabular-nums">
-                                {s.value}
+                        <div className="mb-8 md:mb-10">
+                          <div className="flex items-center justify-between px-2 py-4 max-w-2xl">
+                            {stats.map((s) => (
+                              <div key={s.label} className="flex flex-col items-center">
+                                <div className="text-xl sm:text-2xl font-bold text-cyan-400 tabular-nums leading-none">
+                                  {s.value}
+                                </div>
+                                <div className="text-[11px] text-slate-400 mt-1.5 whitespace-nowrap">
+                                  {s.label}
+                                </div>
                               </div>
-                              <div className="text-xs sm:text-sm text-slate-500 mt-1.5">
-                                {s.label}
-                              </div>
-                            </div>
-                          ))}
+                            ))}
+                          </div>
                         </div>
                       </div>
 
@@ -271,7 +273,7 @@ export default function HomePage() {
             <div className="text-center mt-12">
               <Link
                 to="/courses"
-                className="inline-flex items-center justify-center px-8 py-3.5 rounded-full bg-cyan-400 text-gray-900 font-bold text-sm sm:text-base shadow-[0_0_24px_rgba(34,211,238,0.25)] hover:bg-cyan-300 transition-colors duration-200 min-w-[180px] text-center"
+                className="inline-flex items-center justify-center px-8 py-3.5 rounded-full border border-white/30 text-white font-semibold text-sm sm:text-base hover:bg-white/5 hover:border-white/50 transition-colors duration-200 min-w-[180px] text-center"
               >
                 عرض جميع الكورسات
               </Link>

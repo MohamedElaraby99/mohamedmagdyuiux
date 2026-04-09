@@ -1166,6 +1166,8 @@ html.light .textarea {
 .hero-btn-primary {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  flex: 1;
   gap: 10px;
   padding: 14px 32px;
   font-family: 'Alexandria', sans-serif;
@@ -1208,8 +1210,10 @@ html.light .textarea {
 .hero-btn-secondary {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  flex: 1;
   gap: 10px;
-  padding: 14px 24px;
+  padding: 14px 32px;
   color: #f8fafc;
   font-family: 'Alexandria', sans-serif;
   font-weight: 600;
@@ -1616,11 +1620,17 @@ html.light .textarea {
   color: #e0e5fc;
   text-decoration: none;
   white-space: nowrap;
-  transition: color 0.2s ease, opacity 0.2s ease;
+  padding: 7px 14px;
+  border-radius: 999px;
+  position: relative;
+  transition: color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease;
 }
 
 .hero-stats-social-link:hover {
-  color: #ffffff;
+  color: #22d3ee;
+  background: rgba(34, 211, 238, 0.1);
+  box-shadow: 0 0 14px rgba(34, 211, 238, 0.25), inset 0 0 0 1px rgba(34, 211, 238, 0.2);
+  transform: translateY(-1px);
 }
 
 .hero-stats-col--tagline {
