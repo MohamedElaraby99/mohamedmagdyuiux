@@ -10,6 +10,7 @@ import {
 
 import { PaymentSuccessAlert, PaymentErrorAlert, WalletAlert } from '../../Components/ModernAlert';
 import OptimizedLessonContentModal from '../../Components/OptimizedLessonContentModal';
+import Sidebar from '../../Components/Sidebar';
 import ExamModal from '../../Components/Exam/ExamModal';
 import EssayExamModal from '../../Components/EssayExamModal';
 import CustomVideoPlayer from '../../Components/CustomVideoPlayer';
@@ -18,7 +19,7 @@ import ImageViewer from '../../Components/ImageViewer';
 import {
   FaUser, FaPlay, FaArrowRight, FaArrowLeft,
   FaChevronDown,
-  FaLock, FaLockOpen, FaTimes, FaDownload, FaBars,
+  FaLock, FaLockOpen, FaTimes, FaDownload,
   FaFilePdf, FaClipboardList, FaDumbbell, FaImage,
   FaShoppingCart, FaBookOpen, FaVideo, FaCheckCircle, FaPaperPlane, FaComments, FaExclamationTriangle
 } from 'react-icons/fa';
@@ -59,6 +60,7 @@ export default function CourseDetail() {
   // ── core state ────────────────────────────────────────────────────────────
   const [accessAlertShown, setAccessAlertShown] = useState(false);
   const [expandedUnits, setExpandedUnits] = useState(new Set());
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
   const [showErrorAlert, setShowErrorAlert] = useState(false);
   const [showWalletAlert, setShowWalletAlert] = useState(false);
@@ -172,6 +174,14 @@ export default function CourseDetail() {
     if (user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN') return true;
     if (courseAccessState?.hasAccess) return true;
     return coursePurchaseStatus[currentCourse._id] || false;
+  };
+
+  const toggleMainSidebar = () => {
+    const drawerToggle = document.getElementById('sidebar-drawer');
+    if (drawerToggle) {
+      drawerToggle.checked = !drawerToggle.checked;
+      drawerToggle.dispatchEvent(new Event('change', { bubbles: true }));
+    }
   };
 
   const hasContentAccess = () => {
@@ -930,7 +940,10 @@ export default function CourseDetail() {
 
   // ── main render ───────────────────────────────────────────────────────────
   return (
+    <>
+    <Sidebar />
     <div className="h-screen flex flex-col" style={{ background: '#0d1829', color: 'white' }} dir="rtl">
+
       {/* ── Alerts ── */}
       {showSuccessAlert && <PaymentSuccessAlert message={alertMessage} onClose={() => setShowSuccessAlert(false)} />}
       {showErrorAlert && <PaymentErrorAlert message={alertMessage} onClose={() => setShowErrorAlert(false)} />}
@@ -938,27 +951,39 @@ export default function CourseDetail() {
 
       {/* ── Navbar ── */}
       <header className="flex items-center justify-between px-5 md:px-8 flex-shrink-0" style={{ background: '#0d1829', borderBottom: '1px solid rgba(255,255,255,0.07)', height: '52px' }}>
-        {/* Left: Avatar + Name */}
+
+        {/* LEFT: Burger + Brand */}
+        <div className="flex items-center gap-3">
+          <button
+            onClick={toggleMainSidebar}
+            className="flex flex-col items-center justify-center gap-1.5 w-8 h-8 rounded-lg transition-all hover:bg-white/10 flex-shrink-0"
+            title="القائمة الرئيسية">
+            <span className="block w-5 h-0.5 rounded-full bg-white" />
+            <span className="block w-5 h-0.5 rounded-full bg-white" />
+            <span className="block w-5 h-0.5 rounded-full bg-white" />
+          </button>
+          <span className="font-bold tracking-widest text-sm md:text-base text-white select-none">
+            {BRAND?.navbarWordmark || 'MAGDYACADEMY'}
+          </span>
+        </div>
+
+        {/* RIGHT: Avatar + Name */}
         <button onClick={() => navigate('/profile')} className="flex items-center gap-2.5 group">
+          <span className="text-white text-sm font-medium group-hover:text-gray-200 transition-colors">
+            {user?.fullName || user?.name || 'المستخدم'}
+          </span>
           {user?.avatar?.secure_url
             ? <img src={generateImageUrl(user.avatar.secure_url)} alt={user?.fullName}
                 className="w-8 h-8 rounded-full object-cover flex-shrink-0"
                 style={{ border: '2px solid rgba(255,255,255,0.15)' }}
-                onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }} />
+                onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling?.classList?.remove('hidden'); }} />
             : null}
-          <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-white font-bold text-sm ${user?.avatar?.secure_url ? 'hidden' : 'flex'}`}
+          <div className={`w-8 h-8 rounded-full items-center justify-center flex-shrink-0 text-white font-bold text-sm ${user?.avatar?.secure_url ? 'hidden' : 'flex'}`}
             style={{ background: 'rgba(99,102,241,0.6)', border: '2px solid rgba(99,102,241,0.4)' }}>
             {(user?.fullName || user?.name || 'U').charAt(0).toUpperCase()}
           </div>
-          <span className="text-white text-sm font-medium group-hover:text-gray-200 transition-colors">
-            {user?.fullName || user?.name || 'المستخدم'}
-          </span>
         </button>
 
-        {/* Right: Brand */}
-        <span className="font-bold tracking-widest text-sm md:text-base text-white select-none">
-          {BRAND?.navbarWordmark || 'MAGDYACADEMY'}
-        </span>
       </header>
 
       {/* ── Breadcrumb ── */}
@@ -1180,7 +1205,23 @@ export default function CourseDetail() {
         </div>
 
         {/* ── Right: Curriculum Sidebar ── */}
-        <div className="w-72 xl:w-80 flex-shrink-0 flex flex-col border-r overflow-hidden hidden md:flex" style={{ background: '#111827', borderColor: 'rgba(255,255,255,0.08)' }}>
+        {/* Mobile overlay backdrop */}
+        {sidebarOpen && (
+          <div className="fixed inset-0 z-20 md:hidden" style={{ background: 'rgba(0,0,0,0.5)' }} onClick={() => setSidebarOpen(false)} />
+        )}
+
+        {/* Sidebar: fixed overlay on mobile, collapsible inline on desktop */}
+        <div
+          className="flex-col border-r overflow-hidden flex-shrink-0 transition-all duration-300 ease-in-out"
+          style={{
+            background: '#111827',
+            borderColor: 'rgba(255,255,255,0.08)',
+            // Desktop: collapse by width
+            width: sidebarOpen ? '288px' : '0px',
+            minWidth: sidebarOpen ? '288px' : '0px',
+            overflow: 'hidden',
+            display: 'flex',
+          }}>
 
           {/* Header */}
           <div className="p-4 flex-shrink-0" style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
@@ -1398,5 +1439,6 @@ export default function CourseDetail() {
         </div>
       )}
     </div>
+    </>
   );
 }
