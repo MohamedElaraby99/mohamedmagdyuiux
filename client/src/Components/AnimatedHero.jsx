@@ -41,7 +41,9 @@ const AnimatedHero = ({ onGetStarted }) => {
 
         <div className="hero-container">
           <div className={`hero-text-content ${isVisible ? 'hero-animate-in' : 'hero-animate-out'}`}>
-            <span className="hero-eyebrow">2026 MASTERCLASS</span>
+            <span className="hero-eyebrow" dir="ltr">
+              {HERO.eyebrowText || "2026 MASTERCLASS"}
+            </span>
             <h1 className="hero-title hero-title-glow">
               إبدأ رحلتك الآن
             </h1>
