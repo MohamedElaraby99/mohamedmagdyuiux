@@ -98,7 +98,7 @@ export default function Login() {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-gradient-to-br from-primary/10 via-white to-primary/10 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8" dir="rtl">
+      <div className="min-h-screen flex items-center justify-center bg-[#080E1E] py-12 px-4 sm:px-6 lg:px-8" dir="rtl">
         <div className="max-w-md w-full space-y-8">
           {/* Enhanced Header with Logo */}
           <div className="text-center">
@@ -123,21 +123,21 @@ export default function Login() {
               </div>
             </div>
 
-            <h2 className="text-4xl font-bold text-primary dark:text-white mb-3 bg-gradient-to-r from-primary to-primary-dark bg-clip-text text-transparent">
+            <h2 className="mb-3 text-4xl font-bold text-white">
               أهلاً وسهلاً
             </h2>
-            <p className="text-lg text-gray-600 dark:text-gray-300">
+            <p className="text-lg text-slate-300">
               ادخل على حسابك عشان تكمل تعلم
             </p>
           </div>
 
           {/* Enhanced Modern Form */}
-          <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-3xl shadow-2xl p-8 border border-primary/20 dark:border-primary/50 transform hover:scale-[1.02] transition-all duration-500">
+          <div className="rounded-3xl border border-white/10 bg-[#0c1428]/95 p-8 shadow-2xl shadow-black/40 backdrop-blur-sm transition-colors duration-300">
             <form onSubmit={onLogin} className="space-y-6">
 
               {/* Identifier Field (Email or Phone) */}
               <div className="group">
-                <label htmlFor="identifier" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 text-right">
+                <label htmlFor="identifier" className="mb-3 block text-right text-sm font-semibold text-slate-300">
                   البريد الإلكتروني أو رقم الهاتف
                 </label>
                 <div className="relative">
@@ -149,7 +149,7 @@ export default function Login() {
                     name="identifier"
                     type="text"
                     required
-                    className="block w-full pr-12 pl-4 py-4 border-2 border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-primary/20 focus:border-primary transition-all duration-300 text-right shadow-sm hover:shadow-md"
+                    className="block w-full rounded-xl border border-gray-200 bg-white py-4 pl-4 pr-12 text-right text-gray-900 shadow-sm transition-all duration-300 placeholder:text-gray-500 hover:shadow-md focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary/20"
                     placeholder="أدخل البريد الإلكتروني أو رقم الهاتف"
                     value={loginData.identifier}
                     onChange={handleUserInput}
@@ -159,7 +159,7 @@ export default function Login() {
 
               {/* Password Field */}
               <div className="group">
-                <label htmlFor="password" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 text-right">
+                <label htmlFor="password" className="mb-3 block text-right text-sm font-semibold text-slate-300">
                   كلمة السر
                 </label>
                 <div className="relative">
@@ -171,14 +171,14 @@ export default function Login() {
                     name="password"
                     type={showPassword ? "text" : "password"}
                     required
-                    className="block w-full pr-12 pl-12 py-4 border-2 border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-primary/20 focus:border-primary transition-all duration-300 text-right shadow-sm hover:shadow-md"
+                    className="block w-full rounded-xl border border-gray-200 bg-white py-4 pl-12 pr-12 text-right text-gray-900 shadow-sm transition-all duration-300 placeholder:text-gray-500 hover:shadow-md focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary/20"
                     placeholder="اكتب كلمة السر"
                     value={loginData.password}
                     onChange={handleUserInput}
                   />
                   <button
                     type="button"
-                    className="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors duration-200"
+                    className="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400 transition-colors duration-200 hover:text-gray-600"
                     onClick={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? (
@@ -222,10 +222,10 @@ export default function Login() {
             <div className="mt-8">
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t-2 border-gray-200 dark:border-gray-600" />
+                  <div className="w-full border-t border-slate-600/80" />
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-4 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400 font-medium">
+                  <span className="bg-[#0c1428] px-4 font-medium text-slate-400">
                     جديد في منصة  مستر Magdy Academy ؟
                   </span>
                 </div>
@@ -248,9 +248,9 @@ export default function Login() {
 
           {/* Enhanced Footer */}
           <div className="text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-full border border-gray-200 dark:border-gray-700">
-              <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
-              <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">
+            <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-[#0c1428]/90 px-4 py-2 backdrop-blur-sm">
+              <div className="h-2 w-2 animate-pulse rounded-full bg-primary"></div>
+              <p className="text-sm font-medium text-slate-300">
                 لما تدخل، إنت بتوافق على{" "}
                 <Link to="/terms" className="text-primary dark:text-primary-light hover:underline font-semibold">
                   شروط الخدمة
@@ -260,7 +260,7 @@ export default function Login() {
                   سياسة الخصوصية
                 </Link>
               </p>
-              <div className="w-2 h-2 bg-primary rounded-full animate-pulse animation-delay-1000"></div>
+              <div className="h-2 w-2 animate-pulse rounded-full bg-primary animation-delay-1000"></div>
             </div>
           </div>
         </div>
