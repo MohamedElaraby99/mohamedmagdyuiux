@@ -149,7 +149,6 @@ export const FOOTER = {
     // معلومات المطور
     developer: {
         name: "Fikra Software",
-        footerLinkLabel: "صفحة شركة فكرة على فيسبوك",
         url: "https://www.facebook.com/p/Fikra-Software-%D9%81%D9%83%D8%B1%D8%A9-61572824761047/",
         showInFooter: true,
     },
