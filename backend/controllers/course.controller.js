@@ -626,7 +626,7 @@ export const getLessonById = async (req, res, next) => {
         enabled: true,
         type: lesson.entryExam.type || 'mcq',
         taskDescription: lesson.entryExam.taskDescription || '',
-        title: lesson.entryExam.title || 'امتحان المدخل',
+        title: lesson.entryExam.title || 'كويز فتح المحتوى',
         description: lesson.entryExam.description || '',
         timeLimit: lesson.entryExam.timeLimit || 15,
         questionsCount: lesson.entryExam.questions?.length || 0,

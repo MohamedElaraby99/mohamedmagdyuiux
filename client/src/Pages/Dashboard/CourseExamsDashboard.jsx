@@ -140,7 +140,7 @@ const CourseExamsDashboard = () => {
                 ...lesson.entryExam,
                 _id: 'entryExam',
                 type: 'entryExam',
-                displayType: 'امتحان المدخل',
+                displayType: 'كويز فتح المحتوى',
                 index: 0,
                 attemptCount: lesson.entryExam.userAttempts?.length || 0,
             });

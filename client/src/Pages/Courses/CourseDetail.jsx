@@ -59,9 +59,10 @@ export default function CourseDetail() {
   const courseAccessState = useSelector((s) => s.courseAccess.byCourseId[id]);
 
   // ── core state ────────────────────────────────────────────────────────────
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
   const [accessAlertShown, setAccessAlertShown] = useState(false);
   const [expandedUnits, setExpandedUnits] = useState(new Set());
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(() => window.innerWidth >= 768);
   const [mainMenuOpen, setMainMenuOpen] = useState(false);
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
   const [showErrorAlert, setShowErrorAlert] = useState(false);
@@ -114,6 +115,17 @@ export default function CourseDetail() {
   );
 
   // ── effects ───────────────────────────────────────────────────────────────
+  useEffect(() => {
+    const handleResize = () => {
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+      if (!mobile && !sidebarOpen) setSidebarOpen(true);
+      if (mobile && sidebarOpen) setSidebarOpen(false);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [sidebarOpen]);
+
   useEffect(() => { if (id) dispatch(getCourseById(id)); }, [dispatch, id]);
 
   useEffect(() => {
@@ -226,6 +238,25 @@ export default function CourseDetail() {
       unitTitle: lesson.unitTitle,
       unitIndex: lesson.unitIndex,
     });
+  };
+
+  const handleCompleteLesson = async () => {
+    // Mark first video as completed if exists
+    if (activeLessonData?.videos?.[0] && id) {
+      const videoId = activeLessonData.videos[0]._id;
+      dispatch(updateVideoProgress({
+        courseId: id,
+        videoId,
+        progressData: { progress: 100, isCompleted: true, currentTime: activeLessonData.videos[0].duration || 0 },
+      }));
+    }
+    // Go to next lesson or show done message
+    if (nextLesson) {
+      navigateToLesson(nextLesson);
+    } else {
+      setAlertMessage('أحسنت! لقد أكملت آخر درس في الكورس 🎉');
+      setShowSuccessAlert(true);
+    }
   };
 
   // ── access handlers ───────────────────────────────────────────────────────
@@ -570,7 +601,7 @@ export default function CourseDetail() {
         <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: 'rgba(99,102,241,0.2)', border: '1px solid rgba(99,102,241,0.35)' }}>
           <FaLockOpen className="text-indigo-400 text-2xl" />
         </div>
-        <h3 className="text-xl font-bold text-white mb-2">{entryExam.title || 'امتحان المدخل'}</h3>
+        <h3 className="text-xl font-bold text-white mb-2">{entryExam.title || 'كويز فتح المحتوى'}</h3>
         {entryExam.description && <p className="text-gray-400 text-sm mb-4">{entryExam.description}</p>}
         <div className="flex items-center justify-center gap-8 mb-6 text-sm">
           <div className="text-center">
@@ -912,7 +943,7 @@ export default function CourseDetail() {
         <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: isDone ? 'rgba(16,185,129,0.2)' : 'rgba(99,102,241,0.2)', border: `1px solid ${isDone ? 'rgba(16,185,129,0.4)' : 'rgba(99,102,241,0.4)'}` }}>
           {isDone ? <FaCheckCircle className="text-green-400 text-2xl" /> : <FaLockOpen className="text-indigo-400 text-2xl" />}
         </div>
-        <h3 className="text-xl font-bold text-white mb-2">{entryExam?.title || 'امتحان المدخل'}</h3>
+        <h3 className="text-xl font-bold text-white mb-2">{entryExam?.title || 'كويز فتح المحتوى'}</h3>
         {isDone
           ? <p className="text-green-300 text-sm mb-5">تم اجتياز كويز فتح المحتوى بنجاح</p>
           : <p className="text-gray-400 text-sm mb-5">{isTask ? 'سلّم المهمة لفتح محتوى الدرس' : 'أجب على الأسئلة لفتح محتوى الدرس'}</p>
@@ -1086,9 +1117,15 @@ export default function CourseDetail() {
           </span>
         </div>
 
-        {/* RIGHT: Avatar + Name */}
-        <button onClick={() => navigate('/profile')} className="flex items-center gap-2.5 group">
-          <span className="text-white text-sm font-medium group-hover:text-gray-200 transition-colors">
+        {/* RIGHT: Curriculum toggle (mobile) + Avatar + Name */}
+        <div className="flex items-center gap-2">
+        <button onClick={() => setSidebarOpen(v => !v)}
+          className="md:hidden flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs text-gray-300 transition-all"
+          style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)' }}>
+          <FaClipboardList className="text-indigo-400 text-xs" /> المحتوى
+        </button>
+        <button onClick={() => navigate('/profile')} className="flex items-center gap-2 group">
+          <span className="hidden sm:block text-white text-sm font-medium group-hover:text-gray-200 transition-colors">
             {user?.fullName || user?.name || 'المستخدم'}
           </span>
           {user?.avatar?.secure_url
@@ -1102,6 +1139,7 @@ export default function CourseDetail() {
             {(user?.fullName || user?.name || 'U').charAt(0).toUpperCase()}
           </div>
         </button>
+        </div>
 
       </header>
 
@@ -1114,14 +1152,14 @@ export default function CourseDetail() {
       </div>
 
       {/* ── Body: two-column layout ── */}
-      <div className="flex flex-1 overflow-hidden" style={{ flexDirection: 'row', direction: 'ltr' }}>
+      <div className="flex flex-1 overflow-hidden flex-col md:flex-row" style={{ direction: 'ltr' }}>
 
         {/* ── Left: Main Content ── */}
         <div className="flex-1 overflow-y-auto" dir="rtl">
           <div className="p-4 md:p-5">
 
             {/* Video Player Area */}
-            <div className="relative rounded-2xl overflow-hidden mb-4 group" style={{ width: '100%', paddingBottom: '32%', background: '#111827', position: 'relative' }}>
+            <div className="relative overflow-hidden mb-4 group" style={{ width: '100%', paddingBottom: isMobile ? '56.25%' : '34%', background: '#111827', position: 'relative', borderRadius: isMobile ? '12px' : '16px' }}>
               {/* Thumbnail / background */}
               {ytId && (
                 <img src={ytThumb(ytId)} alt={firstVideo?.title}
@@ -1185,57 +1223,70 @@ export default function CourseDetail() {
               )}
             </div>
 
+            {/* Mobile hint */}
+            {isMobile && (
+              <button onClick={() => setSidebarOpen(true)}
+                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl mb-3 text-xs font-medium transition-all"
+                style={{ background: 'rgba(99,102,241,0.12)', border: '1px dashed rgba(99,102,241,0.4)', color: '#a5b4fc' }}>
+                <FaClipboardList className="text-indigo-400 text-xs" />
+                اضغط هنا لعرض محتوى الكورس
+                <FaArrowLeft className="text-indigo-400 text-xs" />
+              </button>
+            )}
+
             {/* Navigation + Complete Button */}
             <div className="flex items-center justify-between mb-4 gap-2">
               <button onClick={() => prevLesson && navigateToLesson(prevLesson)}
                 disabled={!prevLesson}
-                className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm transition-all disabled:opacity-30"
+                className="flex items-center gap-1 px-2.5 md:px-3 py-2 rounded-lg text-xs md:text-sm transition-all disabled:opacity-30"
                 style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.1)' }}>
-                <FaArrowRight className="text-xs" /> السابق
+                <FaArrowRight className="text-xs" /> <span className="hidden xs:inline">السابق</span>
               </button>
 
-              <button className="px-5 py-2 rounded-lg text-sm font-semibold text-white transition-all"
+              <button onClick={handleCompleteLesson}
+                className="flex items-center gap-1.5 px-3 md:px-5 py-2 rounded-lg text-xs md:text-sm font-semibold text-white transition-all hover:opacity-90"
                 style={{ background: 'rgba(99,102,241,0.85)' }}>
-                أكمل الدرس
+                <FaCheckCircle className="text-xs" />
+                {nextLesson ? (isMobile ? 'أكمل وانتقل' : 'أكمل وانتقل للتالي') : 'أكمل الدرس'}
               </button>
 
               <button onClick={() => nextLesson && navigateToLesson(nextLesson)}
                 disabled={!nextLesson}
-                className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm transition-all disabled:opacity-30"
+                className="flex items-center gap-1 px-2.5 md:px-3 py-2 rounded-lg text-xs md:text-sm transition-all disabled:opacity-30"
                 style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.1)' }}>
-                التالي <FaArrowLeft className="text-xs" />
+                <span className="hidden xs:inline">التالي</span> <FaArrowLeft className="text-xs" />
               </button>
             </div>
 
             {/* Lesson Info Row */}
-            <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
-              {/* Author */}
-              <div className="flex items-center gap-2">
-                <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0"
-                  style={{ background: 'linear-gradient(135deg,#6366f1,#8b5cf6)' }}>
-                  <FaUser className="text-white text-sm" />
-                </div>
-                <div>
-                  <div className="text-sm font-semibold">{currentCourse.instructor?.name || 'أحمد مجدي'}</div>
-                  <div className="text-xs text-gray-500">المدرس</div>
-                </div>
-              </div>
-
+            <div className="mb-4">
               {/* Title */}
-              <h1 className="text-lg md:text-xl font-bold text-center flex-1 px-2">
+              <h1 className="text-base md:text-xl font-bold mb-2 leading-snug">
                 {activeLesson?.title || currentCourse.title}
               </h1>
-
-              {/* Stats */}
-              <div className="flex items-center gap-3 text-xs text-gray-400">
-                <span className="flex items-center gap-1">
-                  <svg viewBox="0 0 20 20" fill="currentColor" className="w-3.5 h-3.5 text-gray-500"><path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" /></svg>
-                  2K
-                </span>
-                <span className="flex items-center gap-1">
-                  <svg viewBox="0 0 20 20" fill="currentColor" className="w-3.5 h-3.5 text-gray-500"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" /></svg>
-                  {activeLessonData?.duration || '12'} دقيقة
-                </span>
+              <div className="flex items-center justify-between flex-wrap gap-2">
+                {/* Author */}
+                <div className="flex items-center gap-2">
+                  <div className="w-7 h-7 md:w-9 md:h-9 rounded-full flex items-center justify-center flex-shrink-0"
+                    style={{ background: 'linear-gradient(135deg,#6366f1,#8b5cf6)' }}>
+                    <FaUser className="text-white text-xs md:text-sm" />
+                  </div>
+                  <div>
+                    <div className="text-xs md:text-sm font-semibold">{currentCourse.instructor?.name || 'أحمد مجدي'}</div>
+                    <div className="text-xs text-gray-500">المدرس</div>
+                  </div>
+                </div>
+                {/* Stats */}
+                <div className="flex items-center gap-3 text-xs text-gray-400">
+                  <span className="flex items-center gap-1">
+                    <svg viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3 text-gray-500"><path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" /></svg>
+                    2K
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <svg viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3 text-gray-500"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" /></svg>
+                    {activeLessonData?.duration || '12'} دقيقة
+                  </span>
+                </div>
               </div>
             </div>
 
@@ -1250,7 +1301,39 @@ export default function CourseDetail() {
                 'الملحقات': d ? ((d.pdfs?.length || 0) + (d.lockedPdfsCount || 0)) : null,
                 'مناقشات': null,
               };
-              return (
+              return isMobile ? (
+                /* ── Mobile: pill tabs ── */
+                <div className="mb-4 -mx-3">
+                  <div className="flex gap-2 overflow-x-auto px-3 pb-1" style={{ scrollbarWidth: 'none' }}>
+                    {['كويز فتح المحتوى', 'واجب', 'كويز', 'نظرة سريعة', 'الملحقات', 'مناقشات'].map((tab) => {
+                      const badge = tabBadges[tab];
+                      const isActive = activeTab === tab;
+                      return (
+                        <button key={tab} onClick={() => setActiveTab(tab)}
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap flex-shrink-0 transition-all"
+                          style={isActive ? {
+                            background: 'rgba(99,102,241,0.9)',
+                            color: 'white',
+                            boxShadow: '0 2px 12px rgba(99,102,241,0.4)',
+                          } : {
+                            background: 'rgba(255,255,255,0.07)',
+                            color: '#9ca3af',
+                            border: '1px solid rgba(255,255,255,0.1)',
+                          }}>
+                          {tab}
+                          {badge != null && badge > 0 && (
+                            <span className="inline-flex items-center justify-center w-4 h-4 rounded-full text-xs font-bold"
+                              style={{ background: isActive ? 'rgba(255,255,255,0.25)' : 'rgba(99,102,241,0.4)', color: 'white', fontSize: '10px' }}>
+                              {badge}
+                            </span>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              ) : (
+                /* ── Desktop: underline tabs ── */
                 <div className="flex gap-0 mb-5 border-b overflow-x-auto" style={{ borderColor: 'rgba(255,255,255,0.1)' }}>
                   {['كويز فتح المحتوى', 'واجب', 'كويز', 'نظرة سريعة', 'الملحقات', 'مناقشات'].map((tab) => {
                     const badge = tabBadges[tab];
@@ -1325,27 +1408,52 @@ export default function CourseDetail() {
 
         {/* ── Right: Curriculum Sidebar ── */}
         {/* Mobile overlay backdrop */}
-        {sidebarOpen && (
-          <div className="fixed inset-0 z-20 md:hidden" style={{ background: 'rgba(0,0,0,0.5)' }} onClick={() => setSidebarOpen(false)} />
+        {sidebarOpen && isMobile && (
+          <div className="fixed inset-0 z-20" style={{ background: 'rgba(0,0,0,0.6)' }} onClick={() => setSidebarOpen(false)} />
         )}
 
         {/* Sidebar: fixed overlay on mobile, collapsible inline on desktop */}
         <div
           dir="rtl"
-          className="flex-col border-r overflow-hidden flex-shrink-0 transition-all duration-300 ease-in-out"
-          style={{
+          className="flex-col flex-shrink-0"
+          style={isMobile ? {
+            position: 'fixed',
+            top: 0,
+            right: 0,
+            height: '100%',
+            width: '85vw',
+            maxWidth: '320px',
+            zIndex: 30,
             background: '#111827',
-            borderColor: 'rgba(255,255,255,0.08)',
-            // Desktop: collapse by width
-            width: sidebarOpen ? '288px' : '0px',
-            minWidth: sidebarOpen ? '288px' : '0px',
+            borderLeft: '1px solid rgba(255,255,255,0.08)',
             overflow: 'hidden',
             display: 'flex',
+            transform: sidebarOpen ? 'translateX(0)' : 'translateX(100%)',
+            transition: 'transform 0.3s ease',
+            boxShadow: sidebarOpen ? '-8px 0 32px rgba(0,0,0,0.5)' : 'none',
+          } : {
+            position: 'relative',
+            width: sidebarOpen ? '288px' : '0px',
+            minWidth: sidebarOpen ? '288px' : '0px',
+            background: '#111827',
+            borderLeft: '1px solid rgba(255,255,255,0.08)',
+            overflow: 'hidden',
+            display: 'flex',
+            transition: 'width 0.3s ease, min-width 0.3s ease',
           }}>
 
           {/* Header */}
           <div className="p-4 flex-shrink-0" style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
-            <h2 className="font-bold text-white mb-3 text-sm">Course Curriculum</h2>
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="font-bold text-white text-sm">Course Curriculum</h2>
+              {isMobile && (
+                <button onClick={() => setSidebarOpen(false)}
+                  className="w-7 h-7 rounded-full flex items-center justify-center text-gray-400 hover:text-white"
+                  style={{ background: 'rgba(255,255,255,0.08)' }}>
+                  <FaTimes className="text-xs" />
+                </button>
+              )}
+            </div>
             {/* Progress bar */}
             <div className="relative h-1 rounded-full mb-2" style={{ background: 'rgba(255,255,255,0.1)' }}>
               <div className="h-full rounded-full transition-all" style={{ width: `${progressPct}%`, background: 'linear-gradient(90deg,#14b8a6,#06b6d4)' }} />
@@ -1453,7 +1561,7 @@ export default function CourseDetail() {
             {/* Header */}
             <div className="flex items-center justify-between px-5 py-4 flex-shrink-0" style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
               <h3 className="text-white font-bold text-base">
-                {activeLessonData?.entryExam?.title || 'كويز فتح المحتوى'}
+                كويز فتح المحتوى
               </h3>
               <button onClick={() => setEntryExamModalOpen(false)} className="w-8 h-8 rounded-full flex items-center justify-center text-gray-400 hover:text-white transition-colors" style={{ background: 'rgba(255,255,255,0.07)' }}>
                 <FaTimes />

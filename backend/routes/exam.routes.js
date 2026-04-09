@@ -21,7 +21,7 @@ router.post("/training", isLoggedIn, takeTrainingExam);
 // Take final exam
 router.post("/final", isLoggedIn, takeFinalExam);
 
-// Take entry exam (امتحان المدخل)
+// Take entry exam (كويز فتح المحتوى)
 router.post("/entry", isLoggedIn, takeEntryExam);
 
 // Review entry task (admin only)

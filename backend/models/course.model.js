@@ -115,7 +115,7 @@ const lessonSchema = new mongoose.Schema({
   entryExam: {
     enabled: { type: Boolean, default: false },
     type: { type: String, enum: ['mcq', 'task'], default: 'mcq' },
-    title: { type: String, default: 'امتحان المدخل' },
+    title: { type: String, default: 'كويز فتح المحتوى' },
     description: { type: String, default: '' },
     taskDescription: { type: String, default: '' }, // For type='task'
     timeLimit: { type: Number, default: 15 }, // Time limit in minutes

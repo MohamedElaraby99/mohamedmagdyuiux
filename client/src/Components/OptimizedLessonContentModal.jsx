@@ -450,7 +450,7 @@ const OptimizedLessonContentModal = ({ isOpen, onClose, courseId, lessonId, unit
         <div className="bg-gradient-to-br from-green-50 to-amber-100 dark:from-gray-800 dark:to-gray-900 p-6 sm:p-8 rounded-xl border-2 border-green-300 dark:border-green-700 text-center">
           <div className="text-6xl mb-4">🔓</div>
           <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-3">
-            {entryExam.title || 'امتحان المدخل'}
+            {entryExam.title || 'كويز فتح المحتوى'}
           </h3>
           {entryExam.description && (
             <p className="text-gray-600 dark:text-gray-400 mb-4">{entryExam.description}</p>
@@ -586,7 +586,7 @@ const OptimizedLessonContentModal = ({ isOpen, onClose, courseId, lessonId, unit
         {/* Exam Header */}
         <div className="bg-gradient-to-r from-green-100 to-amber-100 dark:from-green-900/30 dark:to-amber-900/30 p-4 rounded-xl">
           <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-2">
-            🔓 {entryExam.title || 'امتحان المدخل'}
+            🔓 {entryExam.title || 'كويز فتح المحتوى'}
           </h3>
           <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
             <span>⏱️ الوقت المحدد: {entryExam.timeLimit || 15} دقيقة</span>
@@ -669,7 +669,7 @@ const OptimizedLessonContentModal = ({ isOpen, onClose, courseId, lessonId, unit
             onClick={() => setSelectedTab('entryExam')}
             className="mt-4 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:shadow-lg"
           >
-            🔓 اذهب لامتحان المدخل
+            🔓 اذهب لكويز فتح المحتوى
           </button>
         </div>
       );
@@ -762,7 +762,7 @@ const OptimizedLessonContentModal = ({ isOpen, onClose, courseId, lessonId, unit
             onClick={() => setSelectedTab('entryExam')}
             className="mt-4 bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:shadow-lg"
           >
-            🔓 اذهب لامتحان المدخل
+            🔓 اذهب لكويز فتح المحتوى
           </button>
         </div>
       );
@@ -883,7 +883,7 @@ const OptimizedLessonContentModal = ({ isOpen, onClose, courseId, lessonId, unit
             onClick={() => setSelectedTab('entryExam')}
             className="mt-4 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:shadow-lg"
           >
-            🔓 اذهب لامتحان المدخل
+            🔓 اذهب لكويز فتح المحتوى
           </button>
         </div>
       );
@@ -1028,7 +1028,7 @@ const OptimizedLessonContentModal = ({ isOpen, onClose, courseId, lessonId, unit
             onClick={() => setSelectedTab('entryExam')}
             className="mt-4 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:shadow-lg"
           >
-            🔓 اذهب لامتحان المدخل
+            🔓 اذهب لكويز فتح المحتوى
           </button>
         </div>
       );
@@ -1145,7 +1145,7 @@ const OptimizedLessonContentModal = ({ isOpen, onClose, courseId, lessonId, unit
             onClick={() => setSelectedTab('entryExam')}
             className="mt-4 bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:shadow-lg"
           >
-            🔓 اذهب لامتحان المدخل
+            🔓 اذهب لكويز فتح المحتوى
           </button>
         </div>
       );
@@ -1438,7 +1438,7 @@ const OptimizedLessonContentModal = ({ isOpen, onClose, courseId, lessonId, unit
               <div className="flex items-center gap-3 text-green-800 dark:text-green-200">
                 <span className="text-3xl">🔒</span>
                 <div>
-                  <p className="font-bold text-lg">امتحان المدخل مطلوب</p>
+                  <p className="font-bold text-lg">كويز فتح المحتوى مطلوب</p>
                   <p className="text-sm text-green-700 dark:text-green-300">
                     يجب عليك حلكويز فتح المحتوى أولاً لفتح الفيديوهات والملفات
                     {lesson.lockedVideosCount > 0 && ` (${lesson.lockedVideosCount} فيديو`}

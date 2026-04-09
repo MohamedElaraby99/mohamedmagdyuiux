@@ -151,12 +151,12 @@ const LessonContentModal = ({ courseId, unitId, lessonId, onClose }) => {
   const [expandedEssayExams, setExpandedEssayExams] = useState(new Set());
   const [expandedTrainings, setExpandedTrainings] = useState(new Set());
   const [hasExamDraft, setHasExamDraft] = useState(false);
-  // Entry Exam (امتحان المدخل) state
+  // Entry Exam (كويز فتح المحتوى) state
   const [entryExam, setEntryExam] = useState({
     enabled: lesson?.entryExam?.enabled || false,
     type: lesson?.entryExam?.type || 'mcq',
     taskDescription: lesson?.entryExam?.taskDescription || '',
-    title: lesson?.entryExam?.title || 'امتحان المدخل',
+    title: lesson?.entryExam?.title || 'كويز فتح المحتوى',
     description: lesson?.entryExam?.description || '',
     timeLimit: lesson?.entryExam?.timeLimit || 15,
     questions: lesson?.entryExam?.questions || []
@@ -2303,7 +2303,7 @@ const LessonContentModal = ({ courseId, unitId, lessonId, onClose }) => {
                         value={entryExam.title}
                         onChange={(e) => setEntryExam(prev => ({ ...prev, title: e.target.value }))}
                         className="w-full p-2 border rounded text-right"
-                        placeholder={entryExam.type === 'task' ? "عنوان المهمة" : "امتحان المدخل"}
+                        placeholder={entryExam.type === 'task' ? "عنوان المهمة" : "كويز فتح المحتوى"}
                       />
                     </div>
                     {entryExam.type === 'mcq' && (

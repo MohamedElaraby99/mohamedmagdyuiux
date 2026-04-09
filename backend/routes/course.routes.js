@@ -154,7 +154,7 @@ router.put('/:courseId/lessons/:lessonId/entry-exam', isLoggedIn, authorisedRole
     lesson.entryExam = {
       enabled: entryExam.enabled,
       type: entryExam.type || 'mcq',
-      title: entryExam.title || 'امتحان المدخل',
+      title: entryExam.title || 'كويز فتح المحتوى',
       description: entryExam.description || '',
       taskDescription: entryExam.taskDescription || '',
       timeLimit: entryExam.timeLimit || 15,
@@ -201,7 +201,7 @@ router.put('/:courseId/units/:unitId/lessons/:lessonId/entry-exam', isLoggedIn, 
     lesson.entryExam = {
       enabled: entryExam.enabled,
       type: entryExam.type || 'mcq',
-      title: entryExam.title || 'امتحان المدخل',
+      title: entryExam.title || 'كويز فتح المحتوى',
       description: entryExam.description || '',
       taskDescription: entryExam.taskDescription || '',
       timeLimit: entryExam.timeLimit || 15,
