@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { getCourseById } from '../../Redux/Slices/CourseSlice';
+import { logout } from '../../Redux/Slices/AuthSlice';
 import {
   purchaseCourse,
   checkCoursePurchaseStatus,
@@ -10,7 +11,6 @@ import {
 
 import { PaymentSuccessAlert, PaymentErrorAlert, WalletAlert } from '../../Components/ModernAlert';
 import OptimizedLessonContentModal from '../../Components/OptimizedLessonContentModal';
-import Sidebar from '../../Components/Sidebar';
 import ExamModal from '../../Components/Exam/ExamModal';
 import EssayExamModal from '../../Components/EssayExamModal';
 import CustomVideoPlayer from '../../Components/CustomVideoPlayer';
@@ -61,6 +61,7 @@ export default function CourseDetail() {
   const [accessAlertShown, setAccessAlertShown] = useState(false);
   const [expandedUnits, setExpandedUnits] = useState(new Set());
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [mainMenuOpen, setMainMenuOpen] = useState(false);
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
   const [showErrorAlert, setShowErrorAlert] = useState(false);
   const [showWalletAlert, setShowWalletAlert] = useState(false);
@@ -176,13 +177,7 @@ export default function CourseDetail() {
     return coursePurchaseStatus[currentCourse._id] || false;
   };
 
-  const toggleMainSidebar = () => {
-    const drawerToggle = document.getElementById('sidebar-drawer');
-    if (drawerToggle) {
-      drawerToggle.checked = !drawerToggle.checked;
-      drawerToggle.dispatchEvent(new Event('change', { bubbles: true }));
-    }
-  };
+  const toggleMainSidebar = () => setMainMenuOpen(prev => !prev);
 
   const hasContentAccess = () => {
     if (!user || !isLoggedIn) return false;
@@ -472,7 +467,7 @@ export default function CourseDetail() {
         <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: 'rgba(16,185,129,0.2)' }}>
           <FaCheckCircle className="text-green-400 text-2xl" />
         </div>
-        <h3 className="text-xl font-bold text-green-300">تم اجتيازكويز فتح المحتوى</h3>
+        <h3 className="text-xl font-bold text-green-300">تم اجتياز كويز فتح المحتوى</h3>
         <p className="text-gray-300 mt-2">النتيجة: {userResult.score} / {userResult.totalQuestions}</p>
       </div>
     );
@@ -941,8 +936,95 @@ export default function CourseDetail() {
   // ── main render ───────────────────────────────────────────────────────────
   return (
     <>
-    <Sidebar />
+    {/* ── Main App Menu Panel ── */}
+    {/* Backdrop */}
+    <div
+      onClick={() => setMainMenuOpen(false)}
+      style={{
+        position: 'fixed', inset: 0, zIndex: 9998,
+        background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(3px)',
+        opacity: mainMenuOpen ? 1 : 0,
+        pointerEvents: mainMenuOpen ? 'auto' : 'none',
+        transition: 'opacity 0.3s',
+      }} />
+    {/* Sliding Panel – always left side, pixel-exact */}
+    <div
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        height: '100%',
+        width: '320px',
+        zIndex: 9999,
+        transform: mainMenuOpen ? 'translateX(0px)' : 'translateX(-320px)',
+        transition: 'transform 0.3s ease',
+        background: '#080E1E',
+        borderRight: '1px solid rgba(255,255,255,0.1)',
+        boxShadow: mainMenuOpen ? '8px 0 40px rgba(0,0,0,0.6)' : 'none',
+        display: 'flex',
+        flexDirection: 'column',
+        direction: 'rtl',
+      }}>
+        {/* Panel Header */}
+        <div className="flex items-center justify-between px-4 py-4 border-b" style={{ borderColor: 'rgba(255,255,255,0.08)' }}>
+          <button onClick={() => setMainMenuOpen(false)}
+            className="w-9 h-9 rounded-xl flex items-center justify-center text-white transition-colors"
+            style={{ background: 'rgba(255,255,255,0.1)' }}>
+            <FaTimes className="text-sm" />
+          </button>
+          <div className="text-right">
+            <div className="font-bold text-sm uppercase tracking-wider text-white">{BRAND?.navbarWordmark || 'MAGDY ACADEMY'}</div>
+            <div className="text-xs text-gray-500 mt-0.5">{BRAND?.platformName || 'E-learning Platform'}</div>
+          </div>
+        </div>
+
+        {/* Nav Links */}
+        <div className="flex-1 overflow-y-auto px-3 py-4">
+          {[
+            { to: '/', label: 'الرئيسية', icon: <FaBookOpen className="text-sm" /> },
+            { to: '/courses', label: user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN' ? 'جميع الكورسات' : 'كورساتي', icon: <FaClipboardList className="text-sm" /> },
+            { to: '/exam-history', label: 'سجل الامتحانات', icon: <FaCheckCircle className="text-sm" /> },
+          ].map(({ to, label, icon }) => (
+            <button key={to} onClick={() => { navigate(to); setMainMenuOpen(false); }}
+              className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm text-gray-300 hover:text-white hover:bg-white/5 transition-all mb-1 text-right"
+              style={{ border: '1px solid transparent' }}>
+              <span className="text-gray-500">{icon}</span>
+              {label}
+            </button>
+          ))}
+          {(user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN') && (
+            <button onClick={() => { navigate('/admin/dashboard'); setMainMenuOpen(false); }}
+              className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm text-gray-300 hover:text-white hover:bg-white/5 transition-all mb-1 text-right">
+              <FaUser className="text-sm text-gray-500" />
+              لوحة تحكم الإدارة
+            </button>
+          )}
+        </div>
+
+        {/* Bottom: user + logout */}
+        <div className="px-4 py-4 border-t" style={{ borderColor: 'rgba(255,255,255,0.08)' }}>
+          <div className="flex flex-col items-center gap-3">
+            <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0"
+              style={{ background: 'linear-gradient(135deg,#6C2BD9,#7C3AED)', border: '2px solid rgba(255,255,255,0.2)' }}>
+              {user?.avatar?.secure_url
+                ? <img src={generateImageUrl(user.avatar.secure_url)} alt="" className="w-full h-full rounded-full object-cover" />
+                : (user?.fullName || 'U').charAt(0).toUpperCase()}
+            </div>
+            <div className="text-center">
+              <div className="text-sm font-semibold text-white">{user?.fullName || 'User'}</div>
+              <div className="text-xs text-gray-500">{user?.role === 'SUPER_ADMIN' ? 'مدير مميز' : user?.role === 'ADMIN' ? 'مدير' : 'طالب'}</div>
+            </div>
+            <button onClick={() => { dispatch(logout()); navigate('/login'); }}
+              className="w-full py-2 rounded-xl text-sm font-semibold text-white transition-all"
+              style={{ background: 'rgba(239,68,68,0.15)', border: '1px solid rgba(239,68,68,0.3)' }}>
+              تسجيل الخروج
+            </button>
+          </div>
+        </div>
+      </div>
+
     <div className="h-screen flex flex-col" style={{ background: '#0d1829', color: 'white' }} dir="rtl">
+
 
       {/* ── Alerts ── */}
       {showSuccessAlert && <PaymentSuccessAlert message={alertMessage} onClose={() => setShowSuccessAlert(false)} />}
@@ -995,14 +1077,14 @@ export default function CourseDetail() {
       </div>
 
       {/* ── Body: two-column layout ── */}
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 overflow-hidden" style={{ flexDirection: 'row', direction: 'ltr' }}>
 
         {/* ── Left: Main Content ── */}
-        <div className="flex-1 overflow-y-auto">
-          <div className="p-4 md:p-5 max-w-3xl">
+        <div className="flex-1 overflow-y-auto" dir="rtl">
+          <div className="p-4 md:p-5">
 
             {/* Video Player Area */}
-            <div className="relative rounded-2xl overflow-hidden mb-4 group" style={{ aspectRatio: '16/9', background: '#111827' }}>
+            <div className="relative rounded-2xl overflow-hidden mb-4 group" style={{ width: '100%', paddingBottom: '32%', background: '#111827', position: 'relative' }}>
               {/* Thumbnail / background */}
               {ytId && (
                 <img src={ytThumb(ytId)} alt={firstVideo?.title}
@@ -1212,6 +1294,7 @@ export default function CourseDetail() {
 
         {/* Sidebar: fixed overlay on mobile, collapsible inline on desktop */}
         <div
+          dir="rtl"
           className="flex-col border-r overflow-hidden flex-shrink-0 transition-all duration-300 ease-in-out"
           style={{
             background: '#111827',

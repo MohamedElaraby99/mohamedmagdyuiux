@@ -101,7 +101,7 @@ export default function Sidebar({ hideBar = false }) {
 
   return (
     <>
-      <div className="drawer">
+      <div className="drawer drawer-end">
         <input className="drawer-toggle" id="sidebar-drawer" type="checkbox" />
         <div className="drawer-side" style={{ zIndex: 9999 }}>
           {/* DaisyUI drawer overlay (hidden) */}

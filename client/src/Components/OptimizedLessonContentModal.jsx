@@ -390,7 +390,7 @@ const OptimizedLessonContentModal = ({ isOpen, onClose, courseId, lessonId, unit
         <div className="bg-gradient-to-br from-green-50 to-emerald-100 dark:from-gray-800 dark:to-gray-900 p-6 sm:p-8 rounded-xl border-2 border-green-300 dark:border-green-700 text-center">
           <div className="text-6xl mb-4">✅</div>
           <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-3">
-            تم اجتيازكويز فتح المحتوى بنجاح!
+            تم اجتياز كويز فتح المحتوى بنجاح!
           </h3>
           <p className="text-gray-600 dark:text-gray-400 mb-4">
             النتيجة: {userResult.score} / {userResult.totalQuestions}
