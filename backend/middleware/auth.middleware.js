@@ -2,6 +2,9 @@ import AppError from "../utils/error.utils.js";
 import jwt from "jsonwebtoken";
 import userModel from '../models/user.model.js';
 import UserDevice from '../models/userDevice.model.js';
+import Purchase from '../models/purchase.model.js';
+import CourseAccess from '../models/courseAccess.model.js';
+import Course from '../models/course.model.js';
 import { generateDeviceFingerprint, parseDeviceInfo } from '../utils/deviceUtils.js';
 
 const isLoggedIn = async (req, res, next) => {
@@ -55,14 +58,88 @@ const authorizeSubscriber = async (req, res, next) => {
         return next(new AppError('المستخدم غير موجود', 404));
     }
 
+    if (['ADMIN', 'SUPER_ADMIN'].includes(role)) {
+        return next();
+    }
+
     const subscriptionStatus = user.subscription?.status;
 
-    // For now, allow all logged-in users to access courses (temporary fix)
-    if (!['ADMIN', 'SUPER_ADMIN'].includes(role) && subscriptionStatus !== 'active') {
-        // Allowing access for now
+    if (subscriptionStatus !== 'active') {
+        return next(new AppError('يجب أن يكون لديك اشتراك فعال للوصول إلى هذا المحتوى', 403));
     }
 
     next();
+}
+
+const verifyCourseAccess = async (req, res, next) => {
+    try {
+        const { role, id } = req.user;
+        const userId = req.user._id || id;
+
+        if (['ADMIN', 'SUPER_ADMIN'].includes(role)) {
+            return next();
+        }
+
+        const courseId = req.params.courseId || req.params.id;
+        if (!courseId) {
+            return next(new AppError('معرف الكورس مطلوب', 400));
+        }
+
+        const course = await Course.findById(courseId).select('price isFree units directLessons');
+        if (!course) {
+            return next(new AppError('الكورس غير موجود', 404));
+        }
+
+        if (course.isFree || (course.price != null && course.price <= 0)) {
+            return next();
+        }
+
+        const lessonId = req.params.lessonId;
+        if (lessonId) {
+            const unitId = req.query.unitId;
+            let lesson = null;
+            let unit = null;
+
+            if (unitId) {
+                unit = course.units?.id(unitId);
+                if (unit) lesson = unit.lessons?.id(lessonId);
+            } else {
+                lesson = course.directLessons?.id(lessonId);
+                if (!lesson) {
+                    for (const u of (course.units || [])) {
+                        lesson = u.lessons?.id(lessonId);
+                        if (lesson) { unit = u; break; }
+                    }
+                }
+            }
+
+            if (lesson?.isFree || unit?.isFree) {
+                return next();
+            }
+        }
+
+        const [purchase, access] = await Promise.all([
+            Purchase.findOne({
+                userId,
+                courseId,
+                purchaseType: 'course',
+                status: 'completed'
+            }),
+            CourseAccess.findOne({
+                userId,
+                courseId,
+                accessEndAt: { $gt: new Date() }
+            })
+        ]);
+
+        if (purchase || access) {
+            return next();
+        }
+
+        return next(new AppError('لازم تشتري الكورس أو تفعل كود وصول عشان تقدر تشوف المحتوى', 403));
+    } catch (error) {
+        return next(new AppError('حدث خطأ أثناء التحقق من صلاحية الوصول', 500));
+    }
 }
 
 // Device verification middleware
@@ -127,5 +204,6 @@ export {
     authorisedRoles,
     authorizeSubscriber,
     checkDeviceAuthorization,
-    requireAdmin
+    requireAdmin,
+    verifyCourseAccess
 }

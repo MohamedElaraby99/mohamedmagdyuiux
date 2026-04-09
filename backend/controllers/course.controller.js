@@ -367,20 +367,15 @@ export const getCourseById = async (req, res, next) => {
     if (courseObj.units) {
 
       courseObj.units = courseObj.units.map(unit => {
-        console.log(`📚 Unit "${unit.title}":`, {
-          lessonsCount: unit.lessons?.length || 0
-        });
         return {
           ...unit,
           isFree: unit.isFree || false,
-          lessons: unit.lessons?.map(lesson => {
-            const lessonData = {
+          lessons: unit.lessons?.map(lesson => ({
               _id: lesson._id,
               title: lesson.title,
               description: lesson.description,
               price: lesson.price,
               isFree: lesson.isFree || false,
-              content: lesson.content,
               videosCount: lesson.videos?.length || 0,
               pdfsCount: lesson.pdfs?.length || 0,
               examsCount: lesson.exams?.length || 0,
@@ -390,15 +385,7 @@ export const getCourseById = async (req, res, next) => {
                 type: lesson.entryExam.type,
                 title: lesson.entryExam.title
               } : null
-            };
-            console.log(`  📚 Lesson "${lesson.title}":`, {
-              videos: lesson.videos?.length || 0,
-              pdfs: lesson.pdfs?.length || 0,
-              exams: lesson.exams?.length || 0,
-              trainings: lesson.trainings?.length || 0
-            });
-            return lessonData;
-          }) || []
+          })) || []
         };
       });
     }
@@ -406,14 +393,12 @@ export const getCourseById = async (req, res, next) => {
     // Clean up direct lessons
     if (courseObj.directLessons) {
 
-      courseObj.directLessons = courseObj.directLessons.map(lesson => {
-        const lessonData = {
+      courseObj.directLessons = courseObj.directLessons.map(lesson => ({
           _id: lesson._id,
           title: lesson.title,
           description: lesson.description,
           price: lesson.price,
           isFree: lesson.isFree || false,
-          content: lesson.content,
           videosCount: lesson.videos?.length || 0,
           pdfsCount: lesson.pdfs?.length || 0,
           examsCount: lesson.exams?.length || 0,
@@ -423,15 +408,7 @@ export const getCourseById = async (req, res, next) => {
             type: lesson.entryExam.type,
             title: lesson.entryExam.title
           } : null
-        };
-        console.log(`📚 Lesson "${lesson.title}":`, {
-          videos: lesson.videos?.length || 0,
-          pdfs: lesson.pdfs?.length || 0,
-          exams: lesson.exams?.length || 0,
-          trainings: lesson.trainings?.length || 0
-        });
-        return lessonData;
-      });
+      }));
     }
 
     return res.status(200).json({ success: true, data: { course: courseObj } });

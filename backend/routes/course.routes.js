@@ -2,7 +2,7 @@ import express from 'express';
 import jwt from 'jsonwebtoken';
 import User from '../models/user.model.js';
 import upload from '../middleware/multer.middleware.js';
-import { isLoggedIn, authorisedRoles } from '../middleware/auth.middleware.js';
+import { isLoggedIn, authorisedRoles, verifyCourseAccess } from '../middleware/auth.middleware.js';
 import {
   getAllCourses,
   getAdminCourses,
@@ -66,8 +66,8 @@ router.get('/admin/:id', isLoggedIn, authorisedRoles('ADMIN', 'SUPER_ADMIN'), ge
 router.get('/stats', getCourseStats);
 router.get('/:id', getCourseById);
 
-// Get optimized lesson data
-router.get('/:courseId/lessons/:lessonId', isLoggedIn, getLessonById);
+// Get optimized lesson data (requires login + course purchase/access)
+router.get('/:courseId/lessons/:lessonId', isLoggedIn, verifyCourseAccess, getLessonById);
 
 // Protected routes
 router.post('/', upload.single('thumbnail'), isLoggedIn, authorisedRoles('ADMIN', 'SUPER_ADMIN', 'INSTRUCTOR'), createCourse);
@@ -119,8 +119,8 @@ router.delete('/:courseId/lessons/:lessonId', isLoggedIn, authorisedRoles('ADMIN
 router.put('/:courseId/reorder-lessons', isLoggedIn, authorisedRoles('ADMIN', 'SUPER_ADMIN', 'INSTRUCTOR'), reorderLessons);
 router.put('/:courseId/reorder-units', isLoggedIn, authorisedRoles('ADMIN', 'SUPER_ADMIN', 'INSTRUCTOR'), reorderUnits);
 
-// Training attempt submission
-router.post('/:courseId/lessons/:lessonId/trainings/:trainingIndex/submit', isLoggedIn, submitTrainingAttempt);
+// Training attempt submission (requires course access)
+router.post('/:courseId/lessons/:lessonId/trainings/:trainingIndex/submit', isLoggedIn, verifyCourseAccess, submitTrainingAttempt);
 
 // Entry Exam management
 router.put('/:courseId/lessons/:lessonId/entry-exam', isLoggedIn, authorisedRoles('ADMIN', 'SUPER_ADMIN', 'INSTRUCTOR'), async (req, res, next) => {

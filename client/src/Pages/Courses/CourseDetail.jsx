@@ -104,17 +104,57 @@ export default function CourseDetail() {
   // YouTube durations cache: { [videoId]: seconds }
   const [ytDurations, setYtDurations] = useState({});
 
+  // ── access helpers (before hooks that depend on them) ─────────────────────
+  const isCoursePurchased = () => {
+    if (!currentCourse) return false;
+    if (user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN') return true;
+    if (courseAccessState?.hasAccess) return true;
+    return coursePurchaseStatus[currentCourse._id] || false;
+  };
+
+  const hasContentAccess = () => {
+    if (!user || !isLoggedIn) return false;
+    if (user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN') return true;
+    const price = currentCourse?.price || 0;
+    if (price <= 0) return true;
+    if (isCoursePurchased()) return true;
+    if (courseAccessState?.source === 'code' && courseAccessState?.accessEndAt) {
+      if (new Date(courseAccessState.accessEndAt) <= new Date()) return false;
+    }
+    return courseAccessState?.hasAccess || false;
+  };
+
+  const isActiveLessonFree = () => {
+    if (!activeLesson || !currentCourse) return false;
+    const dl = currentCourse.directLessons?.find(l => l._id === activeLesson.lessonId);
+    if (dl?.isFree) return true;
+    if (activeLesson.unitId) {
+      const unit = currentCourse.units?.find(u => u._id === activeLesson.unitId);
+      if (unit?.isFree) return true;
+      const lesson = unit?.lessons?.find(l => l._id === activeLesson.lessonId);
+      if (lesson?.isFree) return true;
+    } else {
+      for (const u of (currentCourse.units || [])) {
+        const lesson = u.lessons?.find(l => l._id === activeLesson.lessonId);
+        if (lesson) return lesson.isFree || u.isFree;
+      }
+    }
+    return false;
+  };
+
   // ── lesson data for inline view ───────────────────────────────────────────
+  const canFetchLesson = activeLesson && (hasContentAccess() || isActiveLessonFree());
   const {
     lesson: activeLessonData,
     loading: lessonLoading,
     error: lessonError,
     refetch: refetchLesson,
   } = useLessonData(
-    activeLesson ? id : null,
+    canFetchLesson ? id : null,
     activeLesson?.lessonId,
     activeLesson?.unitId
   );
+  const isLessonLocked = activeLesson && !canFetchLesson;
 
   // ── effects ───────────────────────────────────────────────────────────────
   useEffect(() => {
@@ -206,27 +246,7 @@ export default function CourseDetail() {
     setActiveTab('كويز فتح المحتوى');
   }, [activeLesson?.lessonId]);
 
-  // ── helpers ───────────────────────────────────────────────────────────────
-  const isCoursePurchased = () => {
-    if (!currentCourse) return false;
-    if (user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN') return true;
-    if (courseAccessState?.hasAccess) return true;
-    return coursePurchaseStatus[currentCourse._id] || false;
-  };
-
   const toggleMainSidebar = () => setMainMenuOpen(prev => !prev);
-
-  const hasContentAccess = () => {
-    if (!user || !isLoggedIn) return false;
-    if (user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN') return true;
-    const price = currentCourse?.price || 0;
-    if (price <= 0) return true;
-    if (isCoursePurchased()) return true;
-    if (courseAccessState?.source === 'code' && courseAccessState?.accessEndAt) {
-      if (new Date(courseAccessState.accessEndAt) <= new Date()) return false;
-    }
-    return courseAccessState?.hasAccess || false;
-  };
 
   const getTotalLessons = (course) => {
     if (!course) return 0;
@@ -1192,10 +1212,27 @@ export default function CourseDetail() {
 
               {/* Overlay */}
               <div className="absolute inset-0 flex flex-col items-center justify-center"
-                style={{ background: ytId ? 'rgba(0,0,0,0.45)' : 'rgba(0,0,0,0.6)' }}>
+                style={{ background: isLessonLocked ? 'rgba(0,0,0,0.75)' : ytId ? 'rgba(0,0,0,0.45)' : 'rgba(0,0,0,0.6)' }}>
 
-                {/* Locked state */}
-                {activeLessonData?.hasEntryExam && !activeLessonData?.contentUnlocked ? (
+                {/* Locked: no purchase / access */}
+                {isLessonLocked ? (
+                  <div className="text-center px-6 max-w-md">
+                    <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4"
+                      style={{ background: 'linear-gradient(135deg, rgba(99,102,241,0.25), rgba(139,92,246,0.25))', border: '2px solid rgba(99,102,241,0.4)' }}>
+                      <FaLock className="text-indigo-400 text-2xl" />
+                    </div>
+                    <h3 className="text-white text-lg font-bold mb-2">هذا المحتوى يحتاج اشتراك</h3>
+                    <p className="text-gray-400 text-sm mb-5 leading-relaxed">
+                      اشترِ الكورس عشان تقدر تشوف الدروس والفيديوهات
+                    </p>
+                    <button onClick={handleCoursePurchaseClick}
+                      className="flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm text-white font-semibold transition-all hover:scale-105 mx-auto"
+                      style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}>
+                      <FaShoppingCart className="text-xs" />
+                      شراء الكورس — {currentCourse?.price} جنيه
+                    </button>
+                  </div>
+                ) : activeLessonData?.hasEntryExam && !activeLessonData?.contentUnlocked ? (
                   <div className="text-center">
                     <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-3" style={{ background: 'rgba(245,158,11,0.2)', border: '1px solid rgba(245,158,11,0.3)' }}>
                       <FaLock className="text-yellow-400 text-xl" />
@@ -1257,7 +1294,8 @@ export default function CourseDetail() {
               </button>
             )}
 
-            {/* Navigation + Complete Button */}
+            {/* Navigation + Complete Button (hidden when locked) */}
+            {!isLessonLocked && (
             <div className="flex items-center justify-between mb-4 gap-2">
               <button onClick={() => prevLesson && navigateToLesson(prevLesson)}
                 disabled={!prevLesson}
@@ -1280,13 +1318,15 @@ export default function CourseDetail() {
                 <span className="hidden xs:inline">التالي</span> <FaArrowLeft className="text-xs" />
               </button>
             </div>
+            )}
 
             {/* Lesson Info Row */}
             <div className="mb-4">
               {/* Title */}
               <h1 className="text-base md:text-xl font-bold mb-2 leading-snug">
-                {activeLesson?.title || currentCourse.title}
+                {isLessonLocked ? currentCourse.title : (activeLesson?.title || currentCourse.title)}
               </h1>
+              {!isLessonLocked && (
               <div className="flex items-center justify-between flex-wrap gap-2">
                 {/* Author */}
                 <div className="flex items-center gap-2">
@@ -1326,8 +1366,30 @@ export default function CourseDetail() {
                   })()}
                 </div>
               </div>
+              )}
             </div>
 
+            {isLessonLocked ? (
+              /* ── Locked Lesson: purchase / redeem panel ── */
+              <div className="rounded-2xl p-6 md:p-8 text-center" style={{ background: 'linear-gradient(135deg, rgba(99,102,241,0.08), rgba(139,92,246,0.08))', border: '1px solid rgba(99,102,241,0.2)' }}>
+                <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
+                  style={{ background: 'linear-gradient(135deg, rgba(99,102,241,0.2), rgba(139,92,246,0.2))', border: '1px solid rgba(99,102,241,0.3)' }}>
+                  <FaBookOpen className="text-indigo-400 text-xl" />
+                </div>
+                <h3 className="text-white text-lg font-bold mb-2">محتاج اشتراك عشان توصل للمحتوى</h3>
+                <p className="text-gray-400 text-sm mb-1 leading-relaxed max-w-md mx-auto">
+                  الكورس ده فيه {getTotalLessons(currentCourse)} درس — اشتريه دلوقتي
+                </p>
+                <p className="text-indigo-400 text-xl font-bold mb-5">{currentCourse.price} جنيه</p>
+                <button onClick={handleCoursePurchaseClick}
+                  className="flex items-center gap-2 px-6 py-3 rounded-xl text-sm text-white font-semibold transition-all hover:scale-105 hover:shadow-lg mx-auto"
+                  style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', boxShadow: '0 4px 20px rgba(99,102,241,0.35)' }}>
+                  <FaShoppingCart className="text-xs" />
+                  شراء الكورس
+                </button>
+              </div>
+            ) : (
+            <>
             {/* Tabs */}
             {(() => {
               const d = activeLessonData;
@@ -1406,33 +1468,7 @@ export default function CourseDetail() {
                     </div>
                   : renderTabContent()}
             </div>
-
-            {/* Access / Purchase Section (if no access) */}
-            {!hasContentAccess() && currentCourse.price > 0 && (
-              <div className="mt-6 rounded-2xl p-5" style={{ background: 'rgba(99,102,241,0.1)', border: '1px solid rgba(99,102,241,0.25)' }}>
-                <h3 className="text-white font-bold mb-2">للوصول للمحتوى الكامل</h3>
-                <p className="text-gray-400 text-sm mb-4">سعر الكورس: {currentCourse.price} جنيه</p>
-                <div className="flex gap-3 flex-wrap">
-                  <button onClick={handleCoursePurchaseClick}
-                    className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm text-white font-medium"
-                    style={{ background: 'rgba(99,102,241,0.8)' }}>
-                    <FaShoppingCart /> شراء الكورس
-                  </button>
-                  <button onClick={() => setShowRedeemPanel((p) => !p)}
-                    className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm text-gray-300"
-                    style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.1)' }}>
-                    تفعيل كود
-                  </button>
-                </div>
-                {showRedeemPanel && (
-                  <form onSubmit={handleRedeemCode} className="mt-4 flex gap-2">
-                    <input type="text" placeholder="أدخل الكود" value={redeemCode} onChange={(e) => setRedeemCode(e.target.value.toUpperCase())} dir="ltr"
-                      className="flex-1 px-3 py-2 rounded-lg text-sm outline-none"
-                      style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)', color: 'white' }} />
-                    <button type="submit" className="px-4 py-2 rounded-lg text-sm text-white" style={{ background: 'rgba(99,102,241,0.8)' }}>تفعيل</button>
-                  </form>
-                )}
-              </div>
+            </>
             )}
 
             {/* Remaining days banner */}
