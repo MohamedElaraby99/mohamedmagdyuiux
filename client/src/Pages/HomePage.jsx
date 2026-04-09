@@ -1,12 +1,12 @@
-import React, { useEffect, useState, Suspense, lazy } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Layout from "../Layout/Layout";
-import heroPng from "../assets/images/hero.png";
 import iconLine from "../assets/image copy 3.png";
 import { getAllBlogs } from "../Redux/Slices/BlogSlice";
 import { getFeaturedSubjects } from "../Redux/Slices/SubjectSlice";
 import { getFeaturedCourses } from "../Redux/Slices/CourseSlice";
+import { checkCourseAccess } from "../Redux/Slices/CourseAccessSlice";
 
 import { generateImageUrl } from "../utils/fileUtils";
 import AnimatedHero from "../Components/AnimatedHero";
@@ -14,52 +14,14 @@ import FeaturesSection from "../Components/FeaturesSection";
 import TestimonialsSection from "../Components/TestimonialsSection";
 import PromoBannerSection from "../Components/PromoBannerSection";
 import DesignerProfileSection from "../Components/DesignerProfileSection";
-import { CONTACT, SOCIAL_MEDIA, PAYMENT } from "../Constants/LayoutConfig";
-// Lazy load components
-const FAQAccordion = lazy(() => import("../Components/FAQAccordion"));
-const SubjectCard = lazy(() => import("../Components/SubjectCard"));
-const InstructorSection = lazy(() => import("../Components/InstructorSection"));
-const NewsletterSection = lazy(() => import("../Components/NewsletterSection"));
-
-import {
-  FaEye,
-  FaHeart,
-  FaCalendar,
-  FaUser,
-  FaStar,
-  FaUsers,
-  FaGraduationCap,
-  FaRocket,
-  FaLightbulb,
-  FaShieldAlt,
-  FaGlobe,
-  FaCode,
-  FaPalette,
-  FaBookOpen,
-  FaAward,
-  FaQuestionCircle,
-  FaArrowUp,
-  FaWhatsapp,
-  FaFacebook,
-  FaYoutube,
-  FaComments,
-  FaTiktok,
-  FaInstagram,
-  FaArrowLeft,
-  FaBook
-} from "react-icons/fa";
-import { placeholderImages } from "../utils/placeholderImages";
-// Using a public URL for now - replace with your actual image URL
-const fikraCharacter = "/fikra_character-removebg-preview.png";
+import { FaBookOpen, FaArrowUp } from "react-icons/fa";
 
 export default function HomePage() {
   const dispatch = useDispatch();
-  const { blogs } = useSelector((state) => state.blog);
-  const { featuredSubjects } = useSelector((state) => state.subject);
-  const { courses, featuredCourses, featuredLoading } = useSelector((state) => state.course);
+  const { featuredCourses, featuredLoading } = useSelector((state) => state.course);
+  const courseAccessByid = useSelector((state) => state.courseAccess.byCourseId);
 
-
-  const { role, isLoggedIn, data: userData } = useSelector((state) => state.auth);
+  const { isLoggedIn, data: userData } = useSelector((state) => state.auth);
 
   const [isVisible, setIsVisible] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
@@ -82,6 +44,17 @@ export default function HomePage() {
       setTimeout(() => {
         dispatch(getAllBlogs({ page: 1, limit: 3 }));
       }, 500);
+
+      // Check course access for logged-in users
+      if (isLoggedIn && userData) {
+        const courses = await dispatch(getFeaturedCourses());
+        const fetchedCourses = courses?.payload?.courses || courses?.payload || [];
+        if (Array.isArray(fetchedCourses)) {
+          fetchedCourses.slice(0, 6).forEach((course) => {
+            if (course._id) dispatch(checkCourseAccess(course._id));
+          });
+        }
+      }
     };
 
     loadData();
@@ -239,12 +212,21 @@ export default function HomePage() {
                         </div>
 
                         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 w-full sm:w-auto sm:flex-wrap sm:justify-end">
-                          <Link
-                            to={`/courses/${course._id}`}
-                            className="inline-flex items-center justify-center px-8 py-3.5 rounded-full bg-cyan-400 text-gray-900 font-bold text-sm sm:text-base shadow-[0_0_24px_rgba(34,211,238,0.25)] hover:bg-cyan-300 transition-colors duration-200 flex-1 sm:flex-initial min-w-[140px] text-center"
-                          >
-                            اشترك الآن
-                          </Link>
+                          {isLoggedIn && courseAccessByid[course._id]?.hasAccess ? (
+                            <Link
+                              to={`/courses/${course._id}`}
+                              className="inline-flex items-center justify-center px-8 py-3.5 rounded-full bg-emerald-500 text-white font-bold text-sm sm:text-base shadow-[0_0_24px_rgba(16,185,129,0.25)] hover:bg-emerald-400 transition-colors duration-200 flex-1 sm:flex-initial min-w-[180px] text-center"
+                            >
+                              انت مشترك في الكورس واكمل ماشي
+                            </Link>
+                          ) : (
+                            <Link
+                              to={`/courses/${course._id}`}
+                              className="inline-flex items-center justify-center px-8 py-3.5 rounded-full bg-cyan-400 text-gray-900 font-bold text-sm sm:text-base shadow-[0_0_24px_rgba(34,211,238,0.25)] hover:bg-cyan-300 transition-colors duration-200 flex-1 sm:flex-initial min-w-[140px] text-center"
+                            >
+                              اشترك الآن
+                            </Link>
+                          )}
                           <Link
                             to={`/courses/${course._id}`}
                             className="inline-flex items-center justify-center px-8 py-3.5 rounded-full border border-white/25 text-white font-semibold text-sm sm:text-base hover:bg-white/5 hover:border-white/35 transition-colors duration-200 flex-1 sm:flex-initial min-w-[140px] text-center"
