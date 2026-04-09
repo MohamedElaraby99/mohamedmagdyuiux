@@ -21,7 +21,9 @@ export default function Navbar() {
   const isHomeNavStyle =
     location.pathname === "/" ||
     location.pathname === "/login" ||
-    location.pathname === "/signup";
+    location.pathname === "/signup" ||
+    location.pathname === "/terms" ||
+    location.pathname === "/privacy";
   const dispatch = useDispatch();
 
   // Use scroll to top utility

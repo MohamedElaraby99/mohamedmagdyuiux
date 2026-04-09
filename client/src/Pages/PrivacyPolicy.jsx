@@ -5,20 +5,20 @@ import { FaShieldAlt, FaDatabase, FaEye, FaLock, FaUserSecret, FaInfoCircle, FaC
 export default function PrivacyPolicy() {
   return (
     <Layout>
-      <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+      <div className="min-h-screen bg-[#080E1E]">
         <div className="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
           {/* Header */}
           <div className="text-center mb-12">
             <div className="mx-auto h-16 w-16 bg-gradient-to-r from-green-600 to-green-600 rounded-full flex items-center justify-center mb-6 shadow-lg">
               <FaShieldAlt className="h-8 w-8 text-white" />
             </div>
-            <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+            <h1 className="text-4xl font-bold text-white mb-4">
               سياسة الخصوصية
             </h1>
-            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+            <p className="text-xl text-slate-300 max-w-2xl mx-auto">
               كيف نجمع ونستخدم ونحمي معلوماتك الشخصية
             </p>
-            <div className="mt-4 text-sm text-gray-500 dark:text-gray-400">
+            <div className="mt-4 text-sm text-slate-400">
               آخر تحديث: {new Date().toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' })}
             </div>
           </div>

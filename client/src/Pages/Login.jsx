@@ -102,27 +102,6 @@ export default function Login() {
         <div className="max-w-md w-full space-y-8">
           {/* Enhanced Header with Logo */}
           <div className="text-center">
-            {/* Modern Logo Container */}
-            <div className="flex justify-center items-center mb-8">
-              <div className="relative">
-                {/* Glowing Background Effect */}
-                <div className="absolute inset-0 bg-gradient-to-r from-primary via-primary-light to-primary-dark rounded-full blur-2xl opacity-30 animate-pulse"></div>
-
-                {/* Logo Container */}
-                <div className="relative bg-white dark:bg-gray-800 rounded-full p-4 shadow-2xl border-4 border-primary/20 dark:border-primary/50 transform hover:scale-110 transition-all duration-500">
-                  <img
-                    src={BRAND.logoUrl || logo2}
-                    alt={BRAND.platformName}
-                    className="w-16 h-16 object-contain drop-shadow-lg"
-                  />
-                </div>
-
-                {/* Floating Decorative Elements */}
-                <div className="absolute -top-2 -right-2 w-4 h-4 bg-primary-light rounded-full animate-bounce z-10 shadow-lg"></div>
-                <div className="absolute -bottom-2 -left-2 w-3 h-3 bg-primary rounded-full animate-pulse z-10 shadow-lg"></div>
-              </div>
-            </div>
-
             <h2 className="mb-3 text-4xl font-bold text-white">
               أهلاً وسهلاً
             </h2>
