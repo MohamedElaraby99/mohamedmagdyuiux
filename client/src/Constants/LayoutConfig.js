@@ -17,6 +17,8 @@
 // 1. معلومات العلامة التجارية - Brand Info
 // ============================================
 export const BRAND = {
+    // شعار الهيدر (أحرف كبيرة، يظهر على الرئيسية)
+    navbarWordmark: "MAGDYACADEMY",
     // اسم المنصة
     platformName: "E-learning Platform",
     // اسم المعلم
@@ -53,7 +55,7 @@ export const HERO = {
     // النص أعلى العنوان
     topText: "اتعلم المهارات اللى هتفتحلك فرص كبيرة!",
     // نص زر الاشتراك
-    ctaButtonText: "اشترك الآن",
+    ctaButtonText: "انضم الآن",
     // رابط زر الاشتراك
     ctaButtonLink: "/signup",
     // صورة المعلم في الهيرو

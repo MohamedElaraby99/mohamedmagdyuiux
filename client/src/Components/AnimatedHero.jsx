@@ -2,16 +2,14 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { FaPlay, FaArrowLeft, FaTimes } from 'react-icons/fa';
-import { HERO, BRAND } from '../Constants/LayoutConfig';
-import heroImage from '../assets/image.webp';
-import creditCardImage from '../assets/image copy.webp';
-import icon1 from '../assets/hero1.png';
-import icon2 from '../assets/her3.png';
-import icon3 from '../assets/hero2.png';
+import { HERO } from '../Constants/LayoutConfig';
+import heroVisualLeft from '../assets/image copy 6.png';
+import heroFloatMomentum from '../assets/image copy 7.png';
+import heroFloatModule from '../assets/image copy 8.png';
+import HeroStatsBar from './HeroStatsBar';
 
 const AnimatedHero = ({ onGetStarted }) => {
   const [isVisible, setIsVisible] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false);
   const navigate = useNavigate();
   const { isLoggedIn } = useSelector((state) => state.auth);
   const [showVideo, setShowVideo] = useState(false);
@@ -19,21 +17,6 @@ const AnimatedHero = ({ onGetStarted }) => {
   useEffect(() => {
     const timer = setTimeout(() => setIsVisible(true), 100);
     return () => clearTimeout(timer);
-  }, []);
-
-  useEffect(() => {
-    const checkDarkMode = () => {
-      const htmlElement = document.documentElement;
-      const isDark = htmlElement.classList.contains('dark');
-      setIsDarkMode(isDark);
-    };
-    checkDarkMode();
-    const observer = new MutationObserver(checkDarkMode);
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ['class']
-    });
-    return () => observer.disconnect();
   }, []);
 
   const handleButtonClick = () => {
@@ -44,91 +27,76 @@ const AnimatedHero = ({ onGetStarted }) => {
     }
   };
 
-  const buttonText = isLoggedIn ? 'ابدأ التعلم الآن' : (HERO.ctaButtonText || 'اشترك الآن');
+  const buttonText = isLoggedIn ? 'ابدأ التعلم الآن' : (HERO.ctaButtonText || 'انضم الآن');
 
   return (
     <div className="hero-wrapper" dir="rtl">
-      {/* Hero Section */}
       <section className="hero-section">
-        {/* Decorative background elements */}
         <div className="hero-bg-decorations">
-          <div className="hero-circle hero-circle-1"></div>
-          <div className="hero-circle hero-circle-2"></div>
-          <div className="hero-circle hero-circle-3"></div>
-          <div className="hero-dots"></div>
+          <div className="hero-circle hero-circle-1" />
+          <div className="hero-circle hero-circle-2" />
+          <div className="hero-circle hero-circle-3" />
+          <div className="hero-dots" />
         </div>
 
         <div className="hero-container">
-          {/* Right Side - Text Content */}
           <div className={`hero-text-content ${isVisible ? 'hero-animate-in' : 'hero-animate-out'}`}>
-            <h1 className="hero-title">
-              ابدأ مسيرتك في
-              <br />
-              <span className="hero-title-highlight">
-                تصميم UX/UI
-              </span>
+            <span className="hero-eyebrow">2026 MASTERCLASS</span>
+            <h1 className="hero-title hero-title-glow">
+              إبدأ رحلتك الآن
             </h1>
-
-            <p className="hero-description">
-              اتعلم المهارات اللى هتفتحلك فرص كبيرة!
+            <p className="hero-description hero-description-wide">
+              دبلومة متخصصة في تصميم واجهات وتجربة المستخدم (UI/UX)، تركز على تطوير مهاراتك في خلق
+              تجارب رقمية مبتكرة تناسب المستخدم
             </p>
 
             <div className="hero-actions">
-              <button
-                onClick={handleButtonClick}
-                className="hero-btn-primary"
-              >
+              <button type="button" onClick={handleButtonClick} className="hero-btn-primary hero-btn-gradient">
                 <span>{buttonText}</span>
-                <FaArrowLeft className="hero-btn-icon" />
+                {isLoggedIn ? <FaArrowLeft className="hero-btn-icon" /> : null}
               </button>
-
               <button
-                className="hero-btn-secondary"
+                type="button"
+                className="hero-btn-secondary hero-btn-ghost-navy"
                 onClick={() => setShowVideo(true)}
               >
-                <FaPlay className="hero-play-icon" />
+                <FaPlay className="hero-play-icon hero-play-icon-compact" />
                 <span>فيديو التفاصيل</span>
               </button>
             </div>
           </div>
 
-          {/* Left Side - Hero Image */}
           <div className={`hero-visual ${isVisible ? 'hero-visual-in' : 'hero-visual-out'}`}>
-            <div className="hero-image-container">
-              <img
-                src={heroImage}
-                alt="Master UX/UI Design"
-                className="hero-main-image"
-              />
-
+            <div className="hero-visual-shell">
+              <div className="hero-visual-frame">
+                <img
+                  src={heroVisualLeft}
+                  alt="Master UX/UI Design — Magdy Academy"
+                  className="hero-visual-main-img"
+                  decoding="async"
+                />
+                <div className="hero-visual-float-wrap hero-visual-float-wrap--momentum" aria-hidden>
                   <img
-                src={creditCardImage}
-                alt="Credit Card"
-                className="hero-credit-card"
-              />
-
-              {/* Floating Credit Card */}
-              <img
-                src={icon1}
-                alt="icon1"
-                className="icon1"
-              />
-
-              <img
-                src={icon2}
-                alt="icon2"
-                className="icon2"
-              />
-
-              <img
-                src={icon3}
-                alt="icon3"
-                className="icon3"
-              />
-
+                    src={heroFloatMomentum}
+                    alt=""
+                    className="hero-visual-float-img"
+                    decoding="async"
+                  />
+                </div>
+                <div className="hero-visual-float-wrap hero-visual-float-wrap--module" aria-hidden>
+                  <img
+                    src={heroFloatModule}
+                    alt=""
+                    className="hero-visual-float-img"
+                    decoding="async"
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </div>
+
+        <HeroStatsBar />
       </section>
 
       {/* Video Modal */}

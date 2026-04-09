@@ -26,7 +26,7 @@ const TestimonialsSection = () => {
     };
 
     return (
-        <section className="py-20 bg-[#FDFDF5] dark:bg-gray-900 transition-colors duration-300" dir="rtl">
+        <section className="py-20 bg-[#080E1E] transition-colors duration-300" dir="rtl">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Section Header */}
                 <div className="flex flex-col items-center justify-center mb-16">

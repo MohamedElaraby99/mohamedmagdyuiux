@@ -129,7 +129,7 @@ export default function HomePage() {
 
 
   return (
-    <Layout>
+    <Layout mainClassName="min-h-[100vh] bg-[#080E1E]">
       {/* Hero Section - Clean & Modern RTL */}
       <div className={`transition-all duration-1000 ease-out ${heroVisible
         ? 'opacity-100 translate-y-0'
@@ -144,7 +144,7 @@ export default function HomePage() {
 
       {/* Featured Courses Section */}
       {/* Featured Courses Section */}
-      <section className={`py-20 bg-[#FDFDF5] dark:bg-gray-900 transition-all duration-700 ease-out ${heroLoaded
+      <section className={`py-20 bg-[#080E1E] transition-all duration-700 ease-out ${heroLoaded
         ? 'opacity-100 translate-y-0'
         : 'opacity-0 translate-y-8'
         }`}
