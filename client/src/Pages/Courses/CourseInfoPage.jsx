@@ -225,6 +225,30 @@ export default function CourseInfoPage() {
                   </div>
 
                   <div className="space-y-3">
+                    {/* Direct lessons — المقدمة (shown first) */}
+                    {currentCourse.directLessons?.length > 0 && (
+                      <div className="rounded-xl border border-[#1e293b] overflow-hidden">
+                        <div className="px-5 py-4 bg-[#0f172a] flex items-center gap-3">
+                          <span className="text-purple-400 text-xs font-bold bg-purple-400/10 px-2.5 py-1 rounded-full">
+                            00
+                          </span>
+                          <span className="text-white font-semibold text-sm">المقدمة</span>
+                          <span className="text-slate-500 text-xs mr-auto">{currentCourse.directLessons.length} درس</span>
+                        </div>
+                        <div className="divide-y divide-[#1e293b]">
+                          {currentCourse.directLessons.map((lesson, li) => (
+                            <div key={lesson._id || li} className="flex items-center gap-3 px-5 py-3 bg-[#080E1E]">
+                              <FaLock className="text-slate-600 text-xs flex-shrink-0" />
+                              <span className="text-slate-400 text-sm flex-1">{lesson.title}</span>
+                              {lesson.isFree && (
+                                <span className="text-xs text-emerald-400 bg-emerald-400/10 px-2 py-0.5 rounded-full">مجاني</span>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
                     {/* Units */}
                     {(currentCourse.units || []).map((unit, i) => (
                       <div key={unit._id || i} className="rounded-xl border border-[#1e293b] overflow-hidden">
@@ -263,29 +287,6 @@ export default function CourseInfoPage() {
                       </div>
                     ))}
 
-                    {/* Direct lessons */}
-                    {currentCourse.directLessons?.length > 0 && (
-                      <div className="rounded-xl border border-[#1e293b] overflow-hidden">
-                        <div className="px-5 py-4 bg-[#0f172a] flex items-center gap-3">
-                          <span className="text-cyan-400 text-xs font-bold bg-cyan-400/10 px-2.5 py-1 rounded-full">
-                            دروس
-                          </span>
-                          <span className="text-white font-semibold text-sm">دروس إضافية</span>
-                          <span className="text-slate-500 text-xs mr-auto">{currentCourse.directLessons.length} درس</span>
-                        </div>
-                        <div className="divide-y divide-[#1e293b]">
-                          {currentCourse.directLessons.map((lesson, li) => (
-                            <div key={lesson._id || li} className="flex items-center gap-3 px-5 py-3 bg-[#080E1E]">
-                              <FaLock className="text-slate-600 text-xs flex-shrink-0" />
-                              <span className="text-slate-400 text-sm flex-1">{lesson.title}</span>
-                              {lesson.isFree && (
-                                <span className="text-xs text-emerald-400 bg-emerald-400/10 px-2 py-0.5 rounded-full">مجاني</span>
-                              )}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
                   </div>
                 </section>
               )}
