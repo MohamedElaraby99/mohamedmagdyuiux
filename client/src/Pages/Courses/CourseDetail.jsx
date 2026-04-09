@@ -22,7 +22,7 @@ import {
   FaFilePdf, FaClipboardList, FaDumbbell, FaImage,
   FaShoppingCart, FaBookOpen, FaVideo, FaCheckCircle, FaPaperPlane, FaComments, FaExclamationTriangle
 } from 'react-icons/fa';
-import { generateFileUrl } from '../../utils/fileUtils';
+import { generateFileUrl, generateImageUrl } from '../../utils/fileUtils';
 import { checkCourseAccess, redeemCourseAccessCode } from '../../Redux/Slices/CourseAccessSlice';
 import { axiosInstance } from '../../Helpers/axiosInstance';
 import RemainingDaysLabel from '../../Components/RemainingDaysLabel';
@@ -937,17 +937,28 @@ export default function CourseDetail() {
       {showWalletAlert && <WalletAlert message={alertMessage} onClose={() => setShowWalletAlert(false)} />}
 
       {/* ── Navbar ── */}
-      <header className="flex items-center justify-between px-4 md:px-6 py-3 flex-shrink-0" style={{ background: '#0d1829', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
-        <button onClick={() => navigate('/courses')} className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-white text-sm font-medium" style={{ background: 'rgba(99,102,241,0.8)' }}>
-          <FaUser className="text-xs" />
-          {user?.fullName || user?.name || 'المستخدم'}
+      <header className="flex items-center justify-between px-5 md:px-8 flex-shrink-0" style={{ background: '#0d1829', borderBottom: '1px solid rgba(255,255,255,0.07)', height: '52px' }}>
+        {/* Left: Avatar + Name */}
+        <button onClick={() => navigate('/profile')} className="flex items-center gap-2.5 group">
+          {user?.avatar?.secure_url
+            ? <img src={generateImageUrl(user.avatar.secure_url)} alt={user?.fullName}
+                className="w-8 h-8 rounded-full object-cover flex-shrink-0"
+                style={{ border: '2px solid rgba(255,255,255,0.15)' }}
+                onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }} />
+            : null}
+          <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-white font-bold text-sm ${user?.avatar?.secure_url ? 'hidden' : 'flex'}`}
+            style={{ background: 'rgba(99,102,241,0.6)', border: '2px solid rgba(99,102,241,0.4)' }}>
+            {(user?.fullName || user?.name || 'U').charAt(0).toUpperCase()}
+          </div>
+          <span className="text-white text-sm font-medium group-hover:text-gray-200 transition-colors">
+            {user?.fullName || user?.name || 'المستخدم'}
+          </span>
         </button>
-        <div className="flex items-center gap-3">
-          <span className="font-bold tracking-widest text-sm md:text-base">{BRAND?.navbarWordmark || 'MAGDYACADEMY'}</span>
-          <button className="text-gray-400 hover:text-white p-1">
-            <FaBars />
-          </button>
-        </div>
+
+        {/* Right: Brand */}
+        <span className="font-bold tracking-widest text-sm md:text-base text-white select-none">
+          {BRAND?.navbarWordmark || 'MAGDYACADEMY'}
+        </span>
       </header>
 
       {/* ── Breadcrumb ── */}
