@@ -212,7 +212,7 @@ export default function HomePage() {
                               to={`/courses/${course._id}`}
                               className="inline-flex items-center justify-center px-8 py-3.5 rounded-full bg-emerald-500 text-white font-bold text-sm sm:text-base shadow-[0_0_24px_rgba(16,185,129,0.25)] hover:bg-emerald-400 transition-colors duration-200 flex-1 sm:flex-initial min-w-[180px] text-center"
                             >
-                              انت مشترك في الكورس واكمل ماشي
+                              كمل تعلم
                             </Link>
                           ) : (
                             <Link

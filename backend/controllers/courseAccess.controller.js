@@ -1,6 +1,7 @@
 import CourseAccessCode from "../models/courseAccessCode.model.js";
 import CourseAccess from "../models/courseAccess.model.js";
 import Course from "../models/course.model.js";
+import Purchase from "../models/purchase.model.js";
 import userModel from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
@@ -142,14 +143,22 @@ export const checkCourseAccess = asyncHandler(async (req, res) => {
     if (!courseId) throw new ApiError(400, 'courseId is required');
 
     const now = new Date();
-    // Find the most recent access window (even if expired)
+
+    // Check code-based access
     const latestAccess = await CourseAccess.findOne({ userId, courseId }).sort({ accessEndAt: -1 });
-    const hasActiveAccess = !!(latestAccess && latestAccess.accessEndAt > now);
+    const hasActiveCodeAccess = !!(latestAccess && latestAccess.accessEndAt > now);
+
+    // Check wallet purchase
+    const purchase = await Purchase.findOne({ userId, courseId, purchaseType: 'course', status: 'completed' });
+    const hasPurchase = !!purchase;
+
+    const hasAccess = hasActiveCodeAccess || hasPurchase;
+    const source = hasPurchase ? 'purchase' : (latestAccess?.source || null);
 
     return res.status(200).json(new ApiResponse(200, {
-        hasAccess: hasActiveAccess,
+        hasAccess,
         accessEndAt: latestAccess?.accessEndAt || null,
-        source: latestAccess?.source || null
+        source
     }, 'Access status'));
 });
 

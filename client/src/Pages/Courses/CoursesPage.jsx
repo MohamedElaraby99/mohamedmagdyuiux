@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import Layout from '../../Layout/Layout';
 import { getAllCourses } from '../../Redux/Slices/CourseSlice';
 import { getAllSubjects } from '../../Redux/Slices/SubjectSlice';
+import { checkCourseAccess } from '../../Redux/Slices/CourseAccessSlice';
 import { generateImageUrl } from '../../utils/fileUtils';
 import { FaSearch, FaFilter, FaBookOpen, FaTimes } from 'react-icons/fa';
 
@@ -11,6 +12,8 @@ export default function CoursesPage() {
   const dispatch = useDispatch();
   const { courses, loading } = useSelector((state) => state.course);
   const { subjects } = useSelector((state) => state.subject);
+  const courseAccessByid = useSelector((state) => state.courseAccess.byCourseId);
+  const { isLoggedIn, data: userData } = useSelector((state) => state.auth);
 
   const [filters, setFilters] = useState({
     subject: '',
@@ -23,6 +26,14 @@ export default function CoursesPage() {
     dispatch(getAllCourses());
     dispatch(getAllSubjects());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (isLoggedIn && userData && courses?.length > 0) {
+      courses.forEach((course) => {
+        if (course._id) dispatch(checkCourseAccess(course._id));
+      });
+    }
+  }, [isLoggedIn, userData, courses, dispatch]);
 
   const handleFilterChange = (key, value) => {
     setFilters((prev) => ({
@@ -100,12 +111,21 @@ export default function CoursesPage() {
               </div>
 
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 w-full sm:w-auto sm:flex-wrap">
-                <Link
-                  to={`/courses/${course._id}`}
-                  className="inline-flex items-center justify-center px-8 py-3.5 rounded-full bg-cyan-400 text-gray-900 font-bold text-sm sm:text-base shadow-[0_0_24px_rgba(34,211,238,0.25)] hover:bg-cyan-300 transition-colors duration-200 flex-1 sm:flex-initial min-w-[140px] text-center"
-                >
-                  اشترك الآن
-                </Link>
+                {isLoggedIn && courseAccessByid[course._id]?.hasAccess ? (
+                  <Link
+                    to={`/courses/${course._id}`}
+                    className="inline-flex items-center justify-center px-8 py-3.5 rounded-full bg-emerald-500 text-white font-bold text-sm sm:text-base shadow-[0_0_24px_rgba(16,185,129,0.25)] hover:bg-emerald-400 transition-colors duration-200 flex-1 sm:flex-initial min-w-[180px] text-center"
+                  >
+                    كمل تعلم
+                  </Link>
+                ) : (
+                  <Link
+                    to={`/courses/${course._id}`}
+                    className="inline-flex items-center justify-center px-8 py-3.5 rounded-full bg-cyan-400 text-gray-900 font-bold text-sm sm:text-base shadow-[0_0_24px_rgba(34,211,238,0.25)] hover:bg-cyan-300 transition-colors duration-200 flex-1 sm:flex-initial min-w-[140px] text-center"
+                  >
+                    اشترك الآن
+                  </Link>
+                )}
                 <Link
                   to={`/courses/${course._id}`}
                   className="inline-flex items-center justify-center px-8 py-3.5 rounded-full border border-white/25 text-white font-semibold text-sm sm:text-base hover:bg-white/5 hover:border-white/35 transition-colors duration-200 flex-1 sm:flex-initial min-w-[140px] text-center"
