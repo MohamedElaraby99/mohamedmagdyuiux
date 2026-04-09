@@ -1170,7 +1170,7 @@ export default function CourseDetail() {
           style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)' }}>
           <FaClipboardList className="text-indigo-400 text-xs" /> المحتوى
         </button>
-        <button onClick={() => navigate('/profile')} className="flex items-center gap-2 group">
+        <button onClick={() => navigate('/user/profile')} className="flex items-center gap-2 group">
           <span className="hidden sm:block text-white text-sm font-medium group-hover:text-gray-200 transition-colors">
             {user?.fullName || user?.name || 'المستخدم'}
           </span>
