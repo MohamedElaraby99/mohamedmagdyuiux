@@ -228,7 +228,14 @@ export default function HomePage() {
 
                       <div className="flex flex-col gap-6 sm:gap-8 pt-2 sm:pt-0 items-end w-full">
                         <div className="text-3xl sm:text-4xl font-bold text-white tracking-tight text-end">
-                          {course.price > 0 ? `${course.price} L.E` : 'مجاني'}
+                          {course.price > 0 ? (
+                            <span dir="ltr" className="inline-flex items-baseline gap-2 tabular-nums">
+                              <span>{course.price}</span>
+                              <span className="font-bold">L.E</span>
+                            </span>
+                          ) : (
+                            'مجاني'
+                          )}
                         </div>
 
                         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 w-full sm:w-auto sm:flex-wrap sm:justify-end">
