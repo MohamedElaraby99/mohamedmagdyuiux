@@ -19,6 +19,11 @@ const videoProgressSchema = new Schema({
     type: Number,
     default: 0
   },
+  /** Last playback head position (seconds) — used to resume where the student paused */
+  lastPosition: {
+    type: Number,
+    default: 0
+  },
   duration: {
     type: Number,
     default: 0

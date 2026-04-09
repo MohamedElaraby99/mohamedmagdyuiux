@@ -1,11 +1,12 @@
-import { useEffect, useState, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useRef, useState } from 'react';
+import { FaArrowLeft, FaCompress, FaExpand, FaPlay, FaTimes } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
-import { FaPlay, FaArrowLeft, FaTimes, FaExpand, FaCompress } from 'react-icons/fa';
-import { HERO } from '../Constants/LayoutConfig';
+import { useNavigate } from 'react-router-dom';
+
 import heroVisualLeft from '../assets/image copy 6.png';
 import heroFloatMomentum from '../assets/image copy 7.png';
 import heroFloatModule from '../assets/image copy 8.png';
+import { HERO } from '../Constants/LayoutConfig';
 import HeroStatsBar from './HeroStatsBar';
 
 const AnimatedHero = ({ onGetStarted }) => {
@@ -23,17 +24,34 @@ const AnimatedHero = ({ onGetStarted }) => {
 
   useEffect(() => {
     const handleFullscreenChange = () => {
-      setIsFullscreen(!!document.fullscreenElement);
+      const el =
+        document.fullscreenElement ||
+        document.webkitFullscreenElement ||
+        document.msFullscreenElement;
+      setIsFullscreen(!!el);
     };
     document.addEventListener('fullscreenchange', handleFullscreenChange);
-    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+      document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
+    };
   }, []);
 
   const toggleFullscreen = () => {
-    if (!document.fullscreenElement) {
-      videoContainerRef.current?.requestFullscreen();
+    const el = videoContainerRef.current;
+    const fs =
+      document.fullscreenElement ||
+      document.webkitFullscreenElement ||
+      document.msFullscreenElement;
+    if (!fs) {
+      if (el?.requestFullscreen) el.requestFullscreen();
+      else if (el?.webkitRequestFullscreen) el.webkitRequestFullscreen();
+      else if (el?.msRequestFullscreen) el.msRequestFullscreen();
     } else {
-      document.exitFullscreen();
+      if (document.exitFullscreen) document.exitFullscreen();
+      else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+      else if (document.msExitFullscreen) document.msExitFullscreen();
     }
   };
 
@@ -128,34 +146,34 @@ const AnimatedHero = ({ onGetStarted }) => {
         >
           <div
             ref={videoContainerRef}
-            className="relative w-full max-w-4xl bg-black rounded-2xl overflow-hidden shadow-2xl border border-white/10 flex flex-col"
-            style={isFullscreen ? { width: '100vw', height: '100vh', maxWidth: '100vw', borderRadius: 0 } : {}}
+            className={`relative w-full max-w-4xl bg-black shadow-2xl border border-white/10 ${isFullscreen ? 'h-screen rounded-none' : 'aspect-video rounded-2xl'}`}
+            style={isFullscreen ? { width: '100vw', maxWidth: '100vw' } : {}}
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="absolute top-4 right-4 z-10 flex items-center gap-2">
+            {/* Buttons — top-right corner, forced LTR so RTL page doesn't flip them */}
+            <div className="absolute top-3 right-3 z-10 flex items-center gap-2" dir="ltr">
               <button
                 onClick={toggleFullscreen}
-                className="p-2 text-white/70 hover:text-white bg-black/40 hover:bg-black/60 rounded-full backdrop-blur-md transition-all duration-200"
+                className="p-2 text-white/80 hover:text-white bg-black/60 hover:bg-black/80 rounded-full backdrop-blur-md transition-all duration-200"
                 title={isFullscreen ? 'خروج من الشاشة الكاملة' : 'شاشة كاملة'}
               >
-                {isFullscreen ? <FaCompress size={18} /> : <FaExpand size={18} />}
+                {isFullscreen ? <FaCompress size={16} /> : <FaExpand size={16} />}
               </button>
               <button
                 onClick={() => setShowVideo(false)}
-                className="p-2 text-white/70 hover:text-white bg-black/40 hover:bg-black/60 rounded-full backdrop-blur-md transition-all duration-200"
+                className="p-2 text-white/80 hover:text-white bg-black/60 hover:bg-black/80 rounded-full backdrop-blur-md transition-all duration-200"
               >
-                <FaTimes size={20} />
+                <FaTimes size={16} />
               </button>
             </div>
-            <div className={isFullscreen ? 'w-full h-full' : 'aspect-video w-full'}>
-              <iframe
-                className="w-full h-full"
-                src="https://www.youtube.com/embed/wL0dk_zCgYs?autoplay=1"
-                title="YouTube video player"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowFullScreen
-              ></iframe>
-            </div>
+
+            <iframe
+              className="w-full h-full rounded-2xl"
+              src="https://www.youtube.com/embed/wL0dk_zCgYs?autoplay=1"
+              title="YouTube video player"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+            ></iframe>
           </div>
         </div>
       )}

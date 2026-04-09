@@ -33,9 +33,13 @@ const getVideoProgress = async (req, res, next) => {
         videoId,
         courseId,
         currentTime: 0,
+        lastPosition: 0,
         duration: 0,
         progress: 0
       });
+    } else if (progress.lastPosition == null && progress.currentTime > 0) {
+      progress.lastPosition = progress.currentTime;
+      await progress.save();
     }
 
     res.status(200).json({
@@ -79,15 +83,24 @@ const updateVideoProgress = async (req, res, next) => {
     // Find existing progress
     let progressRecord = await videoProgressModel.findOne({ userId, videoId });
 
+    const dur = duration && duration > 0 ? duration : null;
+    const headTime =
+      dur != null
+        ? Math.max(0, Math.min(dur, currentTime || 0))
+        : Math.max(0, currentTime || 0);
+
     if (!progressRecord) {
       // Create new progress record
+      const maxT = headTime;
+      const pct = duration > 0 ? Math.round((maxT / duration) * 100) : Math.max(progress || 0, 0);
       progressRecord = await videoProgressModel.create({
         userId,
         videoId,
         courseId,
-        currentTime: Math.max(currentTime || 0, 0),
+        currentTime: maxT,
+        lastPosition: headTime,
         duration: duration || 0,
-        progress: Math.max(progress || 0, 0),
+        progress: Math.max(progress || 0, pct, 0),
         totalWatchTime: Math.max(watchTime || 0, 0),
         reachedPercentages: []
       });
@@ -106,28 +119,24 @@ const updateVideoProgress = async (req, res, next) => {
         newWatchTime: watchTime
       });
 
-      // 🚀 FORWARD-ONLY LOGIC: Progress can only move forward
-      const newProgress = Math.max(progress || 0, progressRecord.progress || 0);
-      const newCurrentTime = Math.max(currentTime || 0, progressRecord.currentTime || 0);
+      // lastPosition = actual playhead (resume here)
+      progressRecord.lastPosition = headTime;
+
+      // currentTime = max position reached (forward-only, for % / completion)
+      const maxReached = Math.max(progressRecord.currentTime || 0, headTime);
+      progressRecord.currentTime = maxReached;
+
+      const progressFromMax = duration > 0 ? Math.round((maxReached / duration) * 100) : 0;
+      const newProgress = Math.max(progress || 0, progressFromMax, progressRecord.progress || 0);
       const newTotalWatchTime = Math.max((progressRecord.totalWatchTime || 0) + (watchTime || 0), progressRecord.totalWatchTime || 0);
 
-      // Log any protection that was applied
-      if (newProgress > (progress || 0)) {
-
-      }
-
-      if (newCurrentTime > (currentTime || 0)) {
-
-      }
-
-      // Update with forward-only values
-      progressRecord.currentTime = newCurrentTime;
       progressRecord.progress = newProgress;
       progressRecord.totalWatchTime = newTotalWatchTime;
 
       console.log('📊 Applied Updates:', {
         progress: `${progressRecord.progress}% (was ${progress}%)`,
-        currentTime: `${progressRecord.currentTime}s (was ${currentTime}s)`,
+        maxReached: `${progressRecord.currentTime}s`,
+        lastPosition: `${progressRecord.lastPosition}s`,
         totalWatchTime: `${progressRecord.totalWatchTime}s (added ${watchTime}s)`
       });
     }
@@ -190,7 +199,7 @@ const updateVideoProgress = async (req, res, next) => {
 const getCourseProgress = async (req, res, next) => {
   try {
     const { courseId } = req.params;
-    const userId = req.user.id;
+    const userId = req.user._id || req.user.id;
 
     // Validate courseId is a valid ObjectId
     if (!courseId || !/^[0-9a-fA-F]{24}$/.test(courseId)) {
@@ -262,29 +271,28 @@ const getVideoProgressForAllUsers = async (req, res, next) => {
 const resetVideoProgress = async (req, res, next) => {
   try {
     const { videoId } = req.params;
-    const userId = req.user.id;
+    const userId = req.user._id || req.user.id;
     const { role } = req.user;
 
-    // Find progress to reset
-    const progress = await videoProgressModel.findOne({ videoId });
+    // Find progress to reset (scoped to this user)
+    const progress = await videoProgressModel.findOne({ userId, videoId });
 
     if (!progress) {
       return next(new AppError("Video progress not found", 404));
     }
 
     // Only allow reset if user owns the progress or is admin
-    if (progress.userId.toString() !== userId && role !== 'ADMIN' && role !== 'SUPER_ADMIN') {
+    if (progress.userId.toString() !== userId.toString() && role !== 'ADMIN' && role !== 'SUPER_ADMIN') {
       return next(new AppError("Unauthorized access", 403));
     }
 
     // Reset progress
     progress.currentTime = 0;
+    progress.lastPosition = 0;
     progress.progress = 0;
     progress.isCompleted = false;
-    progress.checkpoints.forEach(checkpoint => {
-      checkpoint.reached = false;
-      checkpoint.reachedAt = null;
-    });
+    progress.totalWatchTime = 0;
+    progress.reachedPercentages = [];
 
     await progress.save();
 

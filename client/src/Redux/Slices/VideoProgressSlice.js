@@ -123,7 +123,14 @@ const videoProgressSlice = createSlice({
       })
       .addCase(updateVideoProgress.fulfilled, (state, action) => {
         state.loading = false;
-        state.currentVideoProgress = action.payload.data;
+        const data = action.payload?.data;
+        state.currentVideoProgress = data;
+        if (data?.videoId != null) {
+          const vid = String(data.videoId);
+          const idx = state.courseProgress.findIndex((p) => String(p.videoId) === vid);
+          if (idx >= 0) state.courseProgress[idx] = data;
+          else state.courseProgress.push(data);
+        }
       })
       .addCase(updateVideoProgress.rejected, (state, action) => {
         state.loading = false;

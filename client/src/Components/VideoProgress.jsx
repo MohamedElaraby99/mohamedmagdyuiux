@@ -26,7 +26,6 @@ const VideoProgress = ({
   currentTime = 0, 
   duration = 0, 
   isPlaying = false,
-  onSeek,
   showProgress = true 
 }) => {
   const dispatch = useDispatch();
@@ -35,7 +34,6 @@ const VideoProgress = ({
   const [showDetails, setShowDetails] = useState(false);
   const [showCheckpointDetails, setShowCheckpointDetails] = useState(false);
   const [lastUpdateTime, setLastUpdateTime] = useState(0);
-  const [progressRestored, setProgressRestored] = useState(false);
   const progressRestoredRef = useRef(false);
 
   // Get video progress when component mounts
@@ -167,22 +165,8 @@ const VideoProgress = ({
         setTotalWatchTime(currentVideoProgress.totalWatchTime);
       }
       
-      // If user has existing progress, seek to that position
-      if (currentVideoProgress.currentTime > 0 && onSeek) {
+      // Resume position is applied by CustomVideoPlayer (savedProgress / localStorage); avoid double-seek here.
 
-        // Small delay to ensure player is ready
-        setTimeout(() => {
-          onSeek(currentVideoProgress.currentTime);
-          // Show notification to user
-          const minutes = Math.floor(currentVideoProgress.currentTime / 60);
-          const seconds = Math.floor(currentVideoProgress.currentTime % 60);
-
-          setProgressRestored(true);
-          // Hide notification after 3 seconds
-          setTimeout(() => setProgressRestored(false), 3000);
-        }, 500);
-      }
-      
       // Special case: If video is completed but watch time is low, estimate it
       if (currentProgress >= 90 && (!currentVideoProgress.totalWatchTime || currentVideoProgress.totalWatchTime < duration * 0.8)) {
 
@@ -263,7 +247,7 @@ const VideoProgress = ({
 
   const handleResetProgress = () => {
     if (window.confirm('Are you sure you want to reset your progress for this video?')) {
-      dispatch(resetVideoProgress({ courseId, videoId })).then(() => {
+      dispatch(resetVideoProgress(videoId)).then(() => {
         setNextCheckpointIndex(0);
         setTotalWatchTime(0);
         setLastUpdateTime(0);
@@ -289,16 +273,6 @@ const VideoProgress = ({
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 mb-4">
-      {/* Progress Restored Notification */}
-      {progressRestored && (
-        <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded-lg flex items-center gap-2">
-          <FaCheckCircle className="text-green-500" />
-          <span className="text-sm font-medium">
-            ✅ Progress restored! Video will resume from where you left off.
-          </span>
-        </div>
-      )}
-      
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">

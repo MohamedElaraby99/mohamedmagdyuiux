@@ -8,7 +8,7 @@ import {
   checkCoursePurchaseStatus,
   getWalletBalance
 } from '../../Redux/Slices/PaymentSlice';
-import { updateVideoProgress } from '../../Redux/Slices/VideoProgressSlice';
+import { updateVideoProgress, getCourseProgress } from '../../Redux/Slices/VideoProgressSlice';
 
 import { PaymentSuccessAlert, PaymentErrorAlert, WalletAlert } from '../../Components/ModernAlert';
 import OptimizedLessonContentModal from '../../Components/OptimizedLessonContentModal';
@@ -49,6 +49,16 @@ const extractYouTubeId = (url) => {
 
 const ytThumb = (id) => id ? `https://img.youtube.com/vi/${id}/maxresdefault.jpg` : '';
 
+const countVideosInCourse = (course) => {
+  if (!course) return 0;
+  let n = 0;
+  (course.directLessons || []).forEach((l) => { n += l.videos?.length || 0; });
+  (course.units || []).forEach((u) => {
+    (u.lessons || []).forEach((l) => { n += l.videos?.length || 0; });
+  });
+  return n;
+};
+
 // ── component ─────────────────────────────────────────────────────────────────
 export default function CourseDetail() {
   const { id } = useParams();
@@ -58,6 +68,7 @@ export default function CourseDetail() {
   const { walletBalance, coursePurchaseStatus, loading: paymentLoading } = useSelector((s) => s.payment);
   const { data: user, isLoggedIn } = useSelector((s) => s.auth);
   const courseAccessState = useSelector((s) => s.courseAccess.byCourseId[id]);
+  const { courseProgress } = useSelector((s) => s.videoProgress);
 
   // ── core state ────────────────────────────────────────────────────────────
   const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
@@ -178,6 +189,12 @@ export default function CourseDetail() {
 
   useEffect(() => { if (id) dispatch(getCourseById(id)); }, [dispatch, id]);
 
+  useEffect(() => {
+    if (!id || !isLoggedIn || user?.role !== 'USER') return;
+    if (!hasContentAccess()) return;
+    dispatch(getCourseProgress(id));
+  }, [dispatch, id, isLoggedIn, user?.role, courseAccessState?.hasAccess, currentCourse?._id]);
+
   // Auto-fetch YouTube durations for videos that don't have duration set
   useEffect(() => {
     if (!activeLessonData?.videos?.length) return;
@@ -288,6 +305,15 @@ export default function CourseDetail() {
   const currentIdx = allLessons.findIndex((l) => l._id === activeLesson?.lessonId);
   const prevLesson = currentIdx > 0 ? allLessons[currentIdx - 1] : null;
   const nextLesson = currentIdx < allLessons.length - 1 ? allLessons[currentIdx + 1] : null;
+
+  const totalCourseVideos = countVideosInCourse(currentCourse);
+  const videoProgressSum = (courseProgress || []).reduce((a, p) => a + (p.progress || 0), 0);
+  const courseProgressPercent = totalCourseVideos > 0 ? Math.round(videoProgressSum / totalCourseVideos) : 0;
+  const completedVideoCount = (courseProgress || []).filter((p) => p.isCompleted || (p.progress || 0) >= 90).length;
+
+  const savedProgressForCurrentVideo = currentVideo && videoPlayerOpen && courseProgress?.length
+    ? courseProgress.find((p) => String(p.videoId) === String(currentVideo._id))
+    : null;
 
   const navigateToLesson = (lesson) => {
     setActiveLesson({
@@ -1216,6 +1242,25 @@ export default function CourseDetail() {
         <span className="text-gray-300 uppercase">{currentCourse.title}</span>
       </div>
 
+      {isLoggedIn && user?.role === 'USER' && hasContentAccess() && totalCourseVideos > 0 && (
+        <div className="px-4 md:px-6 pb-2 flex-shrink-0" dir="rtl">
+          <div className="rounded-xl px-4 py-2.5 text-sm"
+            style={{ background: 'rgba(99,102,241,0.12)', border: '1px solid rgba(99,102,241,0.25)' }}>
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <span className="text-gray-200 font-medium">تقدمك في الكورس</span>
+              <span className="text-gray-400 text-xs">{completedVideoCount} / {totalCourseVideos} فيديو مكتمل</span>
+            </div>
+            <div className="mt-2 h-2 rounded-full overflow-hidden bg-slate-800/80" dir="ltr">
+              <div
+                className="h-full rounded-full transition-all duration-500"
+                style={{ width: `${Math.min(100, courseProgressPercent)}%`, background: 'linear-gradient(90deg, #6366f1, #8b5cf6)' }}
+              />
+            </div>
+            <p className="text-xs text-gray-500 mt-1.5">{courseProgressPercent}% إجمالي المشاهدة</p>
+          </div>
+        </div>
+      )}
+
       {/* ── Body: two-column layout ── */}
       <div className="flex flex-1 overflow-hidden flex-col md:flex-row" style={{ direction: 'ltr' }}>
 
@@ -1703,7 +1748,8 @@ export default function CourseDetail() {
           userName={user?.fullName || user?.name || 'User'}
           courseId={id}
           showProgress={true}
-          savedProgress={null}
+          savedProgress={savedProgressForCurrentVideo}
+          progressVideoId={currentVideo._id}
         />
       )}
 

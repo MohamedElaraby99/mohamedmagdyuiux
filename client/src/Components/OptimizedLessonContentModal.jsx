@@ -1326,7 +1326,7 @@ const OptimizedLessonContentModal = ({ isOpen, onClose, courseId, lessonId, unit
   // Block access if code-based access has expired
   if (isAccessExpired) {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm">
+      <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm">
         <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl p-8 text-center max-w-md">
           <div className="text-red-500 text-4xl mb-4">⚠️</div>
           <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">انتهت صلاحية الوصول</h3>
@@ -1346,7 +1346,7 @@ const OptimizedLessonContentModal = ({ isOpen, onClose, courseId, lessonId, unit
 
   if (loading) {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm">
+      <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm">
         <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl p-8 text-center">
           <FaSpinner className="animate-spin text-4xl text-green-600 mx-auto mb-4" />
           <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">جاري تحميل محتوى الدرس...</h3>
@@ -1378,7 +1378,7 @@ const OptimizedLessonContentModal = ({ isOpen, onClose, courseId, lessonId, unit
     };
 
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm">
+      <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm">
         <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl p-8 text-center max-w-md">
           <div className="text-red-500 text-4xl mb-4">⚠️</div>
           <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">مشكلة في التحميل</h3>
@@ -1399,7 +1399,7 @@ const OptimizedLessonContentModal = ({ isOpen, onClose, courseId, lessonId, unit
   if (!lesson) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm p-2 sm:p-4">
+    <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm p-2 sm:p-4">
       <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-5xl max-h-[95vh] overflow-hidden relative">
         {/* Header */}
         <div className="bg-gradient-to-r from-green-600 to-green-600 text-white p-4 sm:p-6 rounded-t-2xl">

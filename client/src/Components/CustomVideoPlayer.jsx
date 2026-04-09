@@ -37,7 +37,9 @@ const CustomVideoPlayer = ({
   userName = "User",
   courseId = null,
   showProgress = true,
-  savedProgress = null
+  savedProgress = null,
+  /** MongoDB id of the lesson video — must match API video-progress videoId */
+  progressVideoId = null
 }) => {
   const { role } = useSelector((state) => state.auth);
   const userData = useSelector((state) => state.auth.data);
@@ -73,12 +75,14 @@ const CustomVideoPlayer = ({
   const [resumeTimeDisplay, setResumeTimeDisplay] = useState('');
 
   const iframeRef = useRef(null);
+  const fullscreenContainerRef = useRef(null);
   const progressBarRef = useRef(null);
   const volumeSliderRef = useRef(null);
   const controlsTimerRef = useRef(null);
   const timeUpdateIntervalRef = useRef(null);
   const watermarkTimerRef = useRef(null);
   const savedPositionRef = useRef(0);
+  const serverResumeAppliedRef = useRef(false);
 
   // Simulated video state for custom controls
   const [videoState, setVideoState] = useState({
@@ -102,6 +106,20 @@ const CustomVideoPlayer = ({
       clearWatermarkTimer();
     };
   }, [isOpen, video]);
+
+  // If course progress loads after the player opens, seek once (only if user hasn't moved far yet)
+  useEffect(() => {
+    if (!isOpen || !video || !playerReady || !player) return;
+    const serverT = (savedProgress?.lastPosition ?? savedProgress?.currentTime) || 0;
+    if (serverT <= 5 || serverResumeAppliedRef.current) return;
+    try {
+      const cur = player.getCurrentTime();
+      if (cur > 25) return;
+      player.seekTo(serverT, true);
+      setCurrentTime(serverT);
+      serverResumeAppliedRef.current = true;
+    } catch (_) { /* ignore */ }
+  }, [isOpen, video, savedProgress, playerReady, player]);
 
   // YouTube IFrame API implementation
   useEffect(() => {
@@ -276,9 +294,10 @@ const CustomVideoPlayer = ({
       setResumeTimeDisplay(`${m}:${s.toString().padStart(2, '0')}`);
       setShowResumeNotification(true);
       setTimeout(() => setShowResumeNotification(false), 4000);
-    } else if (savedProgress && savedProgress.currentTime > 0) {
-      event.target.seekTo(savedProgress.currentTime, true);
-      setCurrentTime(savedProgress.currentTime);
+    } else if (savedProgress && (savedProgress.lastPosition > 0 || savedProgress.currentTime > 0)) {
+      const t = savedProgress.lastPosition ?? savedProgress.currentTime;
+      event.target.seekTo(t, true);
+      setCurrentTime(t);
     }
   };
 
@@ -325,7 +344,11 @@ const CustomVideoPlayer = ({
     };
 
     const handleFullscreenChange = () => {
-      setIsFullscreen(!!document.fullscreenElement);
+      const el =
+        document.fullscreenElement ||
+        document.webkitFullscreenElement ||
+        document.msFullscreenElement;
+      setIsFullscreen(!!el);
     };
 
     checkDeviceType();
@@ -367,6 +390,7 @@ const CustomVideoPlayer = ({
   };
 
   const initializeVideo = () => {
+    serverResumeAppliedRef.current = false;
 
     setIsLoading(true);
     setCurrentTime(0);
@@ -377,9 +401,10 @@ const CustomVideoPlayer = ({
     setPlayerReady(false);
     setShowThumbnail(true);
 
-    // Load saved position from localStorage for resume
-    const savedTime = loadPositionFromStorage();
-    savedPositionRef.current = savedTime;
+    // Resume: prefer server (lastPosition), then localStorage
+    const serverT = (savedProgress?.lastPosition ?? savedProgress?.currentTime) || 0;
+    const localT = loadPositionFromStorage();
+    savedPositionRef.current = serverT > 5 ? serverT : localT;
     
     // Extract YouTube video ID
     const videoUrl = getVideoUrl(video);
@@ -664,31 +689,40 @@ const CustomVideoPlayer = ({
     }
   };
 
-  const toggleFullscreen = async () => {
+  const requestFullscreenOnElement = async (element) => {
+    if (!element) return;
     try {
-      if (!document.fullscreenElement) {
-        // Enter fullscreen
-        if (document.documentElement.requestFullscreen) {
-          await document.documentElement.requestFullscreen();
-        } else if (document.documentElement.webkitRequestFullscreen) {
-          await document.documentElement.webkitRequestFullscreen();
-        } else if (document.documentElement.msRequestFullscreen) {
-          await document.documentElement.msRequestFullscreen();
-        }
-        setIsFullscreen(true);
+      if (element.requestFullscreen) await element.requestFullscreen();
+      else if (element.webkitRequestFullscreen) await element.webkitRequestFullscreen();
+      else if (element.msRequestFullscreen) await element.msRequestFullscreen();
+    } catch (error) {
+      /* denied or unsupported */
+    }
+  };
+
+  const exitFullscreenCompat = async () => {
+    try {
+      if (document.exitFullscreen) await document.exitFullscreen();
+      else if (document.webkitExitFullscreen) await document.webkitExitFullscreen();
+      else if (document.msExitFullscreen) await document.msExitFullscreen();
+    } catch (error) {
+      /* */
+    }
+  };
+
+  const toggleFullscreen = async () => {
+    const fs =
+      document.fullscreenElement ||
+      document.webkitFullscreenElement ||
+      document.msFullscreenElement;
+    try {
+      if (!fs) {
+        await requestFullscreenOnElement(fullscreenContainerRef.current);
       } else {
-        // Exit fullscreen
-        if (document.exitFullscreen) {
-          await document.exitFullscreen();
-        } else if (document.webkitExitFullscreen) {
-          await document.webkitExitFullscreen();
-        } else if (document.msExitFullscreen) {
-          await document.msExitFullscreen();
-        }
-        setIsFullscreen(false);
+        await exitFullscreenCompat();
       }
     } catch (error) {
-
+      /* */
     }
   };
 
@@ -789,8 +823,12 @@ const CustomVideoPlayer = ({
   const handleClose = () => {
     savePositionToStorage(currentTime);
     setIsPlaying(false);
-    if (document.fullscreenElement) {
-      document.exitFullscreen();
+    if (
+      document.fullscreenElement ||
+      document.webkitFullscreenElement ||
+      document.msFullscreenElement
+    ) {
+      void exitFullscreenCompat();
     }
     onClose();
   };
@@ -809,15 +847,8 @@ const CustomVideoPlayer = ({
 
   const requestFullscreenAndLandscape = async () => {
     try {
-      // Request fullscreen
-      if (document.documentElement.requestFullscreen) {
-        await document.documentElement.requestFullscreen();
-      } else if (document.documentElement.webkitRequestFullscreen) {
-        await document.documentElement.webkitRequestFullscreen();
-      } else if (document.documentElement.msRequestFullscreen) {
-        await document.documentElement.msRequestFullscreen();
-      }
-      
+      await requestFullscreenOnElement(fullscreenContainerRef.current);
+
       // Try to lock orientation to landscape (works on some mobile browsers)
       if (screen.orientation && screen.orientation.lock) {
         try {
@@ -919,7 +950,8 @@ const CustomVideoPlayer = ({
 
   return (
     <div 
-      className={`fixed inset-0 z-50 ${isFullscreen ? 'z-[9999]' : ''}`}
+      ref={fullscreenContainerRef}
+      className={`fixed inset-0 bg-black ${isFullscreen ? 'z-[9999]' : 'z-[200]'}`}
       onMouseMove={handleMouseMove}
       onMouseLeave={() => setShowControls(false)}
     >
@@ -1026,10 +1058,10 @@ const CustomVideoPlayer = ({
                     className="absolute pointer-events-none z-25 select-none"
                     style={{
                       ...getWatermarkStyle(),
-                      color: 'rgba(255, 255, 255, 0.9)',
+                      color: 'rgba(255, 255, 255, 1)',
                       fontSize: '14px',
                       fontWeight: 'bold',
-                      textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8)',
+                      textShadow: '2px 2px 6px rgba(0, 0, 0, 0.95)',
                       fontFamily: 'Arial, sans-serif',
                       userSelect: 'none',
                       WebkitUserSelect: 'none',
@@ -1037,7 +1069,7 @@ const CustomVideoPlayer = ({
                       msUserSelect: 'none'
                     }}
                   >
-                    <div className="bg-black bg-opacity-60 px-3 py-1 rounded">
+                    <div className="bg-black/85 px-3 py-1 rounded">
                       {displayUserName}
                     </div>
                   </div>
@@ -1232,6 +1264,19 @@ const CustomVideoPlayer = ({
                 {/* Control Buttons */}
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
+                  
+                  <button
+                      onClick={() => seek(10)}
+                      disabled={!playerReady}
+                      className={`text-white hover:text-gray-300 transition-colors ${
+                        !playerReady ? 'opacity-50 cursor-not-allowed' : ''
+                      }`}
+                    >
+                      <FaStepForward className="text-lg" />
+                    </button>
+                    
+                    
+
                     <button
                       onClick={() => {
 
@@ -1254,16 +1299,7 @@ const CustomVideoPlayer = ({
                     >
                       <FaStepBackward className="text-lg" />
                     </button>
-                    
-                    <button
-                      onClick={() => seek(10)}
-                      disabled={!playerReady}
-                      className={`text-white hover:text-gray-300 transition-colors ${
-                        !playerReady ? 'opacity-50 cursor-not-allowed' : ''
-                      }`}
-                    >
-                      <FaStepForward className="text-lg" />
-                    </button>
+
                     
                     <div className="flex items-center gap-2 relative">
                       <button
@@ -1386,29 +1422,23 @@ const CustomVideoPlayer = ({
         </div>
         
         {/* Video Progress Component (Hidden for Users - Background Tracking Only) */}
-        {showProgress && courseId && getCleanVideoId(video) && role === 'USER' && (
+        {showProgress && courseId && (progressVideoId || getCleanVideoId(video)) && role === 'USER' && (
           <div className="hidden">
             <VideoProgress
-              videoId={getCleanVideoId(video)}
+              videoId={progressVideoId ? String(progressVideoId) : getCleanVideoId(video)}
               courseId={courseId}
               currentTime={currentTime}
               duration={duration}
               isPlaying={isPlaying}
-              onSeek={(time) => {
-                if (player && playerReady) {
-                  player.seekTo(time, true);
-                }
-              }}
-              savedProgress={savedProgress}
             />
           </div>
         )}
 
         {/* All Users Progress Component (Admin Only) */}
-        {showProgress && courseId && getCleanVideoId(video) && (role === 'ADMIN' || role === 'SUPER_ADMIN') && (
+        {showProgress && courseId && (progressVideoId || getCleanVideoId(video)) && (role === 'ADMIN' || role === 'SUPER_ADMIN') && (
           <div className="w-full max-w-6xl mt-6 flex-shrink-0">
             <VideoUserProgress
-              videoId={getCleanVideoId(video)}
+              videoId={progressVideoId ? String(progressVideoId) : getCleanVideoId(video)}
               courseId={courseId}
             />
           </div>
