@@ -127,7 +127,7 @@ export default function CoursesPage() {
                   </Link>
                 )}
                 <Link
-                  to={`/courses/${course._id}`}
+                  to={`/courses/${course._id}/info`}
                   className="inline-flex items-center justify-center px-8 py-3.5 rounded-full border border-white/25 text-white font-semibold text-sm sm:text-base hover:bg-white/5 hover:border-white/35 transition-colors duration-200 flex-1 sm:flex-initial min-w-[140px] text-center"
                 >
                   عرض التفاصيل

@@ -43,6 +43,7 @@ const InstructorDetail = lazy(() => import("./Pages/InstructorDetail"));
 const CourseContentManager = lazy(() => import('./Pages/Dashboard/CourseContentManager'));
 const CoursesPage = lazy(() => import('./Pages/Courses/CoursesPage'));
 const CourseDetail = lazy(() => import('./Pages/Courses/CourseDetail'));
+const CourseInfoPage = lazy(() => import('./Pages/Courses/CourseInfoPage'));
 const Profile = lazy(() => import("./Pages/User/Profile"));
 const AdminDashboard = lazy(() => import("./Pages/Dashboard/AdminDashboard"));
 const CourseDashboard = lazy(() => import("./Pages/Dashboard/CourseDashboard"));
@@ -127,6 +128,7 @@ function AppContent() {
           <Route path="/qa/:id" element={<QADetail />} />
           <Route path="/subjects" element={<SubjectList />} />
           <Route path="/courses" element={<CoursesPage />} />
+          <Route path="/courses/:id/info" element={<CourseInfoPage />} />
           <Route path="/courses/:id" element={<CourseDetail />} />
 
           <Route element={<RequireAuth allowedRoles={["ADMIN", "SUPER_ADMIN"]} />}>
