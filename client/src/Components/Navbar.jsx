@@ -24,6 +24,7 @@ export default function Navbar() {
     path === "/privacy" ||
     path === "/exam-history" ||
     path === "/wallet" ||
+    path === "/live-meetings" ||
     path.startsWith("/courses") ||
     path.startsWith("/blogs") ||
     path.startsWith("/qa");
