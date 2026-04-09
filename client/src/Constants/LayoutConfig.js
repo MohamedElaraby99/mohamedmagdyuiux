@@ -18,7 +18,7 @@
 // ============================================
 export const BRAND = {
     // شعار الهيدر (أحرف كبيرة، يظهر على الرئيسية)
-    navbarWordmark: "MAGDYACADEMY",
+    navbarWordmark: "MAGDY ACADEMY",
     // اسم المنصة
     platformName: "E-learning Platform",
     // اسم المعلم
