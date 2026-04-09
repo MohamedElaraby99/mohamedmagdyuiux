@@ -80,6 +80,7 @@ export default function Navbar() {
 
   return (
     <nav
+      dir="rtl"
       className={`sticky top-0 z-50 transition-all duration-300 ${
         isHomeNavStyle
           ? 'w-full border-b border-white/[0.06] shadow-none'
