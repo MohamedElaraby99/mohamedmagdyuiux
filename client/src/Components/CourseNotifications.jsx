@@ -126,7 +126,7 @@ const CourseNotifications = () => {
   }
 
   return (
-    <div className="relative">
+    <div className="relative" style={{ zIndex: 60 }}>
       {/* Notification Bell Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
@@ -142,9 +142,18 @@ const CourseNotifications = () => {
         )}
       </button>
 
+      {/* Backdrop to close dropdown */}
+      {isOpen && (
+        <div
+          className="fixed inset-0"
+          style={{ zIndex: 55 }}
+          onClick={() => setIsOpen(false)}
+        />
+      )}
+
       {/* Notifications Dropdown */}
       {isOpen && (
-        <div className="absolute right-0 top-full mt-2 w-80 md:w-96 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 z-50 max-h-96 overflow-hidden">
+        <div className="absolute right-0 top-full mt-2 w-80 md:w-96 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 max-h-96 overflow-hidden" style={{ zIndex: 60 }}>
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
             <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
@@ -274,13 +283,6 @@ const CourseNotifications = () => {
         </div>
       )}
 
-      {/* Backdrop to close dropdown */}
-      {isOpen && (
-        <div
-          className="fixed inset-0 z-40"
-          onClick={() => setIsOpen(false)}
-        />
-      )}
     </div>
   );
 };

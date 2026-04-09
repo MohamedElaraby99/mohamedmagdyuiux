@@ -28,6 +28,7 @@ import { generateFileUrl, generateImageUrl } from '../../utils/fileUtils';
 import { checkCourseAccess, redeemCourseAccessCode } from '../../Redux/Slices/CourseAccessSlice';
 import { axiosInstance } from '../../Helpers/axiosInstance';
 import RemainingDaysLabel from '../../Components/RemainingDaysLabel';
+import CourseNotifications from '../../Components/CourseNotifications';
 import useLessonData from '../../Helpers/useLessonData';
 import { BRAND } from '../../Constants/LayoutConfig';
 
