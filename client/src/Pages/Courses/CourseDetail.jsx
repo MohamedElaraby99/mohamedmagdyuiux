@@ -1328,7 +1328,7 @@ export default function CourseDetail() {
       {showWalletAlert && <WalletAlert message={alertMessage} onClose={() => setShowWalletAlert(false)} />}
 
       {/* ── Navbar ── */}
-      <header className="flex items-center justify-between px-5 md:px-8 flex-shrink-0" style={{ background: '#0d1829', borderBottom: '1px solid rgba(255,255,255,0.07)', height: '52px' }}>
+      <header className="relative isolate flex items-center justify-between px-5 md:px-8 flex-shrink-0" style={{ background: '#0d1829', borderBottom: '1px solid rgba(255,255,255,0.07)', height: '52px' }}>
 
         {/* LEFT: Burger + Brand */}
         <div className="flex items-center gap-3">

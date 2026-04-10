@@ -126,11 +126,11 @@ const CourseNotifications = () => {
   }
 
   return (
-    <div className="relative" style={{ zIndex: 60 }}>
-      {/* Notification Bell Button */}
+    <div className="relative z-40 isolate">
+      {/* Notification Bell Button — z فوق خلفية القائمة عند الفتح */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2.5 md:p-3 rounded-xl bg-primary/10 dark:bg-primary/20 hover:bg-primary/20 dark:hover:bg-primary/30 transition-all duration-300 shadow-lg hover:shadow-xl border border-primary/30 dark:border-primary/50"
+        className="relative z-[3] p-2.5 md:p-3 rounded-xl bg-primary/10 dark:bg-primary/20 hover:bg-primary/20 dark:hover:bg-primary/30 transition-all duration-300 shadow-lg hover:shadow-xl border border-primary/30 dark:border-primary/50"
       >
         <FaBell className="w-4 h-4 md:w-5 md:h-5 text-primary dark:text-primary-light" />
 
@@ -145,15 +145,14 @@ const CourseNotifications = () => {
       {/* Backdrop to close dropdown */}
       {isOpen && (
         <div
-          className="fixed inset-0"
-          style={{ zIndex: 55 }}
+          className="fixed inset-0 z-[1]"
           onClick={() => setIsOpen(false)}
         />
       )}
 
       {/* Notifications Dropdown */}
       {isOpen && (
-        <div className="absolute right-0 top-full mt-2 w-80 md:w-96 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 max-h-96 overflow-hidden" style={{ zIndex: 60 }}>
+        <div className="absolute right-0 top-full z-[2] mt-2 w-80 md:w-96 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 max-h-96 overflow-hidden">
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
             <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
