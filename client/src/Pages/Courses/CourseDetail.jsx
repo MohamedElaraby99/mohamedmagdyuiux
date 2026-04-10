@@ -11,6 +11,7 @@ import {
 import { updateVideoProgress, getCourseProgress, clearCourseProgress } from '../../Redux/Slices/VideoProgressSlice';
 
 import { PaymentSuccessAlert, PaymentErrorAlert, WalletAlert } from '../../Components/ModernAlert';
+import CoursePurchaseCelebration from '../../Components/CoursePurchaseCelebration';
 import OptimizedLessonContentModal from '../../Components/OptimizedLessonContentModal';
 import ExamModal from '../../Components/Exam/ExamModal';
 import EssayExamModal from '../../Components/EssayExamModal';
@@ -22,7 +23,7 @@ import {
   FaChevronDown,
   FaLock, FaLockOpen, FaTimes, FaDownload,
   FaFilePdf, FaClipboardList, FaDumbbell, FaImage,
-  FaShoppingCart, FaBookOpen, FaVideo, FaCheckCircle, FaPaperPlane, FaComments, FaExclamationTriangle
+  FaShoppingCart, FaBookOpen, FaVideo, FaCheckCircle, FaPaperPlane, FaComments, FaExclamationTriangle, FaInfoCircle
 } from 'react-icons/fa';
 import { generateFileUrl, generateImageUrl } from '../../utils/fileUtils';
 import { checkCourseAccess, redeemCourseAccessCode } from '../../Redux/Slices/CourseAccessSlice';
@@ -139,6 +140,7 @@ export default function CourseDetail() {
   const [selectedLesson, setSelectedLesson] = useState(null);
   const [redeemCode, setRedeemCode] = useState('');
   const [showCoursePurchaseModal, setShowCoursePurchaseModal] = useState(false);
+  const [showPurchaseCelebration, setShowPurchaseCelebration] = useState(false);
   const [showRedeemPanel, setShowRedeemPanel] = useState(false);
 
   // ── inline player state ───────────────────────────────────────────────────
@@ -190,6 +192,16 @@ export default function CourseDetail() {
     }
     return courseAccessState?.hasAccess || false;
   };
+
+  const isPaidCourse = (currentCourse?.price || 0) > 0;
+  /** طالب مسجّل ولسه ما اشتراش الكورس (أو ما عندوش وصول كامل) — يبانله إنه يقدر يشتري من غير ما ينزل للمحتوى المقفول */
+  const showBuyFullCourseBanner =
+    Boolean(currentCourse) &&
+    isPaidCourse &&
+    isLoggedIn &&
+    user?.role === 'USER' &&
+    !isCoursePurchased();
+  const showBuyFullCourseBannerGuest = Boolean(currentCourse) && isPaidCourse && !isLoggedIn;
 
   const isActiveLessonFree = () => {
     if (!activeLesson || !currentCourse) return false;
@@ -502,8 +514,7 @@ export default function CourseDetail() {
     try {
       await dispatch(purchaseCourse({ courseId: currentCourse._id })).unwrap();
       setShowCoursePurchaseModal(false);
-      setAlertMessage('تم شراء الكورس بنجاح! يمكنك الآن الوصول لجميع المحتوى');
-      setShowSuccessAlert(true);
+      setShowPurchaseCelebration(true);
       dispatch(getWalletBalance());
       dispatch(checkCoursePurchaseStatus({ courseId: currentCourse._id }));
     } catch (error) {
@@ -1252,10 +1263,15 @@ export default function CourseDetail() {
             style={{ background: 'rgba(255,255,255,0.1)' }}>
             <FaTimes className="text-sm" />
           </button>
-          <div className="text-right">
-            <div className="font-bold text-sm uppercase tracking-wider text-white">{BRAND?.navbarWordmark || 'MAGDY ACADEMY'}</div>
+          <Link
+            to="/"
+            onClick={() => setMainMenuOpen(false)}
+            className="text-right block min-w-0 hover:opacity-90 transition-opacity"
+            title="الصفحة الرئيسية"
+          >
+            <div className="font-bold text-sm uppercase tracking-wider text-white truncate">{BRAND?.navbarWordmark || 'MAGDY ACADEMY'}</div>
             <div className="text-xs text-gray-500 mt-0.5">{BRAND?.platformName || 'E-learning Platform'}</div>
-          </div>
+          </Link>
         </div>
 
         {/* Nav Links */}
@@ -1324,9 +1340,14 @@ export default function CourseDetail() {
             <span className="block w-5 h-0.5 rounded-full bg-white" />
             <span className="block w-5 h-0.5 rounded-full bg-white" />
           </button>
-          <span className="font-bold tracking-widest text-sm md:text-base text-white select-none">
+          <Link
+            to="/"
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            className="font-bold tracking-widest text-sm md:text-base text-white select-none hover:text-cyan-100 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/40 rounded shrink min-w-0 truncate max-w-[10rem] sm:max-w-[18rem]"
+            title="الصفحة الرئيسية"
+          >
             {BRAND?.navbarWordmark || 'MAGDYACADEMY'}
-          </span>
+          </Link>
         </div>
 
         {/* RIGHT: Notifications + Curriculum toggle (mobile) + Avatar + Name */}
@@ -1363,6 +1384,67 @@ export default function CourseDetail() {
         {activeLesson?.unitTitle && <><span className="uppercase">{activeLesson.unitTitle}</span><span>›</span></>}
         <span className="text-gray-300 uppercase">{currentCourse.title}</span>
       </div>
+
+      {showBuyFullCourseBanner && (
+        <div className="px-4 md:px-6 pb-3 flex-shrink-0" dir="rtl">
+          <div
+            className="rounded-xl px-4 py-3 sm:px-5 sm:py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
+            style={{
+              background: 'linear-gradient(135deg, rgba(245,158,11,0.14), rgba(234,179,8,0.08))',
+              border: '1px solid rgba(245,158,11,0.4)',
+            }}
+          >
+            <div className="min-w-0 flex gap-3">
+              <FaInfoCircle className="text-amber-400 text-lg flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="text-amber-100 font-semibold text-sm sm:text-base mb-1">
+                  فيه دروس مجانية كبداية — والكورس كامل بالاشتراك
+                </p>
+                <p className="text-gray-300 text-xs sm:text-sm leading-relaxed">
+                  تقدر تذاكر من الدروس المفتوحة مجاناً. عشان تفتح{' '}
+                  <span className="text-white font-medium">كل</span> الدروس والفيديوهات والواجبات، اشترِ الكورس كامل مقابل{' '}
+                  <span className="text-amber-300 font-bold tabular-nums">{currentCourse.price} جنيه</span>.
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={handleCoursePurchaseClick}
+              className="flex-shrink-0 flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white whitespace-nowrap transition-transform hover:scale-[1.02] active:scale-[0.98] w-full sm:w-auto"
+              style={{ background: 'linear-gradient(135deg, #d97706, #ea580c)', boxShadow: '0 4px 16px rgba(234,88,12,0.35)' }}
+            >
+              <FaShoppingCart className="text-sm" />
+              اشتري الكورس كامل
+            </button>
+          </div>
+        </div>
+      )}
+
+      {showBuyFullCourseBannerGuest && (
+        <div className="px-4 md:px-6 pb-3 flex-shrink-0" dir="rtl">
+          <div
+            className="rounded-xl px-4 py-3 sm:px-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
+            style={{
+              background: 'rgba(99,102,241,0.1)',
+              border: '1px solid rgba(129,140,248,0.35)',
+            }}
+          >
+            <p className="text-gray-300 text-xs sm:text-sm leading-relaxed min-w-0">
+              <span className="text-indigo-200 font-semibold">تجربة مجانية لبعض الدروس.</span>{' '}
+              سجّل الدخول واشترِ الكورس لفتح كل المحتوى — السعر{' '}
+              <span className="text-white font-bold tabular-nums">{currentCourse.price} جنيه</span>.
+            </p>
+            <Link
+              to="/login"
+              state={{ from: `/courses/${id}` }}
+              className="flex-shrink-0 text-center px-5 py-2.5 rounded-xl text-sm font-bold text-white whitespace-nowrap transition-opacity hover:opacity-95 w-full sm:w-auto"
+              style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}
+            >
+              سجّل الدخول
+            </Link>
+          </div>
+        </div>
+      )}
 
       {isLoggedIn && user?.role === 'USER' && hasContentAccess() && totalCourseVideos > 0 && (
         <div className="px-4 md:px-6 pb-2 flex-shrink-0" dir="rtl">
@@ -1728,6 +1810,39 @@ export default function CourseDetail() {
             </div>
           </div>
 
+          {(showBuyFullCourseBanner || showBuyFullCourseBannerGuest) && (
+            <div className="px-3 pt-2 pb-3 flex-shrink-0 border-b" style={{ borderColor: 'rgba(255,255,255,0.06)' }} dir="rtl">
+              <div className="rounded-lg px-3 py-2.5 text-[11px] leading-snug" style={{ background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.28)' }}>
+                <p className="text-amber-100/95 font-semibold mb-1">فتح الكورس كامل</p>
+                <p className="text-gray-400 mb-2">
+                  {showBuyFullCourseBannerGuest
+                    ? 'سجّل الدخول واشتري عشان تشوف كل الدروس.'
+                    : 'دروس مجانية للبداية — اشترِ الكورس لباقي المحتوى.'}
+                </p>
+                {showBuyFullCourseBannerGuest ? (
+                  <Link
+                    to="/login"
+                    state={{ from: `/courses/${id}` }}
+                    onClick={() => isMobile && setSidebarOpen(false)}
+                    className="block w-full text-center py-2 rounded-lg text-xs font-bold text-white"
+                    style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}
+                  >
+                    تسجيل الدخول
+                  </Link>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => { handleCoursePurchaseClick(); if (isMobile) setSidebarOpen(false); }}
+                    className="w-full py-2 rounded-lg text-xs font-bold text-white"
+                    style={{ background: 'linear-gradient(135deg, #d97706, #ea580c)' }}
+                  >
+                    اشترِ بـ {currentCourse.price} ج
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+
           {/* Lessons list */}
           <div className="flex-1 overflow-y-auto">
             {/* Direct lessons */}
@@ -1932,6 +2047,12 @@ export default function CourseDetail() {
           courseAccessState={courseAccessState}
         />
       )}
+
+      <CoursePurchaseCelebration
+        open={showPurchaseCelebration}
+        onClose={() => setShowPurchaseCelebration(false)}
+        courseTitle={currentCourse?.title}
+      />
 
       {/* Course Purchase Confirmation Modal */}
       {showCoursePurchaseModal && currentCourse && (

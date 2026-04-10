@@ -2026,3 +2026,38 @@ html.light .textarea {
 .dark .magdy-navbar {
   background-color: #1E1B4B !important;
 }
+
+/* Course purchase success celebration */
+@keyframes course-celebration-confetti {
+  0% {
+    transform: translate3d(0, -12vh, 0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(var(--dx, 0px), 105vh, 0) rotate(640deg);
+    opacity: 0.85;
+  }
+}
+
+.course-celebration-piece {
+  position: absolute;
+  top: -10%;
+  animation-name: course-celebration-confetti;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+@keyframes course-purchase-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.88) translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.course-purchase-celebration-modal {
+  animation: course-purchase-pop 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}

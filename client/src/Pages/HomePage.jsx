@@ -184,7 +184,7 @@ export default function HomePage() {
                           <div className="flex items-center justify-between px-2 py-4 max-w-2xl">
                             {stats.map((s) => (
                               <div key={s.label} className="flex flex-col items-center">
-                                <div className="text-xl sm:text-2xl font-bold text-cyan-400 tabular-nums leading-none">
+                                <div className="text-2xl sm:text-3xl font-bold text-cyan-400 tabular-nums leading-none">
                                   {s.value}
                                 </div>
                                 <div className="text-[11px] text-slate-400 mt-1.5 whitespace-nowrap">

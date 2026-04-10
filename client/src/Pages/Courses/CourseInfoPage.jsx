@@ -128,23 +128,35 @@ export default function CourseInfoPage() {
                       <span dir="ltr">{currentCourse.price} <span className="text-2xl">L.E</span></span>
                     ) : 'مجاني'}
                   </div>
-                  {isSubscribed ? (
+                  <div className="flex flex-wrap items-center gap-3">
                     <button
+                      type="button"
                       onClick={() => navigate(`/courses/${id}`)}
-                      className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-emerald-500 text-white font-bold text-sm sm:text-base hover:bg-emerald-400 transition-colors shadow-[0_0_24px_rgba(16,185,129,0.3)]"
+                      className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3.5 rounded-full border border-white/25 text-white font-semibold text-sm sm:text-base hover:bg-white/5 hover:border-white/35 transition-colors duration-200 min-w-[140px]"
                     >
-                      <FaPlay className="text-xs" />
-                      كمل تعلم
+                      <FaBookOpen className="text-sm opacity-90" />
+                      عرض التفاصيل
                     </button>
-                  ) : (
-                    <button
-                      onClick={() => navigate(`/courses/${id}`)}
-                      className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-cyan-400 text-gray-900 font-bold text-sm sm:text-base hover:bg-cyan-300 transition-colors shadow-[0_0_24px_rgba(34,211,238,0.3)]"
-                    >
-                      <FaBolt className="text-xs" />
-                      اشترك الآن
-                    </button>
-                  )}
+                    {isSubscribed ? (
+                      <button
+                        type="button"
+                        onClick={() => navigate(`/courses/${id}`)}
+                        className="inline-flex items-center gap-2 px-6 sm:px-8 py-3.5 rounded-full bg-emerald-500 text-white font-bold text-sm sm:text-base hover:bg-emerald-400 transition-colors shadow-[0_0_24px_rgba(16,185,129,0.3)] min-w-[140px] justify-center"
+                      >
+                        <FaPlay className="text-xs" />
+                        كمل تعلم
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => navigate(`/courses/${id}`)}
+                        className="inline-flex items-center gap-2 px-6 sm:px-8 py-3.5 rounded-full bg-cyan-400 text-gray-900 font-bold text-sm sm:text-base hover:bg-cyan-300 transition-colors shadow-[0_0_24px_rgba(34,211,238,0.3)] min-w-[140px] justify-center"
+                      >
+                        <FaBolt className="text-xs" />
+                        اشترك الآن
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
 
@@ -374,23 +386,35 @@ export default function CourseInfoPage() {
                   </div>
 
                   {/* CTA */}
-                  {isSubscribed ? (
+                  <div className="flex flex-col gap-2 mb-3">
                     <button
+                      type="button"
                       onClick={() => navigate(`/courses/${id}`)}
-                      className="w-full py-3.5 rounded-xl bg-emerald-500 text-white font-bold text-base hover:bg-emerald-400 transition-colors mb-3 flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(16,185,129,0.25)]"
+                      className="w-full py-3 rounded-xl border border-white/20 text-slate-200 font-semibold text-sm hover:bg-white/5 transition-colors flex items-center justify-center gap-2"
                     >
-                      <FaPlay className="text-sm" />
-                      كمل تعلم
+                      <FaBookOpen className="text-sm text-cyan-400/90" />
+                      عرض التفاصيل
                     </button>
-                  ) : (
-                    <button
-                      onClick={() => navigate(`/courses/${id}`)}
-                      className="w-full py-3.5 rounded-xl bg-cyan-400 text-gray-900 font-bold text-base hover:bg-cyan-300 transition-colors mb-3 flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(34,211,238,0.25)]"
-                    >
-                      <FaBolt className="text-sm" />
-                      اشترك الآن
-                    </button>
-                  )}
+                    {isSubscribed ? (
+                      <button
+                        type="button"
+                        onClick={() => navigate(`/courses/${id}`)}
+                        className="w-full py-3.5 rounded-xl bg-emerald-500 text-white font-bold text-base hover:bg-emerald-400 transition-colors flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(16,185,129,0.25)]"
+                      >
+                        <FaPlay className="text-sm" />
+                        كمل تعلم
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => navigate(`/courses/${id}`)}
+                        className="w-full py-3.5 rounded-xl bg-cyan-400 text-gray-900 font-bold text-base hover:bg-cyan-300 transition-colors flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(34,211,238,0.25)]"
+                      >
+                        <FaBolt className="text-sm" />
+                        اشترك الآن
+                      </button>
+                    )}
+                  </div>
 
                   <Link
                     to="/courses"
